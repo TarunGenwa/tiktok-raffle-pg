@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Mystery Box Raffles",
-  description: "Digital raffle mystery boxes - Swipe to explore and win prizes!",
+  title: "SpinWin Raffles",
+  description: "Instant win competitions - Swipe to explore and spin to win prizes!",
 };
 
 export default function RootLayout({

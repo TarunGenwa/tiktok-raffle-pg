@@ -1,68 +1,101 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 import NavSidebar from './components/NavSidebar';
-import MysteryBox from './components/MysteryBox';
+import Competition from './components/Competition';
 import InteractionSidebar from './components/InteractionSidebar';
+import { Button } from '@/components/ui/button';
 
 interface Prize {
   name: string;
   rarity: 'common' | 'rare' | 'epic' | 'legendary';
-  image?: string;
+  probability: number;
 }
 
-interface RaffleBox {
+interface CompetitionType {
   id: string;
   title: string;
+  category: 'crypto' | 'gaming' | 'luxury' | 'electronics';
   description: string;
-  price: number;
+  entryPrice: number;
+  prizePool: number;
+  participants: number;
+  timeRemaining: string;
   prizes: Prize[];
+  sponsored?: boolean;
 }
 
 export default function Home() {
-  const raffleBoxes: RaffleBox[] = [
+  const competitions: CompetitionType[] = [
     {
       id: '1',
-      title: 'Starter Pack',
-      description: 'Perfect for beginners! Get your first prize',
-      price: 9.99,
+      title: 'Bitcoin Bonanza',
+      category: 'crypto',
+      description: 'Win up to 1 BTC in crypto prizes!',
+      entryPrice: 5.00,
+      prizePool: 50000,
+      participants: 12543,
+      timeRemaining: '2h 15m',
+      sponsored: true,
       prizes: [
-        { name: 'Bronze Coin', rarity: 'common' },
-        { name: 'Silver Coin', rarity: 'common' },
-        { name: 'Gold Coin', rarity: 'rare' },
-        { name: 'Lucky Charm', rarity: 'rare' },
-        { name: 'Diamond Ring', rarity: 'epic' },
-        { name: 'Jackpot Ticket', rarity: 'legendary' }
+        { name: '$10 BTC', rarity: 'common', probability: 40 },
+        { name: '$50 ETH', rarity: 'common', probability: 25 },
+        { name: '$100 BTC', rarity: 'rare', probability: 20 },
+        { name: '$500 ETH', rarity: 'epic', probability: 10 },
+        { name: '1 BTC', rarity: 'legendary', probability: 5 }
       ]
     },
     {
       id: '2',
-      title: 'Premium Box',
-      description: 'Higher chances for rare prizes!',
-      price: 24.99,
+      title: 'Gaming Legends',
+      category: 'gaming',
+      description: 'Rare skins and gaming gear up for grabs!',
+      entryPrice: 3.00,
+      prizePool: 25000,
+      participants: 8921,
+      timeRemaining: '5h 30m',
       prizes: [
-        { name: 'Rare Gem', rarity: 'rare' },
-        { name: 'Epic Sword', rarity: 'epic' },
-        { name: 'Legendary Shield', rarity: 'epic' },
-        { name: 'Golden Crown', rarity: 'legendary' },
-        { name: 'Dragon Egg', rarity: 'legendary' }
+        { name: 'Common Skin', rarity: 'common', probability: 45 },
+        { name: 'Rare Emote', rarity: 'rare', probability: 30 },
+        { name: 'Epic Bundle', rarity: 'epic', probability: 15 },
+        { name: 'PS5 Console', rarity: 'legendary', probability: 10 }
       ]
     },
     {
       id: '3',
-      title: 'Ultimate Raffle',
-      description: 'The best prizes await you!',
-      price: 49.99,
+      title: 'Luxury Collection',
+      category: 'luxury',
+      description: 'Premium watches and jewelry await!',
+      entryPrice: 10.00,
+      prizePool: 100000,
+      participants: 5432,
+      timeRemaining: '1h 45m',
       prizes: [
-        { name: 'Mythic Armor', rarity: 'epic' },
-        { name: 'Legendary Weapon', rarity: 'legendary' },
-        { name: 'Ultimate Prize', rarity: 'legendary' },
-        { name: 'Exclusive Skin', rarity: 'legendary' }
+        { name: 'Designer Watch', rarity: 'rare', probability: 35 },
+        { name: 'Gold Chain', rarity: 'rare', probability: 30 },
+        { name: 'Diamond Ring', rarity: 'epic', probability: 20 },
+        { name: 'Rolex Watch', rarity: 'legendary', probability: 15 }
+      ]
+    },
+    {
+      id: '4',
+      title: 'Tech Paradise',
+      category: 'electronics',
+      description: 'Latest gadgets and electronics!',
+      entryPrice: 4.00,
+      prizePool: 35000,
+      participants: 15678,
+      timeRemaining: '3h 20m',
+      prizes: [
+        { name: 'AirPods', rarity: 'common', probability: 40 },
+        { name: 'iPad', rarity: 'rare', probability: 30 },
+        { name: 'MacBook', rarity: 'epic', probability: 20 },
+        { name: 'iPhone 15 Pro', rarity: 'legendary', probability: 10 }
       ]
     }
   ];
 
-  const [currentBoxIndex, setCurrentBoxIndex] = useState(0);
+  const [currentCompetitionIndex, setCurrentCompetitionIndex] = useState(0);
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -72,20 +105,20 @@ export default function Home() {
   // Minimum swipe distance (in px) to trigger navigation
   const minSwipeDistance = 50;
 
-  const goToNextBox = () => {
-    if (currentBoxIndex < raffleBoxes.length - 1 && !isTransitioning) {
+  const goToNextCompetition = () => {
+    if (currentCompetitionIndex < competitions.length - 1 && !isTransitioning) {
       setIsTransitioning(true);
-      setCurrentBoxIndex((prev) => prev + 1);
+      setCurrentCompetitionIndex((prev) => prev + 1);
       setTimeout(() => {
         setIsTransitioning(false);
       }, 400);
     }
   };
 
-  const goToPreviousBox = () => {
-    if (currentBoxIndex > 0 && !isTransitioning) {
+  const goToPreviousCompetition = () => {
+    if (currentCompetitionIndex > 0 && !isTransitioning) {
       setIsTransitioning(true);
-      setCurrentBoxIndex((prev) => prev - 1);
+      setCurrentCompetitionIndex((prev) => prev - 1);
       setTimeout(() => {
         setIsTransitioning(false);
       }, 400);
@@ -120,9 +153,9 @@ export default function Home() {
     const isSwipeDown = distance < -minSwipeDistance;
 
     if (isSwipeUp) {
-      goToNextBox();
+      goToNextCompetition();
     } else if (isSwipeDown) {
-      goToPreviousBox();
+      goToPreviousCompetition();
     }
 
     setIsDragging(false);
@@ -158,9 +191,9 @@ export default function Home() {
     const isSwipeDown = dragOffset < -minSwipeDistance;
 
     if (isSwipeUp) {
-      goToNextBox();
+      goToNextCompetition();
     } else if (isSwipeDown) {
-      goToPreviousBox();
+      goToPreviousCompetition();
     }
 
     // Reset all states
@@ -177,7 +210,7 @@ export default function Home() {
   };
 
 
-  const currentBox = raffleBoxes[currentBoxIndex];
+  const currentCompetition = competitions[currentCompetitionIndex];
 
   // Calculate opacity and transform based on drag
   const getOpacity = () => {
@@ -214,9 +247,9 @@ export default function Home() {
         }}
       >
         <div className="w-full max-w-md h-[calc(100vh-4rem)] mx-auto relative">
-          {/* Single Mystery Box with Smooth Transition */}
+          {/* Single Competition with Smooth Transition */}
           <div
-            key={currentBoxIndex}
+            key={currentCompetitionIndex}
             className="relative w-full h-full"
             style={{
               transform: isDragging ? `translateY(${-dragOffset * 0.5}px) scale(${getScale()})` : 'translateY(0) scale(1)',
@@ -224,17 +257,22 @@ export default function Home() {
               transition: isDragging ? 'none' : 'all 0.4s cubic-bezier(0.4, 0.0, 0.2, 1)',
             }}
           >
-            <MysteryBox
-              id={currentBox.id}
-              title={currentBox.title}
-              description={currentBox.description}
-              price={currentBox.price}
-              prizes={currentBox.prizes}
+            <Competition
+              id={currentCompetition.id}
+              title={currentCompetition.title}
+              category={currentCompetition.category}
+              description={currentCompetition.description}
+              entryPrice={currentCompetition.entryPrice}
+              prizePool={currentCompetition.prizePool}
+              participants={currentCompetition.participants}
+              timeRemaining={currentCompetition.timeRemaining}
+              prizes={currentCompetition.prizes}
+              sponsored={currentCompetition.sponsored}
             />
 
-            {/* Box Counter */}
-            <div className="absolute top-4 right-4 bg-black/50 px-3 py-1 rounded-full text-white text-sm z-20 pointer-events-none">
-              {currentBoxIndex + 1} / {raffleBoxes.length}
+            {/* Competition Counter (Mobile Only) */}
+            <div className="md:hidden absolute top-4 right-4 bg-black/50 px-3 py-1 rounded-full text-white text-sm z-20 pointer-events-none">
+              {currentCompetitionIndex + 1} / {competitions.length}
             </div>
           </div>
 
@@ -242,12 +280,12 @@ export default function Home() {
           {isDragging && (
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-30 pointer-events-none">
               <div className="bg-black/70 rounded-full p-4">
-                {dragOffset > minSwipeDistance && currentBoxIndex < raffleBoxes.length - 1 && (
+                {dragOffset > minSwipeDistance && currentCompetitionIndex < competitions.length - 1 && (
                   <svg className="w-8 h-8 text-white animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M19 9l-7 7-7-7" />
                   </svg>
                 )}
-                {dragOffset < -minSwipeDistance && currentBoxIndex > 0 && (
+                {dragOffset < -minSwipeDistance && currentCompetitionIndex > 0 && (
                   <svg className="w-8 h-8 text-white animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 15l7-7 7 7" />
                   </svg>
@@ -255,6 +293,40 @@ export default function Home() {
               </div>
             </div>
           )}
+        </div>
+
+        {/* Navigation Buttons (Desktop) */}
+        <div className="hidden md:flex absolute right-24 top-1/2 -translate-y-1/2 flex-col gap-4 z-20">
+          {/* Up Button */}
+          <Button
+            onClick={goToPreviousCompetition}
+            disabled={currentCompetitionIndex === 0}
+            size="icon"
+            className="w-14 h-14 rounded-full bg-gray-800/80 hover:bg-gray-700/80 border-2 border-white/20 disabled:opacity-30 disabled:cursor-not-allowed shadow-xl"
+          >
+            <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 15l7-7 7 7" />
+            </svg>
+          </Button>
+
+          {/* Competition Progress Indicator */}
+          <div className="bg-gray-800/80 rounded-full px-4 py-2 border-2 border-white/20 shadow-xl">
+            <div className="text-white text-sm font-bold text-center">
+              {currentCompetitionIndex + 1} / {competitions.length}
+            </div>
+          </div>
+
+          {/* Down Button */}
+          <Button
+            onClick={goToNextCompetition}
+            disabled={currentCompetitionIndex === competitions.length - 1}
+            size="icon"
+            className="w-14 h-14 rounded-full bg-gray-800/80 hover:bg-gray-700/80 border-2 border-white/20 disabled:opacity-30 disabled:cursor-not-allowed shadow-xl"
+          >
+            <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M19 9l-7 7-7-7" />
+            </svg>
+          </Button>
         </div>
 
         {/* Right Sidebar - Interactions (Overlaid on media player) */}
