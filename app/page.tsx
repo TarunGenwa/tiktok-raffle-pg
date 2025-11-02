@@ -139,6 +139,11 @@ export default function Home() {
     const diff = touchStart - currentTouch;
     setDragOffset(diff);
     setTouchEnd(currentTouch);
+
+    // Prevent pull-to-refresh when swiping up
+    if (diff > 0) {
+      e.preventDefault();
+    }
   };
 
   const onTouchEnd = () => {
@@ -226,7 +231,7 @@ export default function Home() {
   };
 
   return (
-    <div className="flex h-screen bg-black overflow-hidden">
+    <div className="flex h-screen bg-black overflow-hidden overscroll-none">
       {/* Left Sidebar - Navigation (Desktop Only) */}
       <aside className="hidden md:block w-20 bg-black border-r border-gray-800 flex-shrink-0">
         <NavSidebar />
@@ -239,7 +244,7 @@ export default function Home() {
 
       {/* Main Content Area - Media Player */}
       <main
-        className="flex-1 flex items-center justify-center relative overflow-hidden select-none pb-20 md:pb-0"
+        className="flex-1 flex items-center justify-center relative overflow-hidden select-none pb-20 md:pb-0 touch-pan-y"
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
@@ -248,7 +253,9 @@ export default function Home() {
         onMouseUp={onMouseUp}
         onMouseLeave={onMouseLeave}
         style={{
-          cursor: isDragging ? 'grabbing' : 'grab'
+          cursor: isDragging ? 'grabbing' : 'grab',
+          touchAction: 'pan-y',
+          overscrollBehavior: 'none'
         }}
       >
         <div className="w-full max-w-md h-[calc(100vh-8rem)] md:h-[calc(100vh-4rem)] mx-auto relative px-2 md:px-0">

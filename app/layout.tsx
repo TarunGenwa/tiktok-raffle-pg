@@ -17,15 +17,23 @@ export const metadata: Metadata = {
   description: "Instant win competitions - Swipe to explore and spin to win prizes!",
 };
 
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en" className="dark overscroll-none">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased overscroll-none`}
+        style={{ overscrollBehavior: 'none' }}
       >
         {children}
       </body>
