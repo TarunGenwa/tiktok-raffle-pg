@@ -247,33 +247,81 @@ export default function Home() {
         }}
       >
         <div className="w-full max-w-md h-[calc(100vh-4rem)] mx-auto relative">
-          {/* Single Competition with Smooth Transition */}
-          <div
-            key={currentCompetitionIndex}
-            className="relative w-full h-full"
-            style={{
-              transform: isDragging ? `translateY(${-dragOffset * 0.5}px) scale(${getScale()})` : 'translateY(0) scale(1)',
-              opacity: getOpacity(),
-              transition: isDragging ? 'none' : 'all 0.4s cubic-bezier(0.4, 0.0, 0.2, 1)',
-            }}
-          >
-            <Competition
-              id={currentCompetition.id}
-              title={currentCompetition.title}
-              category={currentCompetition.category}
-              description={currentCompetition.description}
-              entryPrice={currentCompetition.entryPrice}
-              prizePool={currentCompetition.prizePool}
-              participants={currentCompetition.participants}
-              timeRemaining={currentCompetition.timeRemaining}
-              prizes={currentCompetition.prizes}
-              sponsored={currentCompetition.sponsored}
-            />
+          {/* Competitions Stack with Smooth Transitions */}
+          <div className="relative w-full h-full">
+            {competitions.map((competition, index) => {
+              const offset = index - currentCompetitionIndex;
+              const isActive = index === currentCompetitionIndex;
+              const isPrev = offset === -1;
+              const isNext = offset === 1;
+              const isVisible = Math.abs(offset) <= 1;
 
-            {/* Competition Counter (Mobile Only) */}
-            <div className="md:hidden absolute top-4 right-4 bg-black/50 px-3 py-1 rounded-full text-white text-sm z-20 pointer-events-none">
-              {currentCompetitionIndex + 1} / {competitions.length}
-            </div>
+              if (!isVisible) return null;
+
+              // Calculate transform based on position and drag
+              let translateY = offset * 100; // Base offset in vh
+              if (isDragging) {
+                translateY -= (dragOffset / window.innerHeight) * 100;
+              }
+
+              // Calculate opacity
+              let opacity = 1;
+              if (!isActive) {
+                opacity = 0.3;
+              }
+              if (isDragging && isActive) {
+                const progress = Math.abs(dragOffset) / 300;
+                opacity = Math.max(1 - progress, 0.3);
+              }
+
+              // Calculate scale
+              let scale = 1;
+              if (!isActive) {
+                scale = 0.85;
+              }
+              if (isDragging && isActive) {
+                const progress = Math.abs(dragOffset) / 300;
+                scale = Math.max(1 - progress * 0.15, 0.85);
+              }
+
+              // Calculate blur
+              const blur = isActive ? 0 : 8;
+
+              return (
+                <div
+                  key={competition.id}
+                  className="absolute inset-0 w-full h-full"
+                  style={{
+                    transform: `translateY(${translateY}%) scale(${scale})`,
+                    opacity: opacity,
+                    filter: `blur(${blur}px)`,
+                    transition: isDragging ? 'none' : 'all 0.5s cubic-bezier(0.4, 0.0, 0.2, 1)',
+                    pointerEvents: isActive ? 'auto' : 'none',
+                    zIndex: isActive ? 10 : isPrev ? 9 : isNext ? 8 : 0,
+                  }}
+                >
+                  <Competition
+                    id={competition.id}
+                    title={competition.title}
+                    category={competition.category}
+                    description={competition.description}
+                    entryPrice={competition.entryPrice}
+                    prizePool={competition.prizePool}
+                    participants={competition.participants}
+                    timeRemaining={competition.timeRemaining}
+                    prizes={competition.prizes}
+                    sponsored={competition.sponsored}
+                  />
+
+                  {/* Competition Counter (Mobile Only) */}
+                  {isActive && (
+                    <div className="md:hidden absolute top-4 right-4 bg-black/50 backdrop-blur-sm px-3 py-1 rounded-full text-white text-sm z-20 pointer-events-none">
+                      {index + 1} / {competitions.length}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
 
           {/* Swipe Indicator */}
