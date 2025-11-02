@@ -173,7 +173,7 @@ export default function PrizeWheel({ prizes, onClose, competitionTitle }: PrizeW
                         }}
                       >
                         {/* Repeat prizes 15 times for smooth scrolling */}
-                        {Array(15).fill(prizes).flat().map((prize, idx) => (
+                        {(Array(15).fill(prizes).flat() as Prize[]).map((prize, idx) => (
                           <div
                             key={idx}
                             className={`h-[90px] sm:h-[120px] flex items-center justify-center border-b-2 border-gray-800 bg-gradient-to-br ${rarityGradients[prize.rarity]}`}
