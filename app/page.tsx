@@ -227,14 +227,19 @@ export default function Home() {
 
   return (
     <div className="flex h-screen bg-black overflow-hidden">
-      {/* Left Sidebar - Navigation */}
-      <aside className="w-20 bg-black border-r border-gray-800 flex-shrink-0">
+      {/* Left Sidebar - Navigation (Desktop Only) */}
+      <aside className="hidden md:block w-20 bg-black border-r border-gray-800 flex-shrink-0">
         <NavSidebar />
       </aside>
 
+      {/* Mobile Navigation - Always render NavSidebar for mobile bottom nav */}
+      <div className="md:hidden">
+        <NavSidebar />
+      </div>
+
       {/* Main Content Area - Media Player */}
       <main
-        className="flex-1 flex items-center justify-center relative overflow-hidden select-none"
+        className="flex-1 flex items-center justify-center relative overflow-hidden select-none pb-16 md:pb-0"
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
@@ -246,7 +251,7 @@ export default function Home() {
           cursor: isDragging ? 'grabbing' : 'grab'
         }}
       >
-        <div className="w-full max-w-md h-[calc(100vh-4rem)] mx-auto relative">
+        <div className="w-full max-w-md h-[calc(100vh-4rem)] md:h-[calc(100vh-4rem)] mx-auto relative px-2 md:px-0">
           {/* Competitions Stack with Smooth Transitions */}
           <div className="relative w-full h-full">
             {competitions.map((competition, index) => {
@@ -315,7 +320,7 @@ export default function Home() {
 
                   {/* Competition Counter (Mobile Only) */}
                   {isActive && (
-                    <div className="md:hidden absolute top-4 right-4 bg-black/50 backdrop-blur-sm px-3 py-1 rounded-full text-white text-sm z-20 pointer-events-none">
+                    <div className="md:hidden absolute top-2 right-2 sm:top-4 sm:right-4 bg-black/50 backdrop-blur-sm px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-white text-xs sm:text-sm z-20 pointer-events-none">
                       {index + 1} / {competitions.length}
                     </div>
                   )}
@@ -327,14 +332,14 @@ export default function Home() {
           {/* Swipe Indicator */}
           {isDragging && (
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-30 pointer-events-none">
-              <div className="bg-black/70 rounded-full p-4">
+              <div className="bg-black/70 rounded-full p-3 sm:p-4">
                 {dragOffset > minSwipeDistance && currentCompetitionIndex < competitions.length - 1 && (
-                  <svg className="w-8 h-8 text-white animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-6 h-6 sm:w-8 sm:h-8 text-white animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M19 9l-7 7-7-7" />
                   </svg>
                 )}
                 {dragOffset < -minSwipeDistance && currentCompetitionIndex > 0 && (
-                  <svg className="w-8 h-8 text-white animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-6 h-6 sm:w-8 sm:h-8 text-white animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 15l7-7 7 7" />
                   </svg>
                 )}
@@ -378,7 +383,7 @@ export default function Home() {
         </div>
 
         {/* Right Sidebar - Interactions (Overlaid on media player) */}
-        <div className="absolute right-8 bottom-24 z-10">
+        <div className="absolute right-3 bottom-20 sm:right-4 sm:bottom-20 md:right-8 md:bottom-24 z-10">
           <InteractionSidebar />
         </div>
       </main>

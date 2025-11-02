@@ -29,17 +29,17 @@ export default function InteractionSidebar() {
   };
 
   return (
-    <div className="flex flex-col items-center gap-6">
+    <div className="flex flex-col items-center gap-3 sm:gap-4 md:gap-6">
       {/* Like Button */}
       <Button
         onClick={handleLike}
         variant="ghost"
         size="icon-lg"
-        className="flex flex-col h-auto gap-1 transition-transform hover:scale-110 bg-gray-800/80 hover:bg-gray-700/80 rounded-full"
+        className="flex flex-col h-auto gap-0.5 sm:gap-1 transition-transform hover:scale-110 bg-gray-800/80 hover:bg-gray-700/80 rounded-full p-1.5 sm:p-2"
       >
-        <div className="w-12 h-12 flex items-center justify-center">
+        <div className="w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 flex items-center justify-center">
           <svg
-            className={`w-7 h-7 transition-colors ${isLiked ? 'text-red-500 fill-current' : 'text-white'}`}
+            className={`w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 transition-colors ${isLiked ? 'text-red-500 fill-current' : 'text-white'}`}
             fill={isLiked ? 'currentColor' : 'none'}
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -52,13 +52,13 @@ export default function InteractionSidebar() {
             />
           </svg>
         </div>
-        <span className="text-white text-xs font-semibold">{formatCount(likes)}</span>
+        <span className="text-white text-[10px] sm:text-xs font-semibold">{formatCount(likes)}</span>
       </Button>
 
       {/* Comment Button */}
-      <Button variant="ghost" size="icon-lg" className="flex flex-col h-auto gap-1 transition-transform hover:scale-110 bg-gray-800/80 hover:bg-gray-700/80 rounded-full">
-        <div className="w-12 h-12 flex items-center justify-center">
-          <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <Button variant="ghost" size="icon-lg" className="flex flex-col h-auto gap-0.5 sm:gap-1 transition-transform hover:scale-110 bg-gray-800/80 hover:bg-gray-700/80 rounded-full p-1.5 sm:p-2">
+        <div className="w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 flex items-center justify-center">
+          <svg className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -67,13 +67,13 @@ export default function InteractionSidebar() {
             />
           </svg>
         </div>
-        <span className="text-white text-xs font-semibold">1.2K</span>
+        <span className="text-white text-[10px] sm:text-xs font-semibold">1.2K</span>
       </Button>
 
       {/* Bookmark Button */}
-      <Button variant="ghost" size="icon-lg" className="flex flex-col h-auto gap-1 transition-transform hover:scale-110 bg-gray-800/80 hover:bg-gray-700/80 rounded-full">
-        <div className="w-12 h-12 flex items-center justify-center">
-          <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <Button variant="ghost" size="icon-lg" className="flex flex-col h-auto gap-0.5 sm:gap-1 transition-transform hover:scale-110 bg-gray-800/80 hover:bg-gray-700/80 rounded-full p-1.5 sm:p-2">
+        <div className="w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 flex items-center justify-center">
+          <svg className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -82,13 +82,13 @@ export default function InteractionSidebar() {
             />
           </svg>
         </div>
-        <span className="text-white text-xs font-semibold">Save</span>
+        <span className="text-white text-[10px] sm:text-xs font-semibold">Save</span>
       </Button>
 
       {/* Share Button */}
-      <Button variant="ghost" size="icon-lg" className="flex flex-col h-auto gap-1 transition-transform hover:scale-110 bg-gray-800/80 hover:bg-gray-700/80 rounded-full">
-        <div className="w-12 h-12 flex items-center justify-center">
-          <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <Button variant="ghost" size="icon-lg" className="flex flex-col h-auto gap-0.5 sm:gap-1 transition-transform hover:scale-110 bg-gray-800/80 hover:bg-gray-700/80 rounded-full p-1.5 sm:p-2">
+        <div className="w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 flex items-center justify-center">
+          <svg className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -97,7 +97,7 @@ export default function InteractionSidebar() {
             />
           </svg>
         </div>
-        <span className="text-white text-xs font-semibold">Share</span>
+        <span className="text-white text-[10px] sm:text-xs font-semibold">Share</span>
       </Button>
     </div>
   );

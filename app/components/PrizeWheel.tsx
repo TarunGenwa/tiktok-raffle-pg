@@ -120,7 +120,7 @@ export default function PrizeWheel({ prizes, onClose, competitionTitle }: PrizeW
 
       {!wonPrize ? (
         <div
-          className={`flex flex-col items-center space-y-8 max-w-5xl w-full transition-all duration-500 ${
+          className={`flex flex-col items-center space-y-4 sm:space-y-6 md:space-y-8 max-w-5xl w-full transition-all duration-500 ${
             isVisible && !isExiting ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
           }`}
         >
@@ -130,8 +130,8 @@ export default function PrizeWheel({ prizes, onClose, competitionTitle }: PrizeW
               isVisible && !isExiting ? 'translate-y-0 opacity-100' : '-translate-y-4 opacity-0'
             }`}
           >
-            <h2 className="text-3xl font-bold text-white">{competitionTitle}</h2>
-            <p className="text-gray-400">Spin the slots to win your prize!</p>
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-white px-4">{competitionTitle}</h2>
+            <p className="text-sm sm:text-base text-gray-400 px-4">Spin the slots to win your prize!</p>
           </div>
 
           {/* Slot Machine Container */}
@@ -144,23 +144,23 @@ export default function PrizeWheel({ prizes, onClose, competitionTitle }: PrizeW
             <div className="absolute inset-0 bg-gradient-to-br from-green-500/30 to-emerald-500/30 rounded-2xl blur-3xl"></div>
 
             {/* Slot Machine Frame */}
-            <div className="relative bg-gradient-to-b from-gray-800 to-gray-900 p-8 rounded-3xl shadow-2xl border-8 border-yellow-500/50">
+            <div className="relative bg-gradient-to-b from-gray-800 to-gray-900 p-4 sm:p-8 rounded-2xl sm:rounded-3xl shadow-2xl border-4 sm:border-8 border-yellow-500/50">
               {/* Top Decoration */}
-              <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-gradient-to-r from-yellow-500 to-orange-500 px-8 py-2 rounded-full text-white font-bold text-xl shadow-lg">
+              <div className="absolute -top-4 sm:-top-6 left-1/2 -translate-x-1/2 bg-gradient-to-r from-yellow-500 to-orange-500 px-4 sm:px-8 py-1 sm:py-2 rounded-full text-white font-bold text-sm sm:text-xl shadow-lg">
                 JACKPOT
               </div>
 
               {/* Selection Indicator */}
               <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 z-10 pointer-events-none">
-                <div className="mx-8 border-4 border-red-500 rounded-lg h-[120px] bg-red-500/10 shadow-[0_0_30px_rgba(239,68,68,0.5)]"></div>
+                <div className="mx-4 sm:mx-8 border-2 sm:border-4 border-red-500 rounded-lg h-[90px] sm:h-[120px] bg-red-500/10 shadow-[0_0_30px_rgba(239,68,68,0.5)]"></div>
               </div>
 
               {/* Slot Columns */}
-              <div className="flex gap-4 relative">
+              <div className="flex gap-2 sm:gap-4 relative">
                 {columnRefs.map((ref, colIndex) => (
-                  <div key={colIndex} className="flex-1">
+                  <div key={colIndex} className={`flex-1 ${colIndex >= 3 ? 'hidden sm:block' : ''}`}>
                     {/* Column Container */}
-                    <div className="bg-gray-950 rounded-xl p-2 h-[360px] overflow-hidden relative shadow-inner border-4 border-gray-700">
+                    <div className="bg-gray-950 rounded-xl p-1 sm:p-2 h-[280px] sm:h-[360px] overflow-hidden relative shadow-inner border-2 sm:border-4 border-gray-700">
                       {/* Scrolling Column */}
                       <div
                         ref={ref}
@@ -176,11 +176,11 @@ export default function PrizeWheel({ prizes, onClose, competitionTitle }: PrizeW
                         {Array(15).fill(prizes).flat().map((prize, idx) => (
                           <div
                             key={idx}
-                            className={`h-[120px] flex items-center justify-center border-b-2 border-gray-800 bg-gradient-to-br ${rarityGradients[prize.rarity]}`}
+                            className={`h-[90px] sm:h-[120px] flex items-center justify-center border-b-2 border-gray-800 bg-gradient-to-br ${rarityGradients[prize.rarity]}`}
                           >
-                            <div className="text-center px-2">
-                              <div className="text-white font-bold text-sm mb-1">{prize.name}</div>
-                              <div className="text-xs text-white/80 capitalize">{prize.rarity}</div>
+                            <div className="text-center px-1 sm:px-2">
+                              <div className="text-white font-bold text-xs sm:text-sm mb-1 leading-tight">{prize.name}</div>
+                              <div className="text-[10px] sm:text-xs text-white/80 capitalize">{prize.rarity}</div>
                             </div>
                           </div>
                         ))}
@@ -197,7 +197,7 @@ export default function PrizeWheel({ prizes, onClose, competitionTitle }: PrizeW
             onClick={handleSpin}
             disabled={isSpinning}
             size="lg"
-            className={`bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold text-xl px-16 py-6 rounded-full shadow-2xl transform transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed duration-500 delay-300 ${
+            className={`bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold text-base sm:text-lg md:text-xl px-8 sm:px-12 md:px-16 py-4 sm:py-5 md:py-6 rounded-full shadow-2xl transform transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed duration-500 delay-300 ${
               isVisible && !isExiting ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
             }`}
           >
@@ -206,59 +206,59 @@ export default function PrizeWheel({ prizes, onClose, competitionTitle }: PrizeW
 
           {/* Prize List */}
           <div
-            className={`w-full max-w-3xl transition-all duration-500 delay-[400ms] ${
+            className={`w-full max-w-3xl px-4 transition-all duration-500 delay-[400ms] ${
               isVisible && !isExiting ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
             }`}
           >
-            <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wide text-center mb-3">All Prizes</h3>
-            <div className="grid grid-cols-3 gap-2">
+            <h3 className="text-xs sm:text-sm font-semibold text-gray-400 uppercase tracking-wide text-center mb-2 sm:mb-3">All Prizes</h3>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
               {prizes.map((prize, idx) => (
                 <div
                   key={idx}
-                  className="bg-gray-800/50 backdrop-blur-sm rounded-lg p-3 border border-gray-700 transition-all hover:scale-105 hover:bg-gray-800/70"
+                  className="bg-gray-800/50 backdrop-blur-sm rounded-lg p-2 sm:p-3 border border-gray-700 transition-all hover:scale-105 hover:bg-gray-800/70"
                 >
-                  <div className="text-sm font-medium text-white">{prize.name}</div>
-                  <div className="text-xs text-gray-400 capitalize">{prize.rarity} • {prize.probability}%</div>
+                  <div className="text-xs sm:text-sm font-medium text-white truncate">{prize.name}</div>
+                  <div className="text-[10px] sm:text-xs text-gray-400 capitalize">{prize.rarity} • {prize.probability}%</div>
                 </div>
               ))}
             </div>
           </div>
         </div>
       ) : (
-        <div className="flex flex-col items-center space-y-8 max-w-2xl w-full animate-[fadeIn_0.5s_ease-out]">
+        <div className="flex flex-col items-center space-y-4 sm:space-y-6 md:space-y-8 max-w-2xl w-full px-4 animate-[fadeIn_0.5s_ease-out]">
           {/* Celebration */}
           <div className="absolute inset-0 pointer-events-none">
             <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/20 via-transparent to-green-500/20 animate-pulse"></div>
           </div>
 
           {/* Winner Content */}
-          <div className="relative z-10 text-center space-y-6">
-            <h2 className="text-5xl font-bold text-white animate-[bounceIn_0.6s_ease-out]">🎉 YOU WON! 🎉</h2>
+          <div className="relative z-10 text-center space-y-4 sm:space-y-6">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white animate-[bounceIn_0.6s_ease-out]">🎉 YOU WON! 🎉</h2>
 
             {/* Prize Display */}
-            <div className={`relative p-8 bg-gradient-to-br ${rarityGradients[wonPrize.rarity]} rounded-3xl shadow-2xl border-4 border-white/30 transform hover:scale-105 transition-all animate-[scaleIn_0.5s_ease-out_0.2s_both]`}>
-              <div className="w-64 h-64 bg-white/10 backdrop-blur-sm rounded-2xl flex items-center justify-center">
-                <div className="text-center space-y-4">
-                  <svg className="w-32 h-32 text-white mx-auto" fill="currentColor" viewBox="0 0 24 24">
+            <div className={`relative p-4 sm:p-6 md:p-8 bg-gradient-to-br ${rarityGradients[wonPrize.rarity]} rounded-2xl sm:rounded-3xl shadow-2xl border-2 sm:border-4 border-white/30 transform hover:scale-105 transition-all animate-[scaleIn_0.5s_ease-out_0.2s_both]`}>
+              <div className="w-48 h-48 sm:w-56 sm:h-56 md:w-64 md:h-64 bg-white/10 backdrop-blur-sm rounded-xl sm:rounded-2xl flex items-center justify-center">
+                <div className="text-center space-y-2 sm:space-y-4">
+                  <svg className="w-20 h-20 sm:w-24 sm:h-24 md:w-32 md:h-32 text-white mx-auto" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                   </svg>
                   <div>
-                    <div className="text-3xl font-bold text-white">{wonPrize.name}</div>
-                    <div className="text-xl text-white/80 capitalize mt-2">{wonPrize.rarity} Prize</div>
+                    <div className="text-xl sm:text-2xl md:text-3xl font-bold text-white px-2">{wonPrize.name}</div>
+                    <div className="text-base sm:text-lg md:text-xl text-white/80 capitalize mt-1 sm:mt-2">{wonPrize.rarity} Prize</div>
                   </div>
                 </div>
               </div>
-              <div className="absolute -top-4 -right-4 bg-white text-black px-6 py-2 rounded-full text-sm font-bold uppercase shadow-lg">
+              <div className="absolute -top-2 sm:-top-4 -right-2 sm:-right-4 bg-white text-black px-3 sm:px-6 py-1 sm:py-2 rounded-full text-xs sm:text-sm font-bold uppercase shadow-lg">
                 {wonPrize.rarity}
               </div>
             </div>
 
             {/* Action Buttons */}
-            <div className="flex gap-4 justify-center animate-[fadeIn_0.5s_ease-out_0.5s_both]">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center animate-[fadeIn_0.5s_ease-out_0.5s_both] w-full sm:w-auto">
               <Button
                 onClick={handlePlayAgain}
                 size="lg"
-                className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold px-8 py-4 rounded-full transform hover:scale-105 transition-transform"
+                className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold px-6 sm:px-8 py-3 sm:py-4 rounded-full transform hover:scale-105 transition-transform w-full sm:w-auto"
               >
                 Spin Again
               </Button>
@@ -266,7 +266,7 @@ export default function PrizeWheel({ prizes, onClose, competitionTitle }: PrizeW
                 onClick={handleClose}
                 size="lg"
                 variant="outline"
-                className="bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border-2 border-white/30 font-bold px-8 py-4 rounded-full transform hover:scale-105 transition-transform"
+                className="bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border-2 border-white/30 font-bold px-6 sm:px-8 py-3 sm:py-4 rounded-full transform hover:scale-105 transition-transform w-full sm:w-auto"
               >
                 Close
               </Button>
