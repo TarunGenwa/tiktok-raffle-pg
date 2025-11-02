@@ -239,7 +239,7 @@ export default function Home() {
 
       {/* Main Content Area - Media Player */}
       <main
-        className="flex-1 flex items-center justify-center relative overflow-hidden select-none pb-16 md:pb-0"
+        className="flex-1 flex items-center justify-center relative overflow-hidden select-none pb-20 md:pb-0"
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
@@ -251,7 +251,7 @@ export default function Home() {
           cursor: isDragging ? 'grabbing' : 'grab'
         }}
       >
-        <div className="w-full max-w-md h-[calc(100vh-4rem)] md:h-[calc(100vh-4rem)] mx-auto relative px-2 md:px-0">
+        <div className="w-full max-w-md h-[calc(100vh-8rem)] md:h-[calc(100vh-4rem)] mx-auto relative px-2 md:px-0">
           {/* Competitions Stack with Smooth Transitions */}
           <div className="relative w-full h-full">
             {competitions.map((competition, index) => {
@@ -383,7 +383,7 @@ export default function Home() {
         </div>
 
         {/* Right Sidebar - Interactions (Overlaid on media player) */}
-        <div className="absolute right-3 bottom-20 sm:right-4 sm:bottom-20 md:right-8 md:bottom-24 z-10">
+        <div className="absolute right-3 bottom-24 sm:right-4 sm:bottom-24 md:right-8 md:bottom-24 z-10">
           <InteractionSidebar />
         </div>
       </main>
