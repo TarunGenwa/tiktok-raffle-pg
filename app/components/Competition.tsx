@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import PrizeWheel from './PrizeWheel';
 
@@ -21,6 +21,7 @@ interface CompetitionProps {
   timeRemaining: string;
   prizes: Prize[];
   sponsored?: boolean;
+  videoUrl?: string;
 }
 
 export default function Competition({
@@ -32,9 +33,28 @@ export default function Competition({
   participants,
   timeRemaining,
   prizes,
-  sponsored = false
+  sponsored = false,
+  videoUrl
 }: CompetitionProps) {
   const [isSpinnerOpen, setIsSpinnerOpen] = useState(false);
+  const [videoEnded, setVideoEnded] = useState(false);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+
+  // Unmute video after it starts playing
+  useEffect(() => {
+    if (videoRef.current && videoUrl) {
+      const video = videoRef.current;
+      const handlePlay = () => {
+        video.muted = false;
+      };
+      video.addEventListener('play', handlePlay);
+      return () => video.removeEventListener('play', handlePlay);
+    }
+  }, [videoUrl]);
+
+  const handleVideoEnd = () => {
+    setVideoEnded(true);
+  };
 
   const categoryColors = {
     crypto: 'from-orange-500 to-yellow-500',
@@ -76,99 +96,126 @@ export default function Competition({
   return (
     <>
       <div className="relative w-full h-full bg-gradient-to-br from-gray-900 via-black to-gray-900 rounded-lg overflow-hidden">
-        {/* Background Pattern */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,_rgba(255,255,255,0.1),transparent_50%)]"></div>
-        </div>
+        {/* Video Background */}
+        {videoUrl && (
+          <>
+            <video
+              ref={videoRef}
+              className="absolute inset-0 w-full h-full object-cover"
+              autoPlay
+              muted
+              playsInline
+              onEnded={handleVideoEnd}
+            >
+              <source src={videoUrl} type="video/mp4" />
+            </video>
+            {/* Video Overlay */}
+            <div className="absolute inset-0 bg-black/20"></div>
+          </>
+        )}
 
-        {/* Category Badge */}
-        <div className="absolute top-4 left-4 z-10">
-          <div className={`bg-gradient-to-r ${categoryColors[category]} px-4 py-2 rounded-full text-white font-bold text-sm shadow-lg flex items-center gap-2`}>
-            {categoryBadges[category]}
-            {sponsored && <span className="text-xs bg-white/20 px-2 py-0.5 rounded-full">SPONSORED</span>}
+        {/* Background Pattern (only if no video) */}
+        {!videoUrl && (
+          <div className="absolute inset-0 opacity-10">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,_rgba(255,255,255,0.1),transparent_50%)]"></div>
           </div>
-        </div>
+        )}
+
+        {/* Category Badge - hide while video is playing */}
+        {!(videoUrl && !videoEnded) && (
+          <div className="absolute top-4 left-4 z-10">
+            <div className={`bg-gradient-to-r ${categoryColors[category]} px-4 py-2 rounded-full text-white font-bold text-sm shadow-lg flex items-center gap-2`}>
+              {categoryBadges[category]}
+              {sponsored && <span className="text-xs bg-white/20 px-2 py-0.5 rounded-full">SPONSORED</span>}
+            </div>
+          </div>
+        )}
 
         {/* Main Content */}
         <div className="relative h-full flex flex-col items-center justify-center p-8 space-y-6">
-          {/* Category Icon */}
-          <div className={`relative`}>
-            <div className="w-32 h-32 relative">
-              <div className={`absolute inset-0 bg-gradient-to-br ${categoryColors[category]} rounded-full opacity-70 blur-2xl`}></div>
-              <div className={`relative w-full h-full bg-gradient-to-br ${categoryColors[category]} rounded-full flex items-center justify-center shadow-2xl border-4 border-white/20`}>
-                <div className="text-white">
-                  {categoryIcons[category]}
+          {/* Hide content while video is playing */}
+          {videoUrl && !videoEnded ? null : (
+            <>
+              {/* Category Icon */}
+              <div className={`relative`}>
+                <div className="w-32 h-32 relative">
+                  <div className={`absolute inset-0 bg-gradient-to-br ${categoryColors[category]} rounded-full opacity-70 blur-2xl`}></div>
+                  <div className={`relative w-full h-full bg-gradient-to-br ${categoryColors[category]} rounded-full flex items-center justify-center shadow-2xl border-4 border-white/20`}>
+                    <div className="text-white">
+                      {categoryIcons[category]}
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
 
-          {/* Competition Info */}
-          <div className="text-center space-y-3 max-w-md">
-            <h2 className="text-4xl font-bold text-white tracking-tight">{title}</h2>
-            <p className="text-lg text-gray-300">{description}</p>
-          </div>
+              {/* Competition Info */}
+              <div className="text-center space-y-3 max-w-md">
+                <h2 className="text-4xl font-bold text-white tracking-tight">{title}</h2>
+                <p className="text-lg text-gray-300">{description}</p>
+              </div>
 
-          {/* Stats Grid */}
-          <div className="grid grid-cols-2 gap-4 w-full max-w-md">
-            <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-4 border border-gray-700">
-              <div className="text-gray-400 text-sm font-medium">Prize Pool</div>
-              <div className="text-2xl font-bold text-green-400">${prizePool.toLocaleString()}</div>
-            </div>
-            <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-4 border border-gray-700">
-              <div className="text-gray-400 text-sm font-medium">Entry Price</div>
-              <div className="text-2xl font-bold text-white">${entryPrice}</div>
-            </div>
-            <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-4 border border-gray-700">
-              <div className="text-gray-400 text-sm font-medium">Participants</div>
-              <div className="text-2xl font-bold text-blue-400">{participants.toLocaleString()}</div>
-            </div>
-            <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-4 border border-gray-700">
-              <div className="text-gray-400 text-sm font-medium">Time Left</div>
-              <div className="text-2xl font-bold text-orange-400">{timeRemaining}</div>
-            </div>
-          </div>
-
-          {/* Prize Preview */}
-          <div className="w-full max-w-md">
-            <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wide text-center mb-3">Top Prizes</h3>
-            <div className="flex gap-2 justify-center overflow-x-auto">
-              {prizes.slice(0, 3).map((prize, idx) => (
-                <div
-                  key={idx}
-                  className="bg-gray-800/50 backdrop-blur-sm rounded-lg p-3 border border-gray-700 flex-shrink-0"
-                >
-                  <div className="text-sm font-medium text-white">{prize.name}</div>
-                  <div className="text-xs text-gray-400 capitalize">{prize.rarity}</div>
+              {/* Stats Grid */}
+              <div className="grid grid-cols-2 gap-4 w-full max-w-md">
+                <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-4 border border-gray-700">
+                  <div className="text-gray-400 text-sm font-medium">Prize Pool</div>
+                  <div className="text-2xl font-bold text-green-400">${prizePool.toLocaleString()}</div>
                 </div>
-              ))}
-            </div>
-          </div>
+                <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-4 border border-gray-700">
+                  <div className="text-gray-400 text-sm font-medium">Entry Price</div>
+                  <div className="text-2xl font-bold text-white">${entryPrice}</div>
+                </div>
+                <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-4 border border-gray-700">
+                  <div className="text-gray-400 text-sm font-medium">Participants</div>
+                  <div className="text-2xl font-bold text-blue-400">{participants.toLocaleString()}</div>
+                </div>
+                <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-4 border border-gray-700">
+                  <div className="text-gray-400 text-sm font-medium">Time Left</div>
+                  <div className="text-2xl font-bold text-orange-400">{timeRemaining}</div>
+                </div>
+              </div>
 
-          {/* Enter Button */}
-          <Button
-            onClick={() => setIsSpinnerOpen(true)}
-            size="lg"
-            className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold text-xl px-16 py-6 rounded-full shadow-2xl transform transition-all hover:scale-105"
-          >
-            Enter & Spin Now
-          </Button>
+              {/* Prize Preview */}
+              <div className="w-full max-w-md">
+                <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wide text-center mb-3">Top Prizes</h3>
+                <div className="flex gap-2 justify-center overflow-x-auto">
+                  {prizes.slice(0, 3).map((prize, idx) => (
+                    <div
+                      key={idx}
+                      className="bg-gray-800/50 backdrop-blur-sm rounded-lg p-3 border border-gray-700 flex-shrink-0"
+                    >
+                      <div className="text-sm font-medium text-white">{prize.name}</div>
+                      <div className="text-xs text-gray-400 capitalize">{prize.rarity}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
 
-          {/* Trust Indicators */}
-          <div className="flex items-center gap-4 text-sm text-gray-400">
-            <div className="flex items-center gap-1">
-              <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z"/>
-              </svg>
-              <span>Verified</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <svg className="w-4 h-4 text-blue-500" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
-              </svg>
-              <span>Instant Win</span>
-            </div>
-          </div>
+              {/* Enter Button */}
+              <Button
+                onClick={() => setIsSpinnerOpen(true)}
+                size="lg"
+                className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold text-xl px-16 py-6 rounded-full shadow-2xl transform transition-all hover:scale-105"
+              >
+                Enter & Spin Now
+              </Button>
+
+              {/* Trust Indicators */}
+              <div className="flex items-center gap-4 text-sm text-gray-400">
+                <div className="flex items-center gap-1">
+                  <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z"/>
+                  </svg>
+                  <span>Verified</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <svg className="w-4 h-4 text-blue-500" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                  </svg>
+                  <span>Instant Win</span>
+                </div>
+              </div>
+            </>
+          )}
         </div>
       </div>
 

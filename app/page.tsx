@@ -23,10 +23,29 @@ interface CompetitionType {
   timeRemaining: string;
   prizes: Prize[];
   sponsored?: boolean;
+  videoUrl?: string;
 }
 
 export default function Home() {
   const competitions: CompetitionType[] = [
+    {
+      id: '0',
+      title: 'Lennie Special',
+      category: 'gaming',
+      description: 'Exclusive gaming prizes with special video showcase!',
+      entryPrice: 2.50,
+      prizePool: 15000,
+      participants: 9876,
+      timeRemaining: '4h 10m',
+      sponsored: true,
+      videoUrl: '/lennie.mp4',
+      prizes: [
+        { name: 'Gaming Headset', rarity: 'common', probability: 35 },
+        { name: 'RGB Keyboard', rarity: 'rare', probability: 30 },
+        { name: 'Gaming Chair', rarity: 'epic', probability: 20 },
+        { name: 'RTX 4090', rarity: 'legendary', probability: 15 }
+      ]
+    },
     {
       id: '1',
       title: 'Bitcoin Bonanza',
@@ -323,6 +342,7 @@ export default function Home() {
                     timeRemaining={competition.timeRemaining}
                     prizes={competition.prizes}
                     sponsored={competition.sponsored}
+                    videoUrl={competition.videoUrl}
                   />
 
                   {/* Competition Counter (Mobile Only) */}
