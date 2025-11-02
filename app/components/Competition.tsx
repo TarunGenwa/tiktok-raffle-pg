@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import PrizeWheel from './PrizeWheel';
 
@@ -39,18 +39,6 @@ export default function Competition({
   const [isSpinnerOpen, setIsSpinnerOpen] = useState(false);
   const [videoEnded, setVideoEnded] = useState(false);
   const videoRef = useRef<HTMLVideoElement | null>(null);
-
-  // Unmute video after it starts playing
-  useEffect(() => {
-    if (videoRef.current && videoUrl) {
-      const video = videoRef.current;
-      const handlePlay = () => {
-        video.muted = false;
-      };
-      video.addEventListener('play', handlePlay);
-      return () => video.removeEventListener('play', handlePlay);
-    }
-  }, [videoUrl]);
 
   const handleVideoEnd = () => {
     setVideoEnded(true);
@@ -103,7 +91,6 @@ export default function Competition({
               ref={videoRef}
               className="absolute inset-0 w-full h-full object-cover"
               autoPlay
-              muted
               playsInline
               onEnded={handleVideoEnd}
             >

@@ -17,7 +17,7 @@ interface PrizeWheelProps {
 
 export default function PrizeWheel({ prizes, onClose, competitionTitle }: PrizeWheelProps) {
   const [isSpinning, setIsSpinning] = useState(false);
-  const [wonPrize, setWonPrize] = useState<Prize | null>(null);
+  const [wonPrizes, setWonPrizes] = useState<Prize[] | null>(null);
   const [columnOffsets, setColumnOffsets] = useState([0, 0, 0, 0, 0]);
   const [isVisible, setIsVisible] = useState(false);
   const [isExiting, setIsExiting] = useState(false);
@@ -46,31 +46,41 @@ export default function PrizeWheel({ prizes, onClose, competitionTitle }: PrizeW
     if (isSpinning) return;
 
     setIsSpinning(true);
-    setWonPrize(null);
+    setWonPrizes(null);
 
-    // Select prize based on probability
-    const random = Math.random() * 100;
-    let cumulative = 0;
-    let selectedPrize = prizes[0];
-
-    for (const prize of prizes) {
-      cumulative += prize.probability;
-      if (random <= cumulative) {
-        selectedPrize = prize;
-        break;
+    // Select 5 prizes based on probability (one for each column)
+    const selectPrize = () => {
+      const random = Math.random() * 100;
+      let cumulative = 0;
+      for (const prize of prizes) {
+        cumulative += prize.probability;
+        if (random <= cumulative) {
+          return prize;
+        }
       }
-    }
+      return prizes[0];
+    };
 
-    // Calculate positions for each column to land on the winning prize
-    const prizeHeight = 120; // Height of each prize item
-    const prizeIndex = prizes.indexOf(selectedPrize);
-    const repetitions = 15; // Number of times we repeat the prize list
+    const selectedPrizes = [
+      selectPrize(),
+      selectPrize(),
+      selectPrize(),
+      selectPrize(),
+      selectPrize()
+    ];
+
+    // Calculate positions for each column to land on its specific winning prize
+    const prizeHeight = 90; // Height of each prize item (matching mobile/desktop average)
+    const repetitions = 50; // Increased repetitions for proper circular loop
 
     // Create different spin amounts for each column (they'll stop at different times)
     const newOffsets = columnRefs.map((_, colIndex) => {
-      // Base spins: vary spins for each column (5-9 full rotations)
-      const baseSpins = 5 + colIndex;
-      // Land on a prize in the middle repetition to ensure it's visible
+      const selectedPrize = selectedPrizes[colIndex];
+      const prizeIndex = prizes.indexOf(selectedPrize);
+
+      // Base spins: vary spins for each column (8-12 full rotations for more excitement)
+      const baseSpins = 8 + colIndex;
+      // Land on a prize well within the middle repetitions to ensure it's always visible
       const landingPosition = (repetitions / 2) * prizes.length + prizeIndex;
       const totalOffset = (baseSpins * prizes.length + landingPosition) * prizeHeight;
       return totalOffset;
@@ -83,13 +93,13 @@ export default function PrizeWheel({ prizes, onClose, competitionTitle }: PrizeW
 
     // Show result after last column stops
     setTimeout(() => {
-      setWonPrize(selectedPrize);
+      setWonPrizes(selectedPrizes);
       setIsSpinning(false);
     }, stopTimes[stopTimes.length - 1] + 500);
   };
 
   const handlePlayAgain = () => {
-    setWonPrize(null);
+    setWonPrizes(null);
     setColumnOffsets([0, 0, 0, 0, 0]);
   };
 
@@ -118,7 +128,7 @@ export default function PrizeWheel({ prizes, onClose, competitionTitle }: PrizeW
         </svg>
       </button>
 
-      {!wonPrize ? (
+      {!wonPrizes ? (
         <div
           className={`flex flex-col items-center space-y-4 sm:space-y-6 md:space-y-8 max-w-5xl w-full transition-all duration-500 ${
             isVisible && !isExiting ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
@@ -172,8 +182,8 @@ export default function PrizeWheel({ prizes, onClose, competitionTitle }: PrizeW
                             : 'none',
                         }}
                       >
-                        {/* Repeat prizes 15 times for smooth scrolling */}
-                        {(Array(15).fill(prizes).flat() as Prize[]).map((prize, idx) => (
+                        {/* Repeat prizes 50 times for proper circular loop */}
+                        {(Array(50).fill(prizes).flat() as Prize[]).map((prize, idx) => (
                           <div
                             key={idx}
                             className={`h-[90px] sm:h-[120px] flex items-center justify-center border-b-2 border-gray-800 bg-gradient-to-br ${rarityGradients[prize.rarity]}`}
@@ -225,7 +235,7 @@ export default function PrizeWheel({ prizes, onClose, competitionTitle }: PrizeW
           </div>
         </div>
       ) : (
-        <div className="flex flex-col items-center space-y-4 sm:space-y-6 md:space-y-8 max-w-2xl w-full px-4 animate-[fadeIn_0.5s_ease-out]">
+        <div className="flex flex-col items-center space-y-4 sm:space-y-6 md:space-y-8 max-w-4xl w-full px-4 animate-[fadeIn_0.5s_ease-out]">
           {/* Celebration */}
           <div className="absolute inset-0 pointer-events-none">
             <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/20 via-transparent to-green-500/20 animate-pulse"></div>
@@ -233,28 +243,35 @@ export default function PrizeWheel({ prizes, onClose, competitionTitle }: PrizeW
 
           {/* Winner Content */}
           <div className="relative z-10 text-center space-y-4 sm:space-y-6">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white animate-[bounceIn_0.6s_ease-out]">🎉 YOU WON! 🎉</h2>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white animate-[bounceIn_0.6s_ease-out]">🎉 YOU WON 5 PRIZES! 🎉</h2>
 
-            {/* Prize Display */}
-            <div className={`relative p-4 sm:p-6 md:p-8 bg-gradient-to-br ${rarityGradients[wonPrize.rarity]} rounded-2xl sm:rounded-3xl shadow-2xl border-2 sm:border-4 border-white/30 transform hover:scale-105 transition-all animate-[scaleIn_0.5s_ease-out_0.2s_both]`}>
-              <div className="w-48 h-48 sm:w-56 sm:h-56 md:w-64 md:h-64 bg-white/10 backdrop-blur-sm rounded-xl sm:rounded-2xl flex items-center justify-center">
-                <div className="text-center space-y-2 sm:space-y-4">
-                  <svg className="w-20 h-20 sm:w-24 sm:h-24 md:w-32 md:h-32 text-white mx-auto" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                  </svg>
-                  <div>
-                    <div className="text-xl sm:text-2xl md:text-3xl font-bold text-white px-2">{wonPrize.name}</div>
-                    <div className="text-base sm:text-lg md:text-xl text-white/80 capitalize mt-1 sm:mt-2">{wonPrize.rarity} Prize</div>
+            {/* Prizes Display - All 5 in a grid/list */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4 w-full">
+              {wonPrizes.map((prize, index) => (
+                <div
+                  key={index}
+                  className={`relative p-3 sm:p-4 bg-gradient-to-br ${rarityGradients[prize.rarity]} rounded-xl sm:rounded-2xl shadow-xl border-2 border-white/30 transform hover:scale-105 transition-all animate-[scaleIn_0.5s_ease-out_${0.2 + index * 0.1}s_both]`}
+                >
+                  <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 sm:p-4">
+                    <div className="text-center space-y-2">
+                      <svg className="w-12 h-12 sm:w-16 sm:h-16 text-white mx-auto" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                      </svg>
+                      <div>
+                        <div className="text-sm sm:text-base md:text-lg font-bold text-white">{prize.name}</div>
+                        <div className="text-xs sm:text-sm text-white/80 capitalize mt-1">{prize.rarity}</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="absolute -top-2 -right-2 bg-white text-black px-2 py-0.5 sm:px-3 sm:py-1 rounded-full text-[10px] sm:text-xs font-bold uppercase shadow-lg">
+                    #{index + 1}
                   </div>
                 </div>
-              </div>
-              <div className="absolute -top-2 sm:-top-4 -right-2 sm:-right-4 bg-white text-black px-3 sm:px-6 py-1 sm:py-2 rounded-full text-xs sm:text-sm font-bold uppercase shadow-lg">
-                {wonPrize.rarity}
-              </div>
+              ))}
             </div>
 
             {/* Action Buttons */}
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center animate-[fadeIn_0.5s_ease-out_0.5s_both] w-full sm:w-auto">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center animate-[fadeIn_0.5s_ease-out_0.7s_both] w-full sm:w-auto">
               <Button
                 onClick={handlePlayAgain}
                 size="lg"
