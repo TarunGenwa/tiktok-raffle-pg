@@ -376,7 +376,7 @@ export default function Home() {
         </div>
 
         {/* Navigation Buttons (Desktop) */}
-        <div className="hidden md:flex absolute right-24 top-1/2 -translate-y-1/2 flex-col gap-4 z-20">
+        <div className="hidden md:flex absolute left-24 top-1/2 -translate-y-1/2 flex-col gap-4 z-20">
           {/* Up Button */}
           <Button
             onClick={goToPreviousCompetition}
@@ -411,7 +411,10 @@ export default function Home() {
 
         {/* Right Sidebar - Interactions (Overlaid on media player) */}
         <div className="absolute right-3 sm:right-4 md:right-8 top-1/2 -translate-y-1/2 z-10">
-          <InteractionSidebar />
+          <InteractionSidebar
+            prizes={currentCompetition.prizes}
+            competitionTitle={currentCompetition.title}
+          />
         </div>
       </main>
     </div>
