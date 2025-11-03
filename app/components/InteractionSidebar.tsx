@@ -49,24 +49,24 @@ export default function InteractionSidebar({ prizes, competitionTitle }: Interac
           onClick={() => setIsPrizesModalOpen(true)}
           variant="ghost"
           size="icon-lg"
-          className="flex flex-col h-auto gap-0.5 sm:gap-1 transition-transform hover:scale-110 bg-gray-800/80 hover:bg-gray-700/80 rounded-full p-1.5 sm:p-2"
+          className="flex flex-col h-auto gap-0.5 sm:gap-1 md:gap-2 transition-transform hover:scale-110 bg-gray-800/80 hover:bg-gray-700/80 rounded-full p-2 sm:p-2.5 md:p-3"
         >
-        <div className="w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 flex items-center justify-center">
-          <svg className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 text-white" fill="currentColor" viewBox="0 0 24 24">
+        <div className="w-10 h-10 sm:w-11 sm:h-11 md:w-14 md:h-14 flex items-center justify-center">
+          <svg className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
             <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
           </svg>
         </div>
-        <span className="text-white text-[10px] sm:text-xs font-semibold">Prizes</span>
+        <span className="text-white text-[10px] sm:text-xs md:text-sm font-semibold whitespace-nowrap">Prizes</span>
       </Button>
 
       {/* Tickets Button */}
-      <Button variant="ghost" size="icon-lg" className="flex flex-col h-auto gap-0.5 sm:gap-1 transition-transform hover:scale-110 bg-gray-800/80 hover:bg-gray-700/80 rounded-full p-1.5 sm:p-2">
-        <div className="w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 flex items-center justify-center">
-          <svg className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <Button variant="ghost" size="icon-lg" className="flex flex-col h-auto gap-0.5 sm:gap-1 md:gap-2 transition-transform hover:scale-110 bg-gray-800/80 hover:bg-gray-700/80 rounded-full p-2 sm:p-2.5 md:p-3">
+        <div className="w-10 h-10 sm:w-11 sm:h-11 md:w-14 md:h-14 flex items-center justify-center">
+          <svg className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
           </svg>
         </div>
-        <span className="text-white text-[10px] sm:text-xs font-semibold">Tickets</span>
+        <span className="text-white text-[10px] sm:text-xs md:text-sm font-semibold whitespace-nowrap">Tickets</span>
       </Button>
 
       {/* Like Button */}
@@ -74,11 +74,11 @@ export default function InteractionSidebar({ prizes, competitionTitle }: Interac
         onClick={handleLike}
         variant="ghost"
         size="icon-lg"
-        className="flex flex-col h-auto gap-0.5 sm:gap-1 transition-transform hover:scale-110 bg-gray-800/80 hover:bg-gray-700/80 rounded-full p-1.5 sm:p-2"
+        className="flex flex-col h-auto gap-0.5 sm:gap-1 md:gap-2 transition-transform hover:scale-110 bg-gray-800/80 hover:bg-gray-700/80 rounded-full p-2 sm:p-2.5 md:p-3"
       >
-        <div className="w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 flex items-center justify-center">
+        <div className="w-10 h-10 sm:w-11 sm:h-11 md:w-14 md:h-14 flex items-center justify-center">
           <svg
-            className={`w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 transition-colors ${isLiked ? 'text-red-500 fill-current' : 'text-white'}`}
+            className={`w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 transition-colors ${isLiked ? 'text-red-500 fill-current' : 'text-white'}`}
             fill={isLiked ? 'currentColor' : 'none'}
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -91,13 +91,13 @@ export default function InteractionSidebar({ prizes, competitionTitle }: Interac
             />
           </svg>
         </div>
-        <span className="text-white text-[10px] sm:text-xs font-semibold">{formatCount(likes)}</span>
+        <span className="text-white text-[10px] sm:text-xs md:text-sm font-semibold whitespace-nowrap">{formatCount(likes)}</span>
       </Button>
 
         {/* Comment Button */}
-        <Button variant="ghost" size="icon-lg" className="flex flex-col h-auto gap-0.5 sm:gap-1 transition-transform hover:scale-110 bg-gray-800/80 hover:bg-gray-700/80 rounded-full p-1.5 sm:p-2">
-          <div className="w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 flex items-center justify-center">
-            <svg className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <Button variant="ghost" size="icon-lg" className="flex flex-col h-auto gap-0.5 sm:gap-1 md:gap-2 transition-transform hover:scale-110 bg-gray-800/80 hover:bg-gray-700/80 rounded-full p-2 sm:p-2.5 md:p-3">
+          <div className="w-10 h-10 sm:w-11 sm:h-11 md:w-14 md:h-14 flex items-center justify-center">
+            <svg className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -106,7 +106,7 @@ export default function InteractionSidebar({ prizes, competitionTitle }: Interac
               />
             </svg>
           </div>
-          <span className="text-white text-[10px] sm:text-xs font-semibold">1.2K</span>
+          <span className="text-white text-[10px] sm:text-xs md:text-sm font-semibold whitespace-nowrap">1.2K</span>
         </Button>
       </div>
 

@@ -59,7 +59,7 @@ export default function PrizesModal({ prizes, competitionTitle, onClose }: Prize
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm -z-10" onClick={handleClose}></div>
 
       <div
-        className={`relative bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-l-2xl shadow-2xl w-[85vw] sm:w-[320px] md:w-[360px] max-w-[360px] h-full overflow-hidden border-l-2 border-y-2 border-gray-700 transition-all duration-300 mr-12 sm:mr-16 md:mr-20 ${
+        className={`relative bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-l-2xl shadow-2xl w-[85vw] sm:w-[320px] md:w-[360px] max-w-[360px] h-full overflow-hidden border-l-2 border-y-2 border-gray-700 transition-all duration-300 mr-16 sm:mr-20 md:mr-28 ${
           isVisible ? 'translate-x-0' : 'translate-x-full'
         }`}
         onClick={(e) => e.stopPropagation()}
