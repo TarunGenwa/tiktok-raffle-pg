@@ -30,6 +30,26 @@ export default function InteractionSidebar() {
 
   return (
     <div className="flex flex-col items-center gap-3 sm:gap-4 md:gap-6">
+      {/* Prizes Button */}
+      <Button variant="ghost" size="icon-lg" className="flex flex-col h-auto gap-0.5 sm:gap-1 transition-transform hover:scale-110 bg-gray-800/80 hover:bg-gray-700/80 rounded-full p-1.5 sm:p-2">
+        <div className="w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 flex items-center justify-center">
+          <svg className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 text-white" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+          </svg>
+        </div>
+        <span className="text-white text-[10px] sm:text-xs font-semibold">Prizes</span>
+      </Button>
+
+      {/* Tickets Button */}
+      <Button variant="ghost" size="icon-lg" className="flex flex-col h-auto gap-0.5 sm:gap-1 transition-transform hover:scale-110 bg-gray-800/80 hover:bg-gray-700/80 rounded-full p-1.5 sm:p-2">
+        <div className="w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 flex items-center justify-center">
+          <svg className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
+          </svg>
+        </div>
+        <span className="text-white text-[10px] sm:text-xs font-semibold">Tickets</span>
+      </Button>
+
       {/* Like Button */}
       <Button
         onClick={handleLike}
@@ -68,36 +88,6 @@ export default function InteractionSidebar() {
           </svg>
         </div>
         <span className="text-white text-[10px] sm:text-xs font-semibold">1.2K</span>
-      </Button>
-
-      {/* Bookmark Button */}
-      <Button variant="ghost" size="icon-lg" className="flex flex-col h-auto gap-0.5 sm:gap-1 transition-transform hover:scale-110 bg-gray-800/80 hover:bg-gray-700/80 rounded-full p-1.5 sm:p-2">
-        <div className="w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 flex items-center justify-center">
-          <svg className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"
-            />
-          </svg>
-        </div>
-        <span className="text-white text-[10px] sm:text-xs font-semibold">Save</span>
-      </Button>
-
-      {/* Share Button */}
-      <Button variant="ghost" size="icon-lg" className="flex flex-col h-auto gap-0.5 sm:gap-1 transition-transform hover:scale-110 bg-gray-800/80 hover:bg-gray-700/80 rounded-full p-1.5 sm:p-2">
-        <div className="w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 flex items-center justify-center">
-          <svg className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"
-            />
-          </svg>
-        </div>
-        <span className="text-white text-[10px] sm:text-xs font-semibold">Share</span>
       </Button>
     </div>
   );

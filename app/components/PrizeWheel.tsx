@@ -245,12 +245,12 @@ export default function PrizeWheel({ prizes, onClose, competitionTitle }: PrizeW
           <div className="relative z-10 text-center space-y-4 sm:space-y-6">
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white animate-[bounceIn_0.6s_ease-out]">🎉 YOU WON 5 PRIZES! 🎉</h2>
 
-            {/* Prizes Display - All 5 in a grid/list */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4 w-full">
+            {/* Prizes Display - All 5 with fixed width and wrapping */}
+            <div className="flex flex-wrap justify-center gap-3 sm:gap-4 w-full">
               {wonPrizes.map((prize, index) => (
                 <div
                   key={index}
-                  className={`relative p-3 sm:p-4 bg-gradient-to-br ${rarityGradients[prize.rarity]} rounded-xl sm:rounded-2xl shadow-xl border-2 border-white/30 transform hover:scale-105 transition-all animate-[scaleIn_0.5s_ease-out_${0.2 + index * 0.1}s_both]`}
+                  className={`relative p-3 sm:p-4 bg-gradient-to-br ${rarityGradients[prize.rarity]} rounded-xl sm:rounded-2xl shadow-xl border-2 border-white/30 transform hover:scale-105 transition-all animate-[scaleIn_0.5s_ease-out_${0.2 + index * 0.1}s_both] w-[140px] sm:w-[160px] flex-shrink-0`}
                 >
                   <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 sm:p-4">
                     <div className="text-center space-y-2">

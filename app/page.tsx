@@ -410,7 +410,7 @@ export default function Home() {
         </div>
 
         {/* Right Sidebar - Interactions (Overlaid on media player) */}
-        <div className="absolute right-3 bottom-24 sm:right-4 sm:bottom-24 md:right-8 md:bottom-24 z-10">
+        <div className="absolute right-3 sm:right-4 md:right-8 top-1/2 -translate-y-1/2 z-10">
           <InteractionSidebar />
         </div>
       </main>
