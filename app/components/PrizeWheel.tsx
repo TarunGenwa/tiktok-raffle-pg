@@ -7,6 +7,7 @@ interface Prize {
   name: string;
   rarity: 'common' | 'rare' | 'epic' | 'legendary';
   probability: number;
+  imageUrl?: string;
 }
 
 interface PrizeWheelProps {
@@ -256,12 +257,22 @@ export default function PrizeWheel({ prizes, onClose, competitionTitle, isInline
                         {(Array(50).fill(prizes).flat() as Prize[]).map((prize, idx) => (
                           <div
                             key={idx}
-                            className={`${isInline ? 'w-[110px] sm:w-[130px]' : 'w-[130px] sm:w-[150px]'} flex-shrink-0 flex items-center justify-center border-r-2 border-gray-800 bg-gradient-to-br ${rarityGradients[prize.rarity]}`}
+                            className={`${isInline ? 'w-[110px] sm:w-[130px]' : 'w-[130px] sm:w-[150px]'} flex-shrink-0 flex items-center justify-center border-r-2 border-gray-800 bg-gradient-to-br ${rarityGradients[prize.rarity]} p-2`}
                           >
-                            <div className="text-center px-1 sm:px-2 py-2">
-                              <div className={`text-white font-bold ${isInline ? 'text-[10px] sm:text-xs' : 'text-xs sm:text-sm'} mb-1 leading-tight`}>{prize.name}</div>
-                              <div className={`${isInline ? 'text-[8px] sm:text-[10px]' : 'text-[10px] sm:text-xs'} text-white/80 capitalize`}>{prize.rarity}</div>
-                            </div>
+                            {prize.imageUrl ? (
+                              <div className={`relative ${isInline ? 'w-16 h-16' : 'w-20 h-20'} flex items-center justify-center`}>
+                                <img
+                                  src={prize.imageUrl}
+                                  alt={prize.name}
+                                  className="w-full h-full object-contain"
+                                />
+                              </div>
+                            ) : (
+                              <div className="text-center px-1 sm:px-2 py-2">
+                                <div className={`text-white font-bold ${isInline ? 'text-[10px] sm:text-xs' : 'text-xs sm:text-sm'} mb-1 leading-tight`}>{prize.name}</div>
+                                <div className={`${isInline ? 'text-[8px] sm:text-[10px]' : 'text-[10px] sm:text-xs'} text-white/80 capitalize`}>{prize.rarity}</div>
+                              </div>
+                            )}
                           </div>
                         ))}
                       </div>
@@ -326,9 +337,19 @@ export default function PrizeWheel({ prizes, onClose, competitionTitle, isInline
                 >
                   <div className={`bg-white/10 backdrop-blur-sm rounded-lg ${isInline ? 'p-2' : 'p-3 sm:p-4'}`}>
                     <div className={`text-center ${isInline ? 'space-y-1' : 'space-y-2'}`}>
-                      <svg className={`${isInline ? 'w-8 h-8 sm:w-10 sm:h-10' : 'w-12 h-12 sm:w-16 sm:h-16'} text-white mx-auto`} fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                      </svg>
+                      {prize.imageUrl ? (
+                        <div className={`${isInline ? 'w-12 h-12' : 'w-16 h-16'} flex items-center justify-center mx-auto`}>
+                          <img
+                            src={prize.imageUrl}
+                            alt={prize.name}
+                            className="w-full h-full object-contain"
+                          />
+                        </div>
+                      ) : (
+                        <svg className={`${isInline ? 'w-8 h-8 sm:w-10 sm:h-10' : 'w-12 h-12 sm:w-16 sm:h-16'} text-white mx-auto`} fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                        </svg>
+                      )}
                       <div>
                         <div className={`${isInline ? 'text-xs sm:text-sm' : 'text-sm sm:text-base md:text-lg'} font-bold text-white`}>{prize.name}</div>
                         <div className={`${isInline ? 'text-[10px] sm:text-xs' : 'text-xs sm:text-sm'} text-white/80 capitalize mt-1`}>{prize.rarity}</div>

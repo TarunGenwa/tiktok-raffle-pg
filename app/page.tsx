@@ -10,6 +10,7 @@ interface Prize {
   name: string;
   rarity: 'common' | 'rare' | 'epic' | 'legendary';
   probability: number;
+  imageUrl?: string;
 }
 
 interface CompetitionType {
@@ -40,10 +41,10 @@ export default function Home() {
       sponsored: true,
       videoUrl: '/lennie.mp4',
       prizes: [
-        { name: 'Gaming Headset', rarity: 'common', probability: 35 },
-        { name: 'RGB Keyboard', rarity: 'rare', probability: 30 },
-        { name: 'Gaming Chair', rarity: 'epic', probability: 20 },
-        { name: 'RTX 4090', rarity: 'legendary', probability: 15 }
+        { name: 'Gaming Headset', rarity: 'common', probability: 35, imageUrl: '/CTSP credit 1gbp.png' },
+        { name: 'RGB Keyboard', rarity: 'rare', probability: 30, imageUrl: '/CTSP credit 5gbp.png' },
+        { name: 'Gaming Chair', rarity: 'epic', probability: 20, imageUrl: '/CTSP credit 20gbp.png' },
+        { name: 'RTX 4090', rarity: 'legendary', probability: 15, imageUrl: '/CTSP credit 1000gbp.png' }
       ]
     },
     {
@@ -57,11 +58,11 @@ export default function Home() {
       timeRemaining: '2h 15m',
       sponsored: true,
       prizes: [
-        { name: '$10 BTC', rarity: 'common', probability: 40 },
-        { name: '$50 ETH', rarity: 'common', probability: 25 },
-        { name: '$100 BTC', rarity: 'rare', probability: 20 },
-        { name: '$500 ETH', rarity: 'epic', probability: 10 },
-        { name: '1 BTC', rarity: 'legendary', probability: 5 }
+        { name: '$10 BTC', rarity: 'common', probability: 40, imageUrl: '/CTSP cash 1.png' },
+        { name: '$50 ETH', rarity: 'common', probability: 25, imageUrl: '/CTSP cash 1.png' },
+        { name: '$100 BTC', rarity: 'rare', probability: 20, imageUrl: '/CTSP cash 2.png' },
+        { name: '$500 ETH', rarity: 'epic', probability: 10, imageUrl: '/CTSP cash 3.png' },
+        { name: '1 BTC', rarity: 'legendary', probability: 5, imageUrl: '/CTSP credit 1000gbp.png' }
       ]
     },
     {
@@ -74,10 +75,10 @@ export default function Home() {
       participants: 8921,
       timeRemaining: '5h 30m',
       prizes: [
-        { name: 'Common Skin', rarity: 'common', probability: 45 },
-        { name: 'Rare Emote', rarity: 'rare', probability: 30 },
-        { name: 'Epic Bundle', rarity: 'epic', probability: 15 },
-        { name: 'PS5 Console', rarity: 'legendary', probability: 10 }
+        { name: 'Common Skin', rarity: 'common', probability: 45, imageUrl: '/CTSP credit 1gbp.png' },
+        { name: 'Rare Emote', rarity: 'rare', probability: 30, imageUrl: '/CTSP credit 5gbp.png' },
+        { name: 'Epic Bundle', rarity: 'epic', probability: 15, imageUrl: '/CTSP credit 20gbp.png' },
+        { name: 'PS5 Console', rarity: 'legendary', probability: 10, imageUrl: '/CTSP fiat 500.png' }
       ]
     },
     {
@@ -90,10 +91,10 @@ export default function Home() {
       participants: 5432,
       timeRemaining: '1h 45m',
       prizes: [
-        { name: 'Designer Watch', rarity: 'rare', probability: 35 },
-        { name: 'Gold Chain', rarity: 'rare', probability: 30 },
-        { name: 'Diamond Ring', rarity: 'epic', probability: 20 },
-        { name: 'Rolex Watch', rarity: 'legendary', probability: 15 }
+        { name: 'Designer Watch', rarity: 'rare', probability: 35, imageUrl: '/CTSP credit 5gbp.png' },
+        { name: 'Gold Chain', rarity: 'rare', probability: 30, imageUrl: '/CTSP credit 20gbp.png' },
+        { name: 'Diamond Ring', rarity: 'epic', probability: 20, imageUrl: '/CTSP credit 20gbp.png' },
+        { name: 'Rolex Watch', rarity: 'legendary', probability: 15, imageUrl: '/CTSP credit 1000gbp.png' }
       ]
     },
     {
@@ -106,10 +107,10 @@ export default function Home() {
       participants: 15678,
       timeRemaining: '3h 20m',
       prizes: [
-        { name: 'AirPods', rarity: 'common', probability: 40 },
-        { name: 'iPad', rarity: 'rare', probability: 30 },
-        { name: 'MacBook', rarity: 'epic', probability: 20 },
-        { name: 'iPhone 15 Pro', rarity: 'legendary', probability: 10 }
+        { name: 'AirPods', rarity: 'common', probability: 40, imageUrl: '/CTSP apple voucher 1.png' },
+        { name: 'iPad', rarity: 'rare', probability: 30, imageUrl: '/CTSP apple voucher 1.png' },
+        { name: 'MacBook', rarity: 'epic', probability: 20, imageUrl: '/CTSP apple voucher 1.png' },
+        { name: 'iPhone 15 Pro', rarity: 'legendary', probability: 10, imageUrl: '/CTSP apple voucher 1.png' }
       ]
     }
   ];

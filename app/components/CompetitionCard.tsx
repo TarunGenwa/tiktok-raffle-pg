@@ -8,6 +8,7 @@ interface Prize {
   name: string;
   rarity: 'common' | 'rare' | 'epic' | 'legendary';
   probability: number;
+  imageUrl?: string;
 }
 
 interface CompetitionCardProps {
