@@ -109,66 +109,75 @@ export default function Competition({
   };
 
   return (
-    <>
-      <div className="relative w-full h-full bg-gradient-to-br from-gray-900 via-black to-gray-900 rounded-lg overflow-hidden">
-        {/* Video Background */}
-        {videoUrl && (
-          <>
-            <video
-              ref={videoRef}
-              className="absolute inset-0 w-full h-full object-cover"
-              autoPlay
-              muted={isMuted}
-              playsInline
-              onEnded={handleVideoEnd}
-            >
-              <source src={videoUrl} type="video/mp4" />
-            </video>
-            {/* Video Overlay */}
-            <div className="absolute inset-0 bg-black/20"></div>
-
-            {/* Mute/Unmute Button */}
-            {!videoEnded && (
-              <button
-                onClick={toggleMute}
-                className="absolute top-4 right-4 z-20 w-10 h-10 flex items-center justify-center rounded-full bg-black/50 hover:bg-black/70 transition-colors backdrop-blur-sm"
+    <div className="relative w-full h-full bg-gradient-to-br from-gray-900 via-black to-gray-900 rounded-lg overflow-hidden">
+      {isSpinnerOpen ? (
+        /* Inline Spinner */
+        <PrizeWheel
+          prizes={prizes}
+          onClose={() => setIsSpinnerOpen(false)}
+          competitionTitle={title}
+          isInline={true}
+        />
+      ) : (
+        <>
+          {/* Video Background */}
+          {videoUrl && (
+            <>
+              <video
+                ref={videoRef}
+                className="absolute inset-0 w-full h-full object-cover"
+                autoPlay
+                muted={isMuted}
+                playsInline
+                onEnded={handleVideoEnd}
               >
-                {isMuted ? (
-                  <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" />
-                  </svg>
-                ) : (
-                  <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
-                  </svg>
-                )}
-              </button>
-            )}
-          </>
-        )}
+                <source src={videoUrl} type="video/mp4" />
+              </video>
+              {/* Video Overlay */}
+              <div className="absolute inset-0 bg-black/20"></div>
 
-        {/* Background Pattern (only if no video) */}
-        {!videoUrl && (
-          <div className="absolute inset-0 opacity-10">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,_rgba(255,255,255,0.1),transparent_50%)]"></div>
-          </div>
-        )}
+              {/* Mute/Unmute Button */}
+              {!videoEnded && (
+                <button
+                  onClick={toggleMute}
+                  className="absolute top-4 right-4 z-20 w-10 h-10 flex items-center justify-center rounded-full bg-black/50 hover:bg-black/70 transition-colors backdrop-blur-sm"
+                >
+                  {isMuted ? (
+                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" />
+                    </svg>
+                  ) : (
+                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                    </svg>
+                  )}
+                </button>
+              )}
+            </>
+          )}
 
-        {/* Category Badge - hide while video is playing */}
-        {!(videoUrl && !videoEnded) && (
-          <div className="absolute top-4 left-4 z-10">
-            <div className={`bg-gradient-to-r ${categoryColors[category]} px-4 py-2 rounded-full text-white font-bold text-sm shadow-lg flex items-center gap-2`}>
-              {categoryBadges[category]}
-              {sponsored && <span className="text-xs bg-white/20 px-2 py-0.5 rounded-full">SPONSORED</span>}
+          {/* Background Pattern (only if no video) */}
+          {!videoUrl && (
+            <div className="absolute inset-0 opacity-10">
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,_rgba(255,255,255,0.1),transparent_50%)]"></div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* Main Content */}
-        <div className="relative h-full flex flex-col items-center justify-center p-8 space-y-6">
-          {/* Hide content while video is playing */}
-          {videoUrl && !videoEnded ? null : (
+          {/* Category Badge - hide while video is playing */}
+          {!(videoUrl && !videoEnded) && (
+            <div className="absolute top-4 left-4 z-10">
+              <div className={`bg-gradient-to-r ${categoryColors[category]} px-4 py-2 rounded-full text-white font-bold text-sm shadow-lg flex items-center gap-2`}>
+                {categoryBadges[category]}
+                {sponsored && <span className="text-xs bg-white/20 px-2 py-0.5 rounded-full">SPONSORED</span>}
+              </div>
+            </div>
+          )}
+
+          {/* Main Content */}
+          <div className="relative h-full flex flex-col items-center justify-center p-8 space-y-6">
+            {/* Hide content while video is playing */}
+            {videoUrl && !videoEnded ? null : (
             <>
               {/* Category Icon */}
               <div className={`relative`}>
@@ -250,17 +259,9 @@ export default function Competition({
               </div>
             </>
           )}
-        </div>
-      </div>
-
-      {/* Spinner Modal */}
-      {isSpinnerOpen && (
-        <PrizeWheel
-          prizes={prizes}
-          onClose={() => setIsSpinnerOpen(false)}
-          competitionTitle={title}
-        />
+          </div>
+        </>
       )}
-    </>
+    </div>
   );
 }

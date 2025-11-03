@@ -13,9 +13,10 @@ interface PrizeWheelProps {
   prizes: Prize[];
   onClose: () => void;
   competitionTitle: string;
+  isInline?: boolean;
 }
 
-export default function PrizeWheel({ prizes, onClose, competitionTitle }: PrizeWheelProps) {
+export default function PrizeWheel({ prizes, onClose, competitionTitle, isInline = false }: PrizeWheelProps) {
   const [isSpinning, setIsSpinning] = useState(false);
   const [wonPrizes, setWonPrizes] = useState<Prize[] | null>(null);
   const [columnOffsets, setColumnOffsets] = useState([0, 0, 0, 0, 0]);
@@ -70,7 +71,7 @@ export default function PrizeWheel({ prizes, onClose, competitionTitle }: PrizeW
     ];
 
     // Calculate positions for each column to land on its specific winning prize
-    const prizeHeight = 90; // Height of each prize item (matching mobile/desktop average)
+    const prizeHeight = isInline ? 70 : 90; // Height of each prize item (smaller for inline mode)
     const repetitions = 50; // Increased repetitions for proper circular loop
 
     // Create different spin amounts for each column (they'll stop at different times)
@@ -112,7 +113,7 @@ export default function PrizeWheel({ prizes, onClose, competitionTitle }: PrizeW
 
   return (
     <div
-      className={`fixed inset-0 z-50 bg-black/95 backdrop-blur-md flex items-center justify-center p-4 transition-all duration-300 ${
+      className={`${isInline ? 'relative w-full h-full' : 'fixed inset-0 z-50'} bg-black/95 backdrop-blur-md flex items-center justify-center p-4 transition-all duration-300 ${
         isVisible && !isExiting ? 'opacity-100' : 'opacity-0'
       }`}
     >
@@ -130,18 +131,18 @@ export default function PrizeWheel({ prizes, onClose, competitionTitle }: PrizeW
 
       {!wonPrizes ? (
         <div
-          className={`flex flex-col items-center space-y-4 sm:space-y-6 md:space-y-8 max-w-5xl w-full transition-all duration-500 ${
+          className={`flex flex-col items-center ${isInline ? 'space-y-2 sm:space-y-3 md:space-y-4' : 'space-y-4 sm:space-y-6 md:space-y-8'} ${isInline ? 'max-w-md' : 'max-w-5xl'} w-full transition-all duration-500 ${
             isVisible && !isExiting ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
           }`}
         >
           {/* Title */}
           <div
-            className={`text-center space-y-2 transition-all duration-500 delay-100 ${
+            className={`text-center space-y-1 transition-all duration-500 delay-100 ${
               isVisible && !isExiting ? 'translate-y-0 opacity-100' : '-translate-y-4 opacity-0'
             }`}
           >
-            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-white px-4">{competitionTitle}</h2>
-            <p className="text-sm sm:text-base text-gray-400 px-4">Spin the slots to win your prize!</p>
+            <h2 className={`${isInline ? 'text-lg sm:text-xl' : 'text-xl sm:text-2xl md:text-3xl'} font-bold text-white px-4`}>{competitionTitle}</h2>
+            <p className={`${isInline ? 'text-xs sm:text-sm' : 'text-sm sm:text-base'} text-gray-400 px-4`}>Spin the slots to win your prize!</p>
           </div>
 
           {/* Slot Machine Container */}
@@ -154,23 +155,23 @@ export default function PrizeWheel({ prizes, onClose, competitionTitle }: PrizeW
             <div className="absolute inset-0 bg-gradient-to-br from-green-500/30 to-emerald-500/30 rounded-2xl blur-3xl"></div>
 
             {/* Slot Machine Frame */}
-            <div className="relative bg-gradient-to-b from-gray-800 to-gray-900 p-4 sm:p-8 rounded-2xl sm:rounded-3xl shadow-2xl border-4 sm:border-8 border-yellow-500/50">
+            <div className={`relative bg-gradient-to-b from-gray-800 to-gray-900 ${isInline ? 'p-2 sm:p-4' : 'p-4 sm:p-8'} rounded-2xl sm:rounded-3xl shadow-2xl ${isInline ? 'border-2 sm:border-4' : 'border-4 sm:border-8'} border-yellow-500/50`}>
               {/* Top Decoration */}
-              <div className="absolute -top-4 sm:-top-6 left-1/2 -translate-x-1/2 bg-gradient-to-r from-yellow-500 to-orange-500 px-4 sm:px-8 py-1 sm:py-2 rounded-full text-white font-bold text-sm sm:text-xl shadow-lg">
+              <div className={`absolute ${isInline ? '-top-3 sm:-top-4' : '-top-4 sm:-top-6'} left-1/2 -translate-x-1/2 bg-gradient-to-r from-yellow-500 to-orange-500 ${isInline ? 'px-3 sm:px-6 py-0.5 sm:py-1' : 'px-4 sm:px-8 py-1 sm:py-2'} rounded-full text-white font-bold ${isInline ? 'text-xs sm:text-base' : 'text-sm sm:text-xl'} shadow-lg`}>
                 JACKPOT
               </div>
 
               {/* Selection Indicator */}
               <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 z-10 pointer-events-none">
-                <div className="mx-4 sm:mx-8 border-2 sm:border-4 border-red-500 rounded-lg h-[90px] sm:h-[120px] bg-red-500/10 shadow-[0_0_30px_rgba(239,68,68,0.5)]"></div>
+                <div className={`${isInline ? 'mx-2 sm:mx-4' : 'mx-4 sm:mx-8'} ${isInline ? 'border-2' : 'border-2 sm:border-4'} border-red-500 rounded-lg ${isInline ? 'h-[60px] sm:h-[80px]' : 'h-[90px] sm:h-[120px]'} bg-red-500/10 shadow-[0_0_30px_rgba(239,68,68,0.5)]`}></div>
               </div>
 
               {/* Slot Columns */}
-              <div className="flex gap-2 sm:gap-4 relative">
+              <div className={`flex ${isInline ? 'gap-1 sm:gap-2' : 'gap-2 sm:gap-4'} relative`}>
                 {columnRefs.map((ref, colIndex) => (
                   <div key={colIndex} className={`flex-1 ${colIndex >= 3 ? 'hidden sm:block' : ''}`}>
                     {/* Column Container */}
-                    <div className="bg-gray-950 rounded-xl p-1 sm:p-2 h-[280px] sm:h-[360px] overflow-hidden relative shadow-inner border-2 sm:border-4 border-gray-700">
+                    <div className={`bg-gray-950 rounded-xl p-1 sm:p-2 ${isInline ? 'h-[200px] sm:h-[240px]' : 'h-[280px] sm:h-[360px]'} overflow-hidden relative shadow-inner border-2 sm:border-4 border-gray-700`}>
                       {/* Scrolling Column */}
                       <div
                         ref={ref}
@@ -186,11 +187,11 @@ export default function PrizeWheel({ prizes, onClose, competitionTitle }: PrizeW
                         {(Array(50).fill(prizes).flat() as Prize[]).map((prize, idx) => (
                           <div
                             key={idx}
-                            className={`h-[90px] sm:h-[120px] flex items-center justify-center border-b-2 border-gray-800 bg-gradient-to-br ${rarityGradients[prize.rarity]}`}
+                            className={`${isInline ? 'h-[60px] sm:h-[80px]' : 'h-[90px] sm:h-[120px]'} flex items-center justify-center border-b-2 border-gray-800 bg-gradient-to-br ${rarityGradients[prize.rarity]}`}
                           >
                             <div className="text-center px-1 sm:px-2">
-                              <div className="text-white font-bold text-xs sm:text-sm mb-1 leading-tight">{prize.name}</div>
-                              <div className="text-[10px] sm:text-xs text-white/80 capitalize">{prize.rarity}</div>
+                              <div className={`text-white font-bold ${isInline ? 'text-[10px] sm:text-xs' : 'text-xs sm:text-sm'} mb-1 leading-tight`}>{prize.name}</div>
+                              <div className={`${isInline ? 'text-[8px] sm:text-[10px]' : 'text-[10px] sm:text-xs'} text-white/80 capitalize`}>{prize.rarity}</div>
                             </div>
                           </div>
                         ))}
@@ -207,20 +208,21 @@ export default function PrizeWheel({ prizes, onClose, competitionTitle }: PrizeW
             onClick={handleSpin}
             disabled={isSpinning}
             size="lg"
-            className={`bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold text-base sm:text-lg md:text-xl px-8 sm:px-12 md:px-16 py-4 sm:py-5 md:py-6 rounded-full shadow-2xl transform transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed duration-500 delay-300 ${
+            className={`bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold ${isInline ? 'text-sm sm:text-base px-6 sm:px-10 py-3 sm:py-4' : 'text-base sm:text-lg md:text-xl px-8 sm:px-12 md:px-16 py-4 sm:py-5 md:py-6'} rounded-full shadow-2xl transform transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed duration-500 delay-300 ${
               isVisible && !isExiting ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
             }`}
           >
             {isSpinning ? 'Spinning...' : 'SPIN THE SLOTS'}
           </Button>
 
-          {/* Prize List */}
-          <div
-            className={`w-full max-w-3xl px-4 transition-all duration-500 delay-[400ms] ${
-              isVisible && !isExiting ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
-            }`}
-          >
-            <h3 className="text-xs sm:text-sm font-semibold text-gray-400 uppercase tracking-wide text-center mb-2 sm:mb-3">All Prizes</h3>
+          {/* Prize List - Hide in inline mode to save space */}
+          {!isInline && (
+            <div
+              className={`w-full max-w-3xl px-4 transition-all duration-500 delay-[400ms] ${
+                isVisible && !isExiting ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
+              }`}
+            >
+              <h3 className="text-xs sm:text-sm font-semibold text-gray-400 uppercase tracking-wide text-center mb-2 sm:mb-3">All Prizes</h3>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
               {prizes.map((prize, idx) => (
                 <div
@@ -232,38 +234,39 @@ export default function PrizeWheel({ prizes, onClose, competitionTitle }: PrizeW
                 </div>
               ))}
             </div>
-          </div>
+            </div>
+          )}
         </div>
       ) : (
-        <div className="flex flex-col items-center space-y-4 sm:space-y-6 md:space-y-8 max-w-4xl w-full px-4 animate-[fadeIn_0.5s_ease-out]">
+        <div className={`flex flex-col items-center ${isInline ? 'space-y-2 sm:space-y-3' : 'space-y-4 sm:space-y-6 md:space-y-8'} ${isInline ? 'max-w-md' : 'max-w-4xl'} w-full px-4 animate-[fadeIn_0.5s_ease-out]`}>
           {/* Celebration */}
           <div className="absolute inset-0 pointer-events-none">
             <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/20 via-transparent to-green-500/20 animate-pulse"></div>
           </div>
 
           {/* Winner Content */}
-          <div className="relative z-10 text-center space-y-4 sm:space-y-6">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white animate-[bounceIn_0.6s_ease-out]">🎉 YOU WON 5 PRIZES! 🎉</h2>
+          <div className={`relative z-10 text-center ${isInline ? 'space-y-2 sm:space-y-3' : 'space-y-4 sm:space-y-6'}`}>
+            <h2 className={`${isInline ? 'text-xl sm:text-2xl' : 'text-3xl sm:text-4xl md:text-5xl'} font-bold text-white animate-[bounceIn_0.6s_ease-out]`}>🎉 YOU WON 5 PRIZES! 🎉</h2>
 
             {/* Prizes Display - All 5 with fixed width and wrapping */}
-            <div className="flex flex-wrap justify-center gap-3 sm:gap-4 w-full">
+            <div className={`flex flex-wrap justify-center ${isInline ? 'gap-2' : 'gap-3 sm:gap-4'} w-full`}>
               {wonPrizes.map((prize, index) => (
                 <div
                   key={index}
-                  className={`relative p-3 sm:p-4 bg-gradient-to-br ${rarityGradients[prize.rarity]} rounded-xl sm:rounded-2xl shadow-xl border-2 border-white/30 transform hover:scale-105 transition-all animate-[scaleIn_0.5s_ease-out_${0.2 + index * 0.1}s_both] w-[140px] sm:w-[160px] flex-shrink-0`}
+                  className={`relative ${isInline ? 'p-2 sm:p-3' : 'p-3 sm:p-4'} bg-gradient-to-br ${rarityGradients[prize.rarity]} rounded-xl sm:rounded-2xl shadow-xl border-2 border-white/30 transform hover:scale-105 transition-all animate-[scaleIn_0.5s_ease-out_${0.2 + index * 0.1}s_both] ${isInline ? 'w-[100px] sm:w-[120px]' : 'w-[140px] sm:w-[160px]'} flex-shrink-0`}
                 >
-                  <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 sm:p-4">
-                    <div className="text-center space-y-2">
-                      <svg className="w-12 h-12 sm:w-16 sm:h-16 text-white mx-auto" fill="currentColor" viewBox="0 0 24 24">
+                  <div className={`bg-white/10 backdrop-blur-sm rounded-lg ${isInline ? 'p-2' : 'p-3 sm:p-4'}`}>
+                    <div className={`text-center ${isInline ? 'space-y-1' : 'space-y-2'}`}>
+                      <svg className={`${isInline ? 'w-8 h-8 sm:w-10 sm:h-10' : 'w-12 h-12 sm:w-16 sm:h-16'} text-white mx-auto`} fill="currentColor" viewBox="0 0 24 24">
                         <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                       </svg>
                       <div>
-                        <div className="text-sm sm:text-base md:text-lg font-bold text-white">{prize.name}</div>
-                        <div className="text-xs sm:text-sm text-white/80 capitalize mt-1">{prize.rarity}</div>
+                        <div className={`${isInline ? 'text-xs sm:text-sm' : 'text-sm sm:text-base md:text-lg'} font-bold text-white`}>{prize.name}</div>
+                        <div className={`${isInline ? 'text-[10px] sm:text-xs' : 'text-xs sm:text-sm'} text-white/80 capitalize mt-1`}>{prize.rarity}</div>
                       </div>
                     </div>
                   </div>
-                  <div className="absolute -top-2 -right-2 bg-white text-black px-2 py-0.5 sm:px-3 sm:py-1 rounded-full text-[10px] sm:text-xs font-bold uppercase shadow-lg">
+                  <div className={`absolute -top-2 -right-2 bg-white text-black ${isInline ? 'px-1.5 py-0.5 text-[8px] sm:text-[10px]' : 'px-2 py-0.5 sm:px-3 sm:py-1 text-[10px] sm:text-xs'} rounded-full font-bold uppercase shadow-lg`}>
                     #{index + 1}
                   </div>
                 </div>
@@ -271,19 +274,19 @@ export default function PrizeWheel({ prizes, onClose, competitionTitle }: PrizeW
             </div>
 
             {/* Action Buttons */}
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center animate-[fadeIn_0.5s_ease-out_0.7s_both] w-full sm:w-auto">
+            <div className={`flex flex-col sm:flex-row ${isInline ? 'gap-2' : 'gap-3 sm:gap-4'} justify-center animate-[fadeIn_0.5s_ease-out_0.7s_both] w-full sm:w-auto`}>
               <Button
                 onClick={handlePlayAgain}
-                size="lg"
-                className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold px-6 sm:px-8 py-3 sm:py-4 rounded-full transform hover:scale-105 transition-transform w-full sm:w-auto"
+                size={isInline ? "default" : "lg"}
+                className={`bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold ${isInline ? 'px-4 sm:px-6 py-2 sm:py-3 text-sm' : 'px-6 sm:px-8 py-3 sm:py-4'} rounded-full transform hover:scale-105 transition-transform w-full sm:w-auto`}
               >
                 Spin Again
               </Button>
               <Button
                 onClick={handleClose}
-                size="lg"
+                size={isInline ? "default" : "lg"}
                 variant="outline"
-                className="bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border-2 border-white/30 font-bold px-6 sm:px-8 py-3 sm:py-4 rounded-full transform hover:scale-105 transition-transform w-full sm:w-auto"
+                className={`bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border-2 border-white/30 font-bold ${isInline ? 'px-4 sm:px-6 py-2 sm:py-3 text-sm' : 'px-6 sm:px-8 py-3 sm:py-4'} rounded-full transform hover:scale-105 transition-transform w-full sm:w-auto`}
               >
                 Close
               </Button>
