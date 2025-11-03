@@ -210,10 +210,10 @@ export default function ExplorePage() {
       <main className="flex-1 overflow-y-auto pb-20 md:pb-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
           {/* Header */}
-          <div className="mb-6 md:mb-8">
+          {/* <div className="mb-6 md:mb-8">
             <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">Explore Competitions</h1>
             <p className="text-gray-400 text-sm md:text-base">Discover and enter exciting raffles to win amazing prizes!</p>
-          </div>
+          </div> */}
 
           {/* Search Bar */}
           <div className="mb-6">

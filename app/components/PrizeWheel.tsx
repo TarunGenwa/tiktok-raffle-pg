@@ -31,9 +31,21 @@ export default function PrizeWheel({ prizes, onClose, competitionTitle, isInline
     useRef<HTMLDivElement>(null),
   ];
 
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const tickingIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const audioContextRef = useRef<AudioContext | null>(null);
+
   // Entrance animation
   useEffect(() => {
     setTimeout(() => setIsVisible(true), 10);
+
+    // Cleanup on unmount
+    return () => {
+      stopTickingSound();
+      if (audioContextRef.current) {
+        audioContextRef.current.close();
+      }
+    };
   }, []);
 
   const rarityGradients = {
@@ -49,7 +61,10 @@ export default function PrizeWheel({ prizes, onClose, competitionTitle, isInline
     setIsSpinning(true);
     setWonPrizes(null);
 
-    // Select 5 prizes based on probability (one for each column)
+    // Play ticking sound
+    playTickingSound();
+
+    // Select 5 prizes based on probability (one for each row)
     const selectPrize = () => {
       const random = Math.random() * 100;
       let cumulative = 0;
@@ -71,7 +86,8 @@ export default function PrizeWheel({ prizes, onClose, competitionTitle, isInline
     ];
 
     // Calculate positions for each row to land on its specific winning prize
-    const prizeWidth = isInline ? 120 : 140; // Width of each prize item (smaller for inline mode)
+    const prizeWidth = isInline ? 110 : 130; // Width of each prize item (matching the actual rendered width)
+    const containerWidth = isInline ? 360 : 480; // Container width (matching the actual rendered width)
     const repetitions = 50; // Increased repetitions for proper circular loop
 
     // Create different spin amounts for each row (they'll stop at different times)
@@ -83,7 +99,12 @@ export default function PrizeWheel({ prizes, onClose, competitionTitle, isInline
       const baseSpins = 8 + rowIndex;
       // Land on a prize well within the middle repetitions to ensure it's always visible
       const landingPosition = (repetitions / 2) * prizes.length + prizeIndex;
-      const totalOffset = (baseSpins * prizes.length + landingPosition) * prizeWidth;
+
+      // Calculate offset to center the prize in the selection indicator
+      // Prize center should align with container center
+      const centeringOffset = containerWidth / 2 - prizeWidth / 2;
+      const totalOffset = (baseSpins * prizes.length + landingPosition) * prizeWidth - centeringOffset;
+
       return totalOffset;
     });
 
@@ -92,11 +113,59 @@ export default function PrizeWheel({ prizes, onClose, competitionTitle, isInline
     // Staggered completion times for rows (1.8s, 2.2s, 2.6s, 3.0s, 3.4s)
     const stopTimes = [1800, 2200, 2600, 3000, 3400];
 
+    // Stop ticking sound after last row stops
+    setTimeout(() => {
+      stopTickingSound();
+    }, stopTimes[stopTimes.length - 1]);
+
     // Show result after last row stops
     setTimeout(() => {
       setWonPrizes(selectedPrizes);
       setIsSpinning(false);
     }, stopTimes[stopTimes.length - 1] + 500);
+  };
+
+  // Generate ticking sound using Web Audio API
+  const playTickingSound = () => {
+    // Initialize audio context if not already created
+    if (!audioContextRef.current) {
+      audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+    }
+
+    const audioContext = audioContextRef.current;
+    const tickInterval = 50; // Tick every 50ms for fast ticking sound
+
+    const playTick = () => {
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+
+      oscillator.frequency.value = 800; // Higher pitch for tick sound
+      oscillator.type = 'sine';
+
+      gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.02);
+
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + 0.02);
+    };
+
+    // Clear any existing interval
+    if (tickingIntervalRef.current) {
+      clearInterval(tickingIntervalRef.current);
+    }
+
+    // Play tick sound repeatedly
+    tickingIntervalRef.current = setInterval(playTick, tickInterval);
+  };
+
+  const stopTickingSound = () => {
+    if (tickingIntervalRef.current) {
+      clearInterval(tickingIntervalRef.current);
+      tickingIntervalRef.current = null;
+    }
   };
 
   const handlePlayAgain = () => {

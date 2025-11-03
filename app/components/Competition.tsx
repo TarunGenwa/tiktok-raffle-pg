@@ -164,16 +164,6 @@ export default function Competition({
             </div>
           )}
 
-          {/* Category Badge - hide while video is playing */}
-          {!(videoUrl && !videoEnded) && (
-            <div className="absolute top-4 left-4 z-10">
-              <div className={`bg-gradient-to-r ${categoryColors[category]} px-4 py-2 rounded-full text-white font-bold text-sm shadow-lg flex items-center gap-2`}>
-                {categoryBadges[category]}
-                {sponsored && <span className="text-xs bg-white/20 px-2 py-0.5 rounded-full">SPONSORED</span>}
-              </div>
-            </div>
-          )}
-
           {/* Main Content */}
           <div className="relative h-full flex flex-col items-center justify-center p-8 space-y-6">
             {/* Hide content while video is playing */}
