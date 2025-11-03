@@ -343,6 +343,7 @@ export default function Home() {
                     prizes={competition.prizes}
                     sponsored={competition.sponsored}
                     videoUrl={competition.videoUrl}
+                    isActive={isActive}
                   />
 
                   {/* Competition Counter (Mobile Only) */}

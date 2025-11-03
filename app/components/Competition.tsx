@@ -22,6 +22,7 @@ interface CompetitionProps {
   prizes: Prize[];
   sponsored?: boolean;
   videoUrl?: string;
+  isActive?: boolean;
 }
 
 export default function Competition({
@@ -34,7 +35,8 @@ export default function Competition({
   timeRemaining,
   prizes,
   sponsored = false,
-  videoUrl
+  videoUrl,
+  isActive = true
 }: CompetitionProps) {
   const [isSpinnerOpen, setIsSpinnerOpen] = useState(false);
   const [videoEnded, setVideoEnded] = useState(false);
@@ -51,6 +53,23 @@ export default function Competition({
       setIsMuted(!isMuted);
     }
   };
+
+  // Reset video when competition is no longer active
+  useEffect(() => {
+    if (videoRef.current && videoUrl) {
+      if (!isActive) {
+        // Reset video to beginning and pause
+        videoRef.current.pause();
+        videoRef.current.currentTime = 0;
+        setVideoEnded(false);
+      } else {
+        // Play video when competition becomes active
+        videoRef.current.play().catch(() => {
+          // Autoplay failed, likely needs user interaction
+        });
+      }
+    }
+  }, [isActive, videoUrl]);
 
   const categoryColors = {
     crypto: 'from-orange-500 to-yellow-500',
