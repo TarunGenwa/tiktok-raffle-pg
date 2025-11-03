@@ -19,11 +19,11 @@ interface PrizeWheelProps {
 export default function PrizeWheel({ prizes, onClose, competitionTitle, isInline = false }: PrizeWheelProps) {
   const [isSpinning, setIsSpinning] = useState(false);
   const [wonPrizes, setWonPrizes] = useState<Prize[] | null>(null);
-  const [columnOffsets, setColumnOffsets] = useState([0, 0, 0, 0, 0]);
+  const [rowOffsets, setRowOffsets] = useState([0, 0, 0, 0, 0]);
   const [isVisible, setIsVisible] = useState(false);
   const [isExiting, setIsExiting] = useState(false);
 
-  const columnRefs = [
+  const rowRefs = [
     useRef<HTMLDivElement>(null),
     useRef<HTMLDivElement>(null),
     useRef<HTMLDivElement>(null),
@@ -70,29 +70,29 @@ export default function PrizeWheel({ prizes, onClose, competitionTitle, isInline
       selectPrize()
     ];
 
-    // Calculate positions for each column to land on its specific winning prize
-    const prizeHeight = isInline ? 70 : 90; // Height of each prize item (smaller for inline mode)
+    // Calculate positions for each row to land on its specific winning prize
+    const prizeWidth = isInline ? 120 : 140; // Width of each prize item (smaller for inline mode)
     const repetitions = 50; // Increased repetitions for proper circular loop
 
-    // Create different spin amounts for each column (they'll stop at different times)
-    const newOffsets = columnRefs.map((_, colIndex) => {
-      const selectedPrize = selectedPrizes[colIndex];
+    // Create different spin amounts for each row (they'll stop at different times)
+    const newOffsets = rowRefs.map((_, rowIndex) => {
+      const selectedPrize = selectedPrizes[rowIndex];
       const prizeIndex = prizes.indexOf(selectedPrize);
 
-      // Base spins: vary spins for each column (8-12 full rotations for more excitement)
-      const baseSpins = 8 + colIndex;
+      // Base spins: vary spins for each row (8-12 full rotations for more excitement)
+      const baseSpins = 8 + rowIndex;
       // Land on a prize well within the middle repetitions to ensure it's always visible
       const landingPosition = (repetitions / 2) * prizes.length + prizeIndex;
-      const totalOffset = (baseSpins * prizes.length + landingPosition) * prizeHeight;
+      const totalOffset = (baseSpins * prizes.length + landingPosition) * prizeWidth;
       return totalOffset;
     });
 
-    setColumnOffsets(newOffsets);
+    setRowOffsets(newOffsets);
 
-    // Staggered completion times for columns (1.8s, 2.2s, 2.6s, 3.0s, 3.4s)
+    // Staggered completion times for rows (1.8s, 2.2s, 2.6s, 3.0s, 3.4s)
     const stopTimes = [1800, 2200, 2600, 3000, 3400];
 
-    // Show result after last column stops
+    // Show result after last row stops
     setTimeout(() => {
       setWonPrizes(selectedPrizes);
       setIsSpinning(false);
@@ -101,7 +101,7 @@ export default function PrizeWheel({ prizes, onClose, competitionTitle, isInline
 
   const handlePlayAgain = () => {
     setWonPrizes(null);
-    setColumnOffsets([0, 0, 0, 0, 0]);
+    setRowOffsets([0, 0, 0, 0, 0]);
   };
 
   const handleClose = () => {
@@ -162,24 +162,24 @@ export default function PrizeWheel({ prizes, onClose, competitionTitle, isInline
               </div>
 
               {/* Selection Indicator */}
-              <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 z-10 pointer-events-none">
-                <div className={`${isInline ? 'mx-2 sm:mx-4' : 'mx-4 sm:mx-8'} ${isInline ? 'border-2' : 'border-2 sm:border-4'} border-red-500 rounded-lg ${isInline ? 'h-[60px] sm:h-[80px]' : 'h-[90px] sm:h-[120px]'} bg-red-500/10 shadow-[0_0_30px_rgba(239,68,68,0.5)]`}></div>
+              <div className="absolute top-0 bottom-0 left-1/2 -translate-x-1/2 z-10 pointer-events-none">
+                <div className={`${isInline ? 'my-2 sm:my-4' : 'my-4 sm:my-8'} ${isInline ? 'border-2' : 'border-2 sm:border-4'} border-red-500 rounded-lg ${isInline ? 'w-[110px] sm:w-[130px]' : 'w-[130px] sm:w-[150px]'} h-full bg-red-500/10 shadow-[0_0_30px_rgba(239,68,68,0.5)]`}></div>
               </div>
 
-              {/* Slot Columns */}
-              <div className={`flex ${isInline ? 'gap-1 sm:gap-2' : 'gap-2 sm:gap-4'} relative`}>
-                {columnRefs.map((ref, colIndex) => (
-                  <div key={colIndex} className={`flex-1 ${colIndex >= 3 ? 'hidden sm:block' : ''}`}>
-                    {/* Column Container */}
-                    <div className={`bg-gray-950 rounded-xl p-1 sm:p-2 ${isInline ? 'h-[200px] sm:h-[240px]' : 'h-[280px] sm:h-[360px]'} overflow-hidden relative shadow-inner border-2 sm:border-4 border-gray-700`}>
-                      {/* Scrolling Column */}
+              {/* Slot Rows */}
+              <div className={`flex flex-col ${isInline ? 'gap-1 sm:gap-2' : 'gap-2 sm:gap-4'} relative`}>
+                {rowRefs.map((ref, rowIndex) => (
+                  <div key={rowIndex} className={`flex-1 ${rowIndex >= 3 ? 'hidden sm:block' : ''}`}>
+                    {/* Row Container */}
+                    <div className={`bg-gray-950 rounded-xl p-1 sm:p-2 ${isInline ? 'w-[360px] sm:w-[420px]' : 'w-[480px] sm:w-[600px]'} overflow-hidden relative shadow-inner border-2 sm:border-4 border-gray-700`}>
+                      {/* Scrolling Row */}
                       <div
                         ref={ref}
-                        className="relative"
+                        className="relative flex"
                         style={{
-                          transform: `translateY(-${columnOffsets[colIndex]}px)`,
+                          transform: `translateX(-${rowOffsets[rowIndex]}px)`,
                           transition: isSpinning
-                            ? `transform ${1.8 + colIndex * 0.4}s cubic-bezier(0.25, 0.1, 0.25, 1)`
+                            ? `transform ${1.8 + rowIndex * 0.4}s cubic-bezier(0.25, 0.1, 0.25, 1)`
                             : 'none',
                         }}
                       >
@@ -187,9 +187,9 @@ export default function PrizeWheel({ prizes, onClose, competitionTitle, isInline
                         {(Array(50).fill(prizes).flat() as Prize[]).map((prize, idx) => (
                           <div
                             key={idx}
-                            className={`${isInline ? 'h-[60px] sm:h-[80px]' : 'h-[90px] sm:h-[120px]'} flex items-center justify-center border-b-2 border-gray-800 bg-gradient-to-br ${rarityGradients[prize.rarity]}`}
+                            className={`${isInline ? 'w-[110px] sm:w-[130px]' : 'w-[130px] sm:w-[150px]'} flex-shrink-0 flex items-center justify-center border-r-2 border-gray-800 bg-gradient-to-br ${rarityGradients[prize.rarity]}`}
                           >
-                            <div className="text-center px-1 sm:px-2">
+                            <div className="text-center px-1 sm:px-2 py-2">
                               <div className={`text-white font-bold ${isInline ? 'text-[10px] sm:text-xs' : 'text-xs sm:text-sm'} mb-1 leading-tight`}>{prize.name}</div>
                               <div className={`${isInline ? 'text-[8px] sm:text-[10px]' : 'text-[10px] sm:text-xs'} text-white/80 capitalize`}>{prize.rarity}</div>
                             </div>
