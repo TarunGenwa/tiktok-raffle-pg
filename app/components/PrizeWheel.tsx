@@ -372,21 +372,13 @@ export default function PrizeWheel({ prizes, onClose, competitionTitle, isInline
             </div>
 
             {/* Action Buttons */}
-            <div className={`flex flex-col sm:flex-row ${isInline ? 'gap-2' : 'gap-3 sm:gap-4'} justify-center animate-[fadeIn_0.5s_ease-out_0.7s_both] w-full sm:w-auto`}>
+            <div className={`flex justify-center animate-[fadeIn_0.5s_ease-out_0.7s_both] w-full sm:w-auto`}>
               <Button
                 onClick={handlePlayAgain}
                 size={isInline ? "default" : "lg"}
                 className={`bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold ${isInline ? 'px-4 sm:px-6 py-2 sm:py-3 text-sm' : 'px-6 sm:px-8 py-3 sm:py-4'} rounded-full transform hover:scale-105 transition-transform w-full sm:w-auto`}
               >
                 Spin Again
-              </Button>
-              <Button
-                onClick={handleClose}
-                size={isInline ? "default" : "lg"}
-                variant="outline"
-                className={`bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border-2 border-white/30 font-bold ${isInline ? 'px-4 sm:px-6 py-2 sm:py-3 text-sm' : 'px-6 sm:px-8 py-3 sm:py-4'} rounded-full transform hover:scale-105 transition-transform w-full sm:w-auto`}
-              >
-                Close
               </Button>
             </div>
           </div>
