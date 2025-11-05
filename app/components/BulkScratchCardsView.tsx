@@ -82,13 +82,13 @@ export default function BulkScratchCardsView({
   const allRevealed = revealedCards.size === prizes.length;
 
   return (
-    <div className="fixed inset-0 md:left-20 z-50 bg-gradient-to-br from-purple-900 via-indigo-900 to-blue-900 overflow-hidden">
+    <div className="fixed inset-0 md:left-20 z-50 bg-gradient-to-br from-emerald-900 via-green-800 to-teal-900 overflow-hidden">
       {/* Background animated circles */}
       <div className="absolute inset-0 overflow-hidden">
         {[...Array(5)].map((_, i) => (
           <div
             key={i}
-            className="absolute rounded-full border border-white/10 animate-pulse"
+            className="absolute rounded-full border border-emerald-400/10 animate-pulse"
             style={{
               width: `${(i + 1) * 200}px`,
               height: `${(i + 1) * 200}px`,
@@ -113,16 +113,30 @@ export default function BulkScratchCardsView({
           </p>
         </div>
 
-        {onClose && (
-          <button
-            onClick={onClose}
-            className="p-2 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-colors"
-          >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        )}
+        <div className="flex items-center gap-3">
+          {!autoRevealAll && !allRevealed && (
+            <button
+              onClick={() => setAutoRevealAll(true)}
+              className="px-6 py-3 rounded-lg font-semibold bg-gradient-to-r from-yellow-500 via-orange-500 to-red-500 hover:from-yellow-400 hover:via-orange-400 hover:to-red-400 text-white shadow-lg transition-all transform hover:scale-105 flex items-center gap-2"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+              Reveal All
+            </button>
+          )}
+
+          {onClose && (
+            <button
+              onClick={onClose}
+              className="p-2 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-colors"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Circular entrance animation container */}

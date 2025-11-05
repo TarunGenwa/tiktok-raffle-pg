@@ -191,7 +191,41 @@ export default function ScratchCard({
 
     ctx.globalCompositeOperation = 'destination-out';
     ctx.beginPath();
-    ctx.arc(x, y, 40, 0, Math.PI * 2);
+    ctx.arc(x, y, 60, 0, Math.PI * 2); // Increased radius from 40 to 60
+    ctx.fill();
+
+    // Calculate scratch percentage
+    checkScratchPercentage(canvas, ctx);
+  };
+
+  const handleClick = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
+    if (isRevealed || autoReveal) return;
+
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const rect = canvas.getBoundingClientRect();
+
+    // Ensure canvas has valid dimensions
+    if (rect.width === 0 || rect.height === 0) return;
+
+    let x, y;
+
+    if ('touches' in e) {
+      x = (e.touches[0].clientX - rect.left) * 2;
+      y = (e.touches[0].clientY - rect.top) * 2;
+    } else {
+      x = (e.clientX - rect.left) * 2;
+      y = (e.clientY - rect.top) * 2;
+    }
+
+    ctx.globalCompositeOperation = 'destination-out';
+    // Create a larger scratch area on click
+    ctx.beginPath();
+    ctx.arc(x, y, 80, 0, Math.PI * 2);
     ctx.fill();
 
     // Calculate scratch percentage
@@ -275,9 +309,10 @@ export default function ScratchCard({
         <canvas
           ref={canvasRef}
           className={`absolute inset-0 w-full h-full rounded-xl ${
-            isScratching ? 'cursor-grabbing' : 'cursor-grab'
+            isScratching ? 'cursor-grabbing' : 'cursor-pointer'
           }`}
           style={{ touchAction: 'none' }}
+          onClick={handleClick}
           onMouseDown={handleMouseDown}
           onMouseUp={handleMouseUp}
           onMouseMove={(e) => isScratching && scratch(e)}
