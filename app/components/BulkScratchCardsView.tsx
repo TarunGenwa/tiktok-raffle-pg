@@ -23,6 +23,7 @@ export default function BulkScratchCardsView({
   const [visibleCards, setVisibleCards] = useState<number[]>([]);
   const [revealedCards, setRevealedCards] = useState<Set<number>>(new Set());
   const [isEntering, setIsEntering] = useState(true);
+  const [autoRevealAll, setAutoRevealAll] = useState(false);
 
   // Entrance animation - cards appear in circular pattern
   useEffect(() => {
@@ -157,7 +158,8 @@ export default function BulkScratchCardsView({
                   <ScratchCard
                     prize={prize}
                     onReveal={() => handleCardReveal(index)}
-                    autoReveal={false}
+                    autoReveal={autoRevealAll && !revealedCards.has(index)}
+                    autoRevealDelay={index * 50}
                     cardNumber={index + 1}
                   />
                 </div>
@@ -191,10 +193,18 @@ export default function BulkScratchCardsView({
           )}
 
           {!allRevealed && (
-            <div className="text-center">
+            <div className="text-center space-y-3">
               <p className="text-gray-400 text-sm">
                 Scratch the cards to reveal your prizes
               </p>
+              {!autoRevealAll && (
+                <button
+                  onClick={() => setAutoRevealAll(true)}
+                  className="px-6 py-2 rounded-lg font-semibold bg-gradient-to-r from-emerald-500 via-green-500 to-lime-500 hover:from-emerald-400 hover:via-green-400 hover:to-lime-400 text-white shadow-lg transition-all transform hover:scale-105"
+                >
+                  Reveal All
+                </button>
+              )}
             </div>
           )}
         </div>
