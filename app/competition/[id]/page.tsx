@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import PrizeWheel from '@/app/components/PrizeWheel';
 import InteractionSidebar from '@/app/components/InteractionSidebar';
-import BulkPlayModal from '@/app/components/BulkPlayModal';
 import BulkScratchCardsView from '@/app/components/BulkScratchCardsView';
 import { Button } from '@/components/ui/button';
 
@@ -128,7 +127,6 @@ export default function CompetitionPage() {
   const params = useParams();
   const competitionId = params.id as string;
   const [ticketCount, setTicketCount] = useState(1);
-  const [showBulkModal, setShowBulkModal] = useState(false);
   const [isBulkPlayMode, setIsBulkPlayMode] = useState(false);
   const [bulkPrizes, setBulkPrizes] = useState<BulkPrize[]>([]);
   const MAX_TICKETS = 100;
@@ -137,30 +135,25 @@ export default function CompetitionPage() {
   const competition = competitions.find(c => c.id === competitionId);
 
   const incrementTickets = () => {
-    if (ticketCount < 5) {
-      setTicketCount(ticketCount + 1);
-    } else if (ticketCount === 5) {
-      // Show bulk play modal when trying to go above 5
-      setShowBulkModal(true);
-    } else if (ticketCount < MAX_TICKETS) {
-      setTicketCount(ticketCount + 1);
+    if (ticketCount < MAX_TICKETS) {
+      const newCount = ticketCount + 1;
+      setTicketCount(newCount);
+      // Automatically switch to bulk mode when going above 5
+      if (newCount > 5 && !isBulkPlayMode) {
+        setIsBulkPlayMode(true);
+      }
     }
   };
 
   const decrementTickets = () => {
     if (ticketCount > 1) {
-      setTicketCount(ticketCount - 1);
+      const newCount = ticketCount - 1;
+      setTicketCount(newCount);
+      // Auto-switch back to normal mode when going to 5 or below
+      if (newCount <= 5 && isBulkPlayMode) {
+        setIsBulkPlayMode(false);
+      }
     }
-  };
-
-  const handleBulkPlayConfirm = () => {
-    setShowBulkModal(false);
-    setTicketCount(6); // Start at 6 tickets
-    setIsBulkPlayMode(true);
-  };
-
-  const handleBulkPlayCancel = () => {
-    setShowBulkModal(false);
   };
 
   const handleStartBulkPlay = () => {
@@ -218,13 +211,6 @@ export default function CompetitionPage() {
 
   return (
     <div className="h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 overflow-hidden relative">
-      {/* Bulk Play Modal */}
-      <BulkPlayModal
-        isOpen={showBulkModal}
-        onClose={handleBulkPlayCancel}
-        onConfirm={handleBulkPlayConfirm}
-        ticketCount={ticketCount}
-      />
       {/* Back Button - Top Left */}
       <button
         onClick={() => router.back()}
@@ -258,78 +244,99 @@ export default function CompetitionPage() {
               </button>
               <div className="flex items-center gap-3 flex-1 justify-center">
                 <span className="text-4xl font-bold text-white">{ticketCount}</span>
-                <div className="flex flex-col">
-                  <span className="text-sm text-gray-400">Ticket{ticketCount !== 1 ? 's' : ''}</span>
-                  <span className="text-xs text-gray-500">
-                    (max {isBulkPlayMode ? MAX_TICKETS : 5})
-                  </span>
-                </div>
               </div>
               <button
                 onClick={incrementTickets}
-                disabled={isBulkPlayMode ? ticketCount >= MAX_TICKETS : false}
+                disabled={ticketCount >= MAX_TICKETS}
                 className="w-12 h-12 rounded-full bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 disabled:from-gray-800 disabled:to-gray-900 disabled:cursor-not-allowed flex items-center justify-center text-white font-bold text-2xl transition-all hover:scale-105 disabled:hover:scale-100 shadow-lg disabled:opacity-50"
               >
                 +
               </button>
             </div>
 
-            {/* Slider and quick increment buttons for bulk mode */}
-            {isBulkPlayMode && (
-              <div className="mt-3 space-y-3">
-                {/* Slider */}
-                <div className="px-2">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs text-gray-400">Slide to adjust:</span>
-                    <span className="text-xs text-gray-500">{ticketCount} / {MAX_TICKETS}</span>
-                  </div>
-                  <input
-                    type="range"
-                    min="6"
-                    max={MAX_TICKETS}
-                    value={ticketCount}
-                    onChange={(e) => setTicketCount(parseInt(e.target.value))}
-                    className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider-thumb"
-                    style={{
-                      background: `linear-gradient(to right, rgb(5, 150, 105) 0%, rgb(5, 150, 105) ${((ticketCount - 6) / (MAX_TICKETS - 6)) * 100}%, rgb(55, 65, 81) ${((ticketCount - 6) / (MAX_TICKETS - 6)) * 100}%, rgb(55, 65, 81) 100%)`
-                    }}
-                  />
+            {/* Slider and quick increment buttons */}
+            <div className="mt-3 space-y-3">
+              {/* Slider */}
+              <div className="px-2">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs text-gray-400">Slide to adjust:</span>
+                  <span className="text-xs text-gray-500">{ticketCount} / {MAX_TICKETS}</span>
                 </div>
-
-                {/* Quick add buttons */}
-                <div className="flex items-center justify-center gap-2">
-                  <span className="text-xs text-gray-400 mr-2">Quick add:</span>
-                  <button
-                    onClick={() => setTicketCount(Math.min(ticketCount + 5, MAX_TICKETS))}
-                    disabled={ticketCount >= MAX_TICKETS}
-                    className="px-3 py-1.5 rounded-lg text-sm font-semibold bg-gray-700 hover:bg-gray-600 disabled:bg-gray-800 disabled:cursor-not-allowed text-white transition-colors disabled:opacity-50"
-                  >
-                    +5
-                  </button>
-                  <button
-                    onClick={() => setTicketCount(Math.min(ticketCount + 10, MAX_TICKETS))}
-                    disabled={ticketCount >= MAX_TICKETS}
-                    className="px-3 py-1.5 rounded-lg text-sm font-semibold bg-gray-700 hover:bg-gray-600 disabled:bg-gray-800 disabled:cursor-not-allowed text-white transition-colors disabled:opacity-50"
-                  >
-                    +10
-                  </button>
-                  <button
-                    onClick={() => setTicketCount(Math.min(ticketCount + 25, MAX_TICKETS))}
-                    disabled={ticketCount >= MAX_TICKETS}
-                    className="px-3 py-1.5 rounded-lg text-sm font-semibold bg-gray-700 hover:bg-gray-600 disabled:bg-gray-800 disabled:cursor-not-allowed text-white transition-colors disabled:opacity-50"
-                  >
-                    +25
-                  </button>
-                  <button
-                    onClick={() => setTicketCount(MAX_TICKETS)}
-                    disabled={ticketCount >= MAX_TICKETS}
-                    className="px-3 py-1.5 rounded-lg text-sm font-semibold bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 disabled:from-gray-800 disabled:to-gray-800 disabled:cursor-not-allowed text-white transition-colors disabled:opacity-50"
-                  >
-                    Max
-                  </button>
-                </div>
+                <input
+                  type="range"
+                  min="1"
+                  max={MAX_TICKETS}
+                  value={ticketCount}
+                  onChange={(e) => {
+                    const newCount = parseInt(e.target.value);
+                    setTicketCount(newCount);
+                    // Auto-switch modes based on ticket count
+                    if (newCount > 5 && !isBulkPlayMode) {
+                      setIsBulkPlayMode(true);
+                    } else if (newCount <= 5 && isBulkPlayMode) {
+                      setIsBulkPlayMode(false);
+                    }
+                  }}
+                  className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider-thumb"
+                  style={{
+                    background: `linear-gradient(to right, rgb(5, 150, 105) 0%, rgb(5, 150, 105) ${((ticketCount - 1) / (MAX_TICKETS - 1)) * 100}%, rgb(55, 65, 81) ${((ticketCount - 1) / (MAX_TICKETS - 1)) * 100}%, rgb(55, 65, 81) 100%)`
+                  }}
+                />
               </div>
-            )}
+
+              {/* Quick add buttons */}
+              <div className="flex items-center justify-center gap-2">
+                <span className="text-xs text-gray-400 mr-2">Quick add:</span>
+                <button
+                  onClick={() => {
+                    const newCount = Math.min(ticketCount + 5, isBulkPlayMode ? MAX_TICKETS : 5);
+                    if (newCount > 5 && !isBulkPlayMode) {
+                      setIsBulkPlayMode(true);
+                    }
+                    setTicketCount(newCount);
+                  }}
+                  disabled={ticketCount >= (isBulkPlayMode ? MAX_TICKETS : 5)}
+                  className="px-3 py-1.5 rounded-lg text-sm font-semibold bg-gray-700 hover:bg-gray-600 disabled:bg-gray-800 disabled:cursor-not-allowed text-white transition-colors disabled:opacity-50"
+                >
+                  +5
+                </button>
+                <button
+                  onClick={() => {
+                    const newCount = Math.min(ticketCount + 10, MAX_TICKETS);
+                    if (!isBulkPlayMode) {
+                      setIsBulkPlayMode(true);
+                    }
+                    setTicketCount(newCount);
+                  }}
+                  className="px-3 py-1.5 rounded-lg text-sm font-semibold bg-gray-700 hover:bg-gray-600 disabled:bg-gray-800 disabled:cursor-not-allowed text-white transition-colors disabled:opacity-50"
+                >
+                  +10
+                </button>
+                <button
+                  onClick={() => {
+                    const newCount = Math.min(ticketCount + 25, MAX_TICKETS);
+                    if (!isBulkPlayMode) {
+                      setIsBulkPlayMode(true);
+                    }
+                    setTicketCount(newCount);
+                  }}
+                  className="px-3 py-1.5 rounded-lg text-sm font-semibold bg-gray-700 hover:bg-gray-600 disabled:bg-gray-800 disabled:cursor-not-allowed text-white transition-colors disabled:opacity-50"
+                >
+                  +25
+                </button>
+                <button
+                  onClick={() => {
+                    if (!isBulkPlayMode) {
+                      setIsBulkPlayMode(true);
+                    }
+                    setTicketCount(MAX_TICKETS);
+                  }}
+                  className="px-3 py-1.5 rounded-lg text-sm font-semibold bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-white transition-colors"
+                >
+                  Max
+                </button>
+              </div>
+            </div>
           </div>
         </div>
 
