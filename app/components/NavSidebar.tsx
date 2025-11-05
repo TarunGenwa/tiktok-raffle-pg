@@ -121,25 +121,28 @@ export default function NavSidebar() {
 
       {/* Mobile Bottom Navigation */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 bg-black/95 backdrop-blur-lg border-t border-gray-800 z-40 safe-area-inset-bottom">
-        <nav className="flex justify-around items-center px-1 py-2">
-          {allItems.map((item) => (
-            <Button
-              key={item.id}
-              variant="ghost"
-              onClick={() => router.push(item.path)}
-              className={`flex flex-col h-auto items-center gap-0.5 transition-all p-1.5 min-w-0 ${
-                getActiveTab() === item.id
-                  ? 'text-white'
-                  : 'text-gray-400'
-              }`}
-            >
-              <div className={`transition-transform ${getActiveTab() === item.id ? 'scale-110' : ''}`}>
-                <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="currentColor" viewBox="0 0 24 24">
-                  {item.icon.props.children}
-                </svg>
-              </div>
-              <span className="text-[9px] sm:text-[10px] font-medium truncate max-w-[60px]">{item.label}</span>
-            </Button>
+        <nav className="flex items-stretch">
+          {allItems.map((item, index) => (
+            <div key={item.id} className="flex-1 flex items-stretch">
+              <button
+                onClick={() => router.push(item.path)}
+                className={`flex-1 flex flex-col items-center justify-center gap-1 transition-all py-3 cursor-pointer ${
+                  getActiveTab() === item.id
+                    ? 'text-white'
+                    : 'text-gray-400'
+                }`}
+              >
+                <div className={`transition-transform ${getActiveTab() === item.id ? 'scale-110' : ''}`}>
+                  <svg className="w-6 h-6 sm:w-7 sm:h-7" fill="currentColor" viewBox="0 0 24 24" strokeWidth="0.5" stroke="currentColor">
+                    {item.icon.props.children}
+                  </svg>
+                </div>
+                <span className="text-[10px] sm:text-xs font-semibold truncate max-w-[70px]">{item.label}</span>
+              </button>
+              {index < allItems.length - 1 && (
+                <div className="w-px bg-gray-700 my-2"></div>
+              )}
+            </div>
           ))}
         </nav>
       </div>
