@@ -170,24 +170,27 @@ export default function CompetitionPage() {
         </div>
 
         {/* Ticket Counter */}
-        <div className="w-full flex justify-center mb-4 z-10">
-          <div className="bg-black/50 backdrop-blur-sm rounded-2xl border border-white/20 px-6 py-4 shadow-xl">
-            <div className="flex items-center gap-4">
+        <div className="w-full max-w-md mx-auto px-2 md:px-0 mb-4 z-10">
+          <div className="bg-gradient-to-b from-gray-800 to-gray-900 rounded-2xl border-2 border-gray-700 px-6 py-4 shadow-2xl">
+            <div className="flex items-center justify-between gap-4">
               <button
                 onClick={decrementTickets}
                 disabled={ticketCount <= 1}
-                className="w-10 h-10 rounded-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 disabled:from-gray-600 disabled:to-gray-700 disabled:cursor-not-allowed flex items-center justify-center text-white font-bold text-xl transition-all hover:scale-105 disabled:hover:scale-100 shadow-lg"
+                className="w-12 h-12 rounded-full bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 disabled:from-gray-800 disabled:to-gray-900 disabled:cursor-not-allowed flex items-center justify-center text-white font-bold text-2xl transition-all hover:scale-105 disabled:hover:scale-100 shadow-lg disabled:opacity-50"
               >
                 -
               </button>
-              <div className="text-center min-w-[120px]">
-                <div className="text-3xl font-bold text-white">{ticketCount}</div>
-                <div className="text-sm text-gray-400 mt-1">Ticket{ticketCount !== 1 ? 's' : ''}</div>
+              <div className="flex items-center gap-3 flex-1 justify-center">
+                <span className="text-4xl font-bold text-white">{ticketCount}</span>
+                <div className="flex flex-col">
+                  <span className="text-sm text-gray-400">Ticket{ticketCount !== 1 ? 's' : ''}</span>
+                  <span className="text-xs text-gray-500">(max 5)</span>
+                </div>
               </div>
               <button
                 onClick={incrementTickets}
                 disabled={ticketCount >= 5}
-                className="w-10 h-10 rounded-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 disabled:from-gray-600 disabled:to-gray-700 disabled:cursor-not-allowed flex items-center justify-center text-white font-bold text-xl transition-all hover:scale-105 disabled:hover:scale-100 shadow-lg"
+                className="w-12 h-12 rounded-full bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 disabled:from-gray-800 disabled:to-gray-900 disabled:cursor-not-allowed flex items-center justify-center text-white font-bold text-2xl transition-all hover:scale-105 disabled:hover:scale-100 shadow-lg disabled:opacity-50"
               >
                 +
               </button>
