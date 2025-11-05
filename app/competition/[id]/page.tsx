@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import PrizeWheel from '@/app/components/PrizeWheel';
 import InteractionSidebar from '@/app/components/InteractionSidebar';
+import BulkPlayModal from '@/app/components/BulkPlayModal';
+import BulkScratchCardsView from '@/app/components/BulkScratchCardsView';
 import { Button } from '@/components/ui/button';
 
 interface Prize {
@@ -120,12 +122,21 @@ export default function CompetitionPage() {
   const params = useParams();
   const competitionId = params.id as string;
   const [ticketCount, setTicketCount] = useState(1);
+  const [showBulkModal, setShowBulkModal] = useState(false);
+  const [isBulkPlayMode, setIsBulkPlayMode] = useState(false);
+  const [bulkPrizes, setBulkPrizes] = useState<Prize[]>([]);
+  const MAX_TICKETS = 100;
 
   // Find the competition by ID
   const competition = competitions.find(c => c.id === competitionId);
 
   const incrementTickets = () => {
     if (ticketCount < 5) {
+      setTicketCount(ticketCount + 1);
+    } else if (ticketCount === 5) {
+      // Show bulk play modal when trying to go above 5
+      setShowBulkModal(true);
+    } else if (ticketCount < MAX_TICKETS) {
       setTicketCount(ticketCount + 1);
     }
   };
@@ -134,6 +145,47 @@ export default function CompetitionPage() {
     if (ticketCount > 1) {
       setTicketCount(ticketCount - 1);
     }
+  };
+
+  const handleBulkPlayConfirm = () => {
+    setShowBulkModal(false);
+    setTicketCount(6); // Start at 6 tickets
+    setIsBulkPlayMode(true);
+  };
+
+  const handleBulkPlayCancel = () => {
+    setShowBulkModal(false);
+  };
+
+  const handleStartBulkPlay = () => {
+    if (!competition) return;
+
+    // Generate prizes for all tickets based on probabilities
+    const prizes: Prize[] = [];
+    for (let i = 0; i < ticketCount; i++) {
+      const randomValue = Math.random() * 100;
+      let cumulativeProbability = 0;
+
+      for (const prize of competition.prizes) {
+        cumulativeProbability += prize.probability;
+        if (randomValue <= cumulativeProbability) {
+          prizes.push({
+            name: prize.name,
+            rarity: prize.rarity,
+            image: prize.imageUrl,
+          });
+          break;
+        }
+      }
+    }
+
+    setBulkPrizes(prizes);
+  };
+
+  const handleCloseBulkView = () => {
+    setBulkPrizes([]);
+    setIsBulkPlayMode(false);
+    setTicketCount(1);
   };
 
   if (!competition) {
@@ -147,8 +199,26 @@ export default function CompetitionPage() {
     );
   }
 
+  // If showing bulk scratch cards view
+  if (bulkPrizes.length > 0) {
+    return (
+      <BulkScratchCardsView
+        prizes={bulkPrizes}
+        onAllRevealed={() => {}}
+        onClose={handleCloseBulkView}
+      />
+    );
+  }
+
   return (
     <div className="h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 overflow-hidden relative">
+      {/* Bulk Play Modal */}
+      <BulkPlayModal
+        isOpen={showBulkModal}
+        onClose={handleBulkPlayCancel}
+        onConfirm={handleBulkPlayConfirm}
+        ticketCount={ticketCount}
+      />
       {/* Back Button - Top Left */}
       <button
         onClick={() => router.back()}
@@ -184,12 +254,14 @@ export default function CompetitionPage() {
                 <span className="text-4xl font-bold text-white">{ticketCount}</span>
                 <div className="flex flex-col">
                   <span className="text-sm text-gray-400">Ticket{ticketCount !== 1 ? 's' : ''}</span>
-                  <span className="text-xs text-gray-500">(max 5)</span>
+                  <span className="text-xs text-gray-500">
+                    (max {isBulkPlayMode ? MAX_TICKETS : 5})
+                  </span>
                 </div>
               </div>
               <button
                 onClick={incrementTickets}
-                disabled={ticketCount >= 5}
+                disabled={isBulkPlayMode ? ticketCount >= MAX_TICKETS : false}
                 className="w-12 h-12 rounded-full bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 disabled:from-gray-800 disabled:to-gray-900 disabled:cursor-not-allowed flex items-center justify-center text-white font-bold text-2xl transition-all hover:scale-105 disabled:hover:scale-100 shadow-lg disabled:opacity-50"
               >
                 +
@@ -198,16 +270,57 @@ export default function CompetitionPage() {
           </div>
         </div>
 
-        {/* PrizeWheel Container */}
-        <div className="w-full max-w-md mx-auto relative px-1 md:px-0 flex items-center">
-          <PrizeWheel
-            prizes={competition.prizes}
-            onClose={() => router.back()}
-            competitionTitle={competition.title}
-            isInline={true}
-            hideCloseButton={true}
-            numberOfTickets={ticketCount}
-          />
+        {/* Game Container */}
+        <div className="w-full max-w-md mx-auto relative px-1 md:px-0 flex flex-col items-center gap-4">
+          {!isBulkPlayMode ? (
+            // Show slot machine in normal mode (1-5 tickets)
+            <PrizeWheel
+              prizes={competition.prizes}
+              onClose={() => router.back()}
+              competitionTitle={competition.title}
+              isInline={true}
+              hideCloseButton={true}
+              numberOfTickets={ticketCount}
+            />
+          ) : (
+            // Show bulk play button in bulk mode (6+ tickets)
+            <div className="w-full flex flex-col items-center gap-6 p-8">
+              <div className="text-center">
+                <h2 className="text-2xl font-bold text-white mb-2">
+                  Bulk Play Mode Active
+                </h2>
+                <p className="text-gray-400 mb-1">
+                  Ready to play {ticketCount} tickets at once
+                </p>
+                <p className="text-sm text-gray-500">
+                  Scratch cards will appear in a circular animation
+                </p>
+              </div>
+
+              <button
+                onClick={handleStartBulkPlay}
+                className="group relative px-8 py-4 rounded-xl font-bold text-xl bg-gradient-to-r from-yellow-500 via-orange-500 to-pink-500 hover:from-yellow-400 hover:via-orange-400 hover:to-pink-400 text-white shadow-2xl transition-all transform hover:scale-105 overflow-hidden"
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-yellow-600 via-orange-600 to-pink-600 opacity-0 group-hover:opacity-100 transition-opacity" />
+                <span className="relative flex items-center gap-2">
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                  REVEAL ALL PRIZES
+                </span>
+              </button>
+
+              <button
+                onClick={() => {
+                  setIsBulkPlayMode(false);
+                  setTicketCount(1);
+                }}
+                className="text-gray-400 hover:text-white transition-colors text-sm underline"
+              >
+                Exit bulk mode
+              </button>
+            </div>
+          )}
         </div>
       </main>
     </div>
