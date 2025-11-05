@@ -44,41 +44,57 @@ export default function ScratchCard({
   const revealThreshold = 40; // Reveal when 40% is scratched
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
+    const initializeCanvas = () => {
+      const canvas = canvasRef.current;
+      if (!canvas) return false;
 
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return false;
 
-    // Set canvas size
-    const rect = canvas.getBoundingClientRect();
-    canvas.width = rect.width * 2; // Higher resolution
-    canvas.height = rect.height * 2;
-    ctx.scale(2, 2);
+      // Set canvas size
+      const rect = canvas.getBoundingClientRect();
 
-    // Draw scratch surface
-    const gradient = ctx.createLinearGradient(0, 0, rect.width, rect.height);
-    gradient.addColorStop(0, '#9333ea'); // Purple
-    gradient.addColorStop(0.5, '#ec4899'); // Pink
-    gradient.addColorStop(1, '#3b82f6'); // Blue
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, rect.width, rect.height);
+      // Ensure we have valid dimensions
+      if (rect.width === 0 || rect.height === 0) return false;
 
-    // Add text
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-    ctx.font = 'bold 16px Arial';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText('SCRATCH', rect.width / 2, rect.height / 2 - 10);
-    ctx.fillText('TO REVEAL', rect.width / 2, rect.height / 2 + 10);
+      canvas.width = rect.width * 2; // Higher resolution
+      canvas.height = rect.height * 2;
+      ctx.scale(2, 2);
 
-    // Add sparkle pattern
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
-    for (let i = 0; i < 50; i++) {
-      const x = Math.random() * rect.width;
-      const y = Math.random() * rect.height;
-      const size = Math.random() * 3;
-      ctx.fillRect(x, y, size, size);
+      // Draw scratch surface
+      const gradient = ctx.createLinearGradient(0, 0, rect.width, rect.height);
+      gradient.addColorStop(0, '#9333ea'); // Purple
+      gradient.addColorStop(0.5, '#ec4899'); // Pink
+      gradient.addColorStop(1, '#3b82f6'); // Blue
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, rect.width, rect.height);
+
+      // Add text
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+      ctx.font = 'bold 16px Arial';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('SCRATCH', rect.width / 2, rect.height / 2 - 10);
+      ctx.fillText('TO REVEAL', rect.width / 2, rect.height / 2 + 10);
+
+      // Add sparkle pattern
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+      for (let i = 0; i < 50; i++) {
+        const x = Math.random() * rect.width;
+        const y = Math.random() * rect.height;
+        const size = Math.random() * 3;
+        ctx.fillRect(x, y, size, size);
+      }
+
+      return true;
+    };
+
+    // Try to initialize, retry if dimensions not ready
+    if (!initializeCanvas()) {
+      const timer = setTimeout(() => {
+        initializeCanvas();
+      }, 100);
+      return () => clearTimeout(timer);
     }
   }, []);
 
@@ -98,6 +114,11 @@ export default function ScratchCard({
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
+    const rect = canvas.getBoundingClientRect();
+
+    // Ensure canvas has valid dimensions
+    if (rect.width === 0 || rect.height === 0) return;
+
     // Animate the reveal
     let progress = 0;
     const animate = () => {
@@ -107,7 +128,6 @@ export default function ScratchCard({
         return;
       }
 
-      const rect = canvas.getBoundingClientRect();
       ctx.globalCompositeOperation = 'destination-out';
 
       // Clear in a circular pattern
@@ -138,6 +158,10 @@ export default function ScratchCard({
     if (!ctx) return;
 
     const rect = canvas.getBoundingClientRect();
+
+    // Ensure canvas has valid dimensions
+    if (rect.width === 0 || rect.height === 0) return;
+
     let x, y;
 
     if ('touches' in e) {
@@ -158,20 +182,27 @@ export default function ScratchCard({
   };
 
   const checkScratchPercentage = (canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) => {
-    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    const pixels = imageData.data;
-    let transparent = 0;
+    // Ensure canvas has valid dimensions
+    if (canvas.width <= 0 || canvas.height <= 0) return;
 
-    for (let i = 3; i < pixels.length; i += 4) {
-      if (pixels[i] < 128) transparent++;
-    }
+    try {
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const pixels = imageData.data;
+      let transparent = 0;
 
-    const percentage = (transparent / (pixels.length / 4)) * 100;
-    setScratchPercentage(percentage);
+      for (let i = 3; i < pixels.length; i += 4) {
+        if (pixels[i] < 128) transparent++;
+      }
 
-    if (percentage > revealThreshold && !isRevealed) {
-      setIsRevealed(true);
-      onReveal?.();
+      const percentage = (transparent / (pixels.length / 4)) * 100;
+      setScratchPercentage(percentage);
+
+      if (percentage > revealThreshold && !isRevealed) {
+        setIsRevealed(true);
+        onReveal?.();
+      }
+    } catch (error) {
+      console.error('Error checking scratch percentage:', error);
     }
   };
 
