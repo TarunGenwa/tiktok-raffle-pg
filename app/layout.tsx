@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import NavSidebar from "./components/NavSidebar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -35,7 +36,22 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased overscroll-none`}
         style={{ overscrollBehavior: 'none' }}
       >
-        {children}
+        <div className="flex h-screen bg-black overflow-hidden">
+          {/* Left Sidebar - Navigation (Desktop Only) */}
+          <aside className="hidden md:block w-20 bg-black border-r border-gray-800 flex-shrink-0">
+            <NavSidebar />
+          </aside>
+
+          {/* Mobile Navigation - Always render NavSidebar for mobile bottom nav */}
+          <div className="md:hidden">
+            <NavSidebar />
+          </div>
+
+          {/* Main Content */}
+          <div className="flex-1 overflow-hidden">
+            {children}
+          </div>
+        </div>
       </body>
     </html>
   );

@@ -148,7 +148,7 @@ export default function CompetitionPage() {
   }
 
   return (
-    <div className="flex h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 overflow-hidden">
+    <div className="h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 overflow-hidden relative">
       {/* Back Button - Top Left */}
       <button
         onClick={() => router.back()}
@@ -160,7 +160,7 @@ export default function CompetitionPage() {
       </button>
 
       {/* Main Content Area - Centered Slide Layout */}
-      <main className="flex-1 flex flex-col items-center justify-start relative overflow-y-auto py-16 md:py-8">
+      <main className="h-full flex flex-col items-center justify-start overflow-y-auto py-16 md:py-8 pb-24 md:pb-8">
         {/* Interaction Buttons - Prizes Tickets Tab */}
         <div className="w-full flex justify-center mb-4 z-10">
           <InteractionSidebar

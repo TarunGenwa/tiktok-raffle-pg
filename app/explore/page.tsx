@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import NavSidebar from '../components/NavSidebar';
 import CompetitionCard from '../components/CompetitionCard';
 
 interface Prize {
@@ -196,19 +195,9 @@ export default function ExplorePage() {
   });
 
   return (
-    <div className="flex h-screen bg-black overflow-hidden">
-      {/* Left Sidebar - Navigation (Desktop Only) */}
-      <aside className="hidden md:block w-20 bg-black border-r border-gray-800 flex-shrink-0">
-        <NavSidebar />
-      </aside>
-
-      {/* Mobile Navigation */}
-      <div className="md:hidden">
-        <NavSidebar />
-      </div>
-
+    <div className="h-screen bg-black overflow-hidden">
       {/* Main Content Area */}
-      <main className="flex-1 overflow-y-auto pb-20 md:pb-8">
+      <main className="h-full overflow-y-auto pb-20 md:pb-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
           {/* Header */}
           {/* <div className="mb-6 md:mb-8">

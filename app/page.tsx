@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import NavSidebar from './components/NavSidebar';
 import Competition from './components/Competition';
 import { Button } from '@/components/ui/button';
 
@@ -242,16 +241,6 @@ export default function Home() {
 
   return (
     <div className="flex h-screen bg-black overflow-hidden overscroll-none">
-      {/* Left Sidebar - Navigation (Desktop Only) */}
-      <aside className="hidden md:block w-20 bg-black border-r border-gray-800 flex-shrink-0">
-        <NavSidebar />
-      </aside>
-
-      {/* Mobile Navigation - Always render NavSidebar for mobile bottom nav */}
-      <div className="md:hidden">
-        <NavSidebar />
-      </div>
-
       {/* Main Content Area - Media Player */}
       <main
         className="flex-1 flex items-center justify-center relative overflow-hidden select-none pb-20 md:pb-0 touch-pan-y"
