@@ -38,7 +38,6 @@ export default function Home() {
       participants: 9876,
       timeRemaining: '4h 10m',
       sponsored: true,
-      videoUrl: '/lennie.mp4',
       prizes: [
         { name: 'Gaming Headset', rarity: 'common', probability: 35, imageUrl: '/CTSP credit 1gbp.png' },
         { name: 'RGB Keyboard', rarity: 'rare', probability: 30, imageUrl: '/CTSP credit 5gbp.png' },
