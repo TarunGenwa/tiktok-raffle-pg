@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import PrizeWheel from '@/app/components/PrizeWheel';
 import InteractionSidebar from '@/app/components/InteractionSidebar';
@@ -118,9 +119,22 @@ export default function CompetitionPage() {
   const router = useRouter();
   const params = useParams();
   const competitionId = params.id as string;
+  const [ticketCount, setTicketCount] = useState(1);
 
   // Find the competition by ID
   const competition = competitions.find(c => c.id === competitionId);
+
+  const incrementTickets = () => {
+    if (ticketCount < 5) {
+      setTicketCount(ticketCount + 1);
+    }
+  };
+
+  const decrementTickets = () => {
+    if (ticketCount > 1) {
+      setTicketCount(ticketCount - 1);
+    }
+  };
 
   if (!competition) {
     return (
@@ -147,12 +161,38 @@ export default function CompetitionPage() {
 
       {/* Main Content Area - Centered Slide Layout */}
       <main className="flex-1 flex flex-col items-center justify-start relative overflow-y-auto py-16 md:py-8">
-        {/* Interaction Buttons - Centered Above PrizeWheel */}
+        {/* Interaction Buttons - Prizes Tickets Tab */}
         <div className="w-full flex justify-center mb-4 z-10">
           <InteractionSidebar
             prizes={competition.prizes}
             competitionTitle={competition.title}
           />
+        </div>
+
+        {/* Ticket Counter */}
+        <div className="w-full flex justify-center mb-4 z-10">
+          <div className="bg-black/50 backdrop-blur-sm rounded-2xl border border-white/20 px-6 py-4 shadow-xl">
+            <div className="flex items-center gap-4">
+              <button
+                onClick={decrementTickets}
+                disabled={ticketCount <= 1}
+                className="w-10 h-10 rounded-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 disabled:from-gray-600 disabled:to-gray-700 disabled:cursor-not-allowed flex items-center justify-center text-white font-bold text-xl transition-all hover:scale-105 disabled:hover:scale-100 shadow-lg"
+              >
+                -
+              </button>
+              <div className="text-center min-w-[120px]">
+                <div className="text-3xl font-bold text-white">{ticketCount}</div>
+                <div className="text-sm text-gray-400 mt-1">Ticket{ticketCount !== 1 ? 's' : ''}</div>
+              </div>
+              <button
+                onClick={incrementTickets}
+                disabled={ticketCount >= 5}
+                className="w-10 h-10 rounded-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 disabled:from-gray-600 disabled:to-gray-700 disabled:cursor-not-allowed flex items-center justify-center text-white font-bold text-xl transition-all hover:scale-105 disabled:hover:scale-100 shadow-lg"
+              >
+                +
+              </button>
+            </div>
+          </div>
         </div>
 
         {/* PrizeWheel Container */}
@@ -163,6 +203,7 @@ export default function CompetitionPage() {
             competitionTitle={competition.title}
             isInline={true}
             hideCloseButton={true}
+            numberOfTickets={ticketCount}
           />
         </div>
       </main>

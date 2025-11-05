@@ -16,15 +16,18 @@ interface PrizeWheelProps {
   competitionTitle: string;
   isInline?: boolean;
   hideCloseButton?: boolean;
+  numberOfTickets?: number;
 }
 
-export default function PrizeWheel({ prizes, onClose, competitionTitle, isInline = false, hideCloseButton = false }: PrizeWheelProps) {
+export default function PrizeWheel({ prizes, onClose, competitionTitle, isInline = false, hideCloseButton = false, numberOfTickets = 5 }: PrizeWheelProps) {
   const [isSpinning, setIsSpinning] = useState(false);
   const [wonPrizes, setWonPrizes] = useState<Prize[] | null>(null);
+  // Always maintain 5 offsets, only use first numberOfTickets
   const [rowOffsets, setRowOffsets] = useState([0, 0, 0, 0, 0]);
   const [isVisible, setIsVisible] = useState(false);
   const [isExiting, setIsExiting] = useState(false);
 
+  // Always create 5 refs (maximum), but only use the first numberOfTickets
   const rowRefs = [
     useRef<HTMLDivElement>(null),
     useRef<HTMLDivElement>(null),
@@ -50,6 +53,12 @@ export default function PrizeWheel({ prizes, onClose, competitionTitle, isInline
     };
   }, []);
 
+  // Reset when numberOfTickets changes
+  useEffect(() => {
+    setWonPrizes(null);
+    setRowOffsets([0, 0, 0, 0, 0]);
+  }, [numberOfTickets]);
+
   const rarityGradients = {
     common: 'from-gray-500 to-gray-600',
     rare: 'from-blue-500 to-blue-600',
@@ -66,7 +75,7 @@ export default function PrizeWheel({ prizes, onClose, competitionTitle, isInline
     // Play ticking sound
     playTickingSound();
 
-    // Select 5 prizes based on probability (one for each row)
+    // Select prizes based on probability (one for each row)
     const selectPrize = () => {
       const random = Math.random() * 100;
       let cumulative = 0;
@@ -79,13 +88,7 @@ export default function PrizeWheel({ prizes, onClose, competitionTitle, isInline
       return prizes[0];
     };
 
-    const selectedPrizes = [
-      selectPrize(),
-      selectPrize(),
-      selectPrize(),
-      selectPrize(),
-      selectPrize()
-    ];
+    const selectedPrizes = Array(numberOfTickets).fill(null).map(() => selectPrize());
 
     // Calculate positions for each row to land on its specific winning prize
     const prizeWidth = isInline ? 110 : 130; // Width of each prize item (matching the actual rendered width)
@@ -93,7 +96,7 @@ export default function PrizeWheel({ prizes, onClose, competitionTitle, isInline
     const repetitions = 50; // Increased repetitions for proper circular loop
 
     // Create different spin amounts for each row (they'll stop at different times)
-    const newOffsets = rowRefs.map((_, rowIndex) => {
+    const newOffsets = rowRefs.slice(0, numberOfTickets).map((_, rowIndex) => {
       const selectedPrize = selectedPrizes[rowIndex];
       const prizeIndex = prizes.indexOf(selectedPrize);
 
@@ -110,10 +113,12 @@ export default function PrizeWheel({ prizes, onClose, competitionTitle, isInline
       return totalOffset;
     });
 
-    setRowOffsets(newOffsets);
+    // Pad with zeros to always have 5 elements
+    const paddedOffsets = [...newOffsets, ...Array(5 - numberOfTickets).fill(0)];
+    setRowOffsets(paddedOffsets);
 
-    // Staggered completion times for rows (1.8s, 2.2s, 2.6s, 3.0s, 3.4s)
-    const stopTimes = [1800, 2200, 2600, 3000, 3400];
+    // Staggered completion times for rows (1.8s base + 0.4s per row)
+    const stopTimes = Array(numberOfTickets).fill(0).map((_, i) => 1800 + i * 400);
 
     // Stop ticking sound after last row stops
     setTimeout(() => {
@@ -241,7 +246,7 @@ export default function PrizeWheel({ prizes, onClose, competitionTitle, isInline
 
               {/* Slot Rows */}
               <div className={`flex flex-col ${isInline ? 'gap-1 sm:gap-2' : 'gap-2 sm:gap-4'} relative`}>
-                {rowRefs.map((ref, rowIndex) => (
+                {rowRefs.slice(0, numberOfTickets).map((ref, rowIndex) => (
                   <div key={rowIndex} className={`flex-1 ${rowIndex >= 3 ? 'hidden sm:block' : ''}`}>
                     {/* Row Container */}
                     <div className={`bg-gray-950 rounded-xl p-1 sm:p-2 ${isInline ? 'w-[360px] sm:w-[420px]' : 'w-[480px] sm:w-[600px]'} overflow-hidden relative shadow-inner border-2 sm:border-4 border-gray-700`}>
@@ -329,9 +334,9 @@ export default function PrizeWheel({ prizes, onClose, competitionTitle, isInline
 
           {/* Winner Content */}
           <div className={`relative z-10 text-center ${isInline ? 'space-y-2 sm:space-y-3' : 'space-y-4 sm:space-y-6'}`}>
-            <h2 className={`${isInline ? 'text-xl sm:text-2xl' : 'text-3xl sm:text-4xl md:text-5xl'} font-bold text-white animate-[bounceIn_0.6s_ease-out]`}>🎉 YOU WON 5 PRIZES! 🎉</h2>
+            <h2 className={`${isInline ? 'text-xl sm:text-2xl' : 'text-3xl sm:text-4xl md:text-5xl'} font-bold text-white animate-[bounceIn_0.6s_ease-out]`}>🎉 YOU WON {numberOfTickets} PRIZE{numberOfTickets !== 1 ? 'S' : ''}! 🎉</h2>
 
-            {/* Prizes Display - All 5 with fixed width and wrapping */}
+            {/* Prizes Display - with fixed width and wrapping */}
             <div className={`flex flex-wrap justify-center ${isInline ? 'gap-2' : 'gap-3 sm:gap-4'} w-full`}>
               {wonPrizes.map((prize, index) => (
                 <div
