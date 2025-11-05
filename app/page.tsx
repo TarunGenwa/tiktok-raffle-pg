@@ -119,9 +119,12 @@ export default function Home() {
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [lastScrollTime, setLastScrollTime] = useState(0);
 
   // Minimum swipe distance (in px) to trigger navigation
   const minSwipeDistance = 50;
+  // Minimum time between scroll events (in ms) to prevent too rapid scrolling
+  const scrollDebounceTime = 800;
 
   const goToNextCompetition = () => {
     if (currentCompetitionIndex < competitions.length - 1 && !isTransitioning) {
@@ -187,51 +190,40 @@ export default function Home() {
     setTouchEnd(null);
   };
 
-  // Mouse event handlers for desktop
-  const [mouseStart, setMouseStart] = useState<number | null>(null);
-
-  const onMouseDown = (e: React.MouseEvent) => {
-    setMouseStart(e.clientY);
-    setIsDragging(true);
-  };
-
-  const onMouseMove = (e: React.MouseEvent) => {
-    if (mouseStart === null) return;
-
-    const diff = mouseStart - e.clientY;
-    setDragOffset(diff);
-  };
-
-  const onMouseUp = () => {
-    if (mouseStart === null) {
-      setIsDragging(false);
-      setDragOffset(0);
+  // Wheel event handler for desktop scroll
+  const onWheel = (e: React.WheelEvent) => {
+    // Prevent if already transitioning
+    if (isTransitioning) {
+      e.preventDefault();
       return;
     }
 
-    // Use the accumulated dragOffset instead of recalculating
-    const isSwipeUp = dragOffset > minSwipeDistance;
-    const isSwipeDown = dragOffset < -minSwipeDistance;
-
-    if (isSwipeUp) {
-      goToNextCompetition();
-    } else if (isSwipeDown) {
-      goToPreviousCompetition();
+    const now = Date.now();
+    if (now - lastScrollTime < scrollDebounceTime) {
+      e.preventDefault();
+      return;
     }
 
-    // Reset all states
-    setIsDragging(false);
-    setDragOffset(0);
-    setMouseStart(null);
-  };
+    // Prevent default scroll behavior
+    e.preventDefault();
 
-  const onMouseLeave = () => {
-    // Reset all states when mouse leaves
-    setIsDragging(false);
-    setDragOffset(0);
-    setMouseStart(null);
-  };
+    // Check scroll direction (using a threshold to avoid tiny movements)
+    if (Math.abs(e.deltaY) < 10) return;
 
+    if (e.deltaY > 0) {
+      // Scrolling down - go to next
+      if (currentCompetitionIndex < competitions.length - 1) {
+        setLastScrollTime(now);
+        goToNextCompetition();
+      }
+    } else if (e.deltaY < 0) {
+      // Scrolling up - go to previous
+      if (currentCompetitionIndex > 0) {
+        setLastScrollTime(now);
+        goToPreviousCompetition();
+      }
+    }
+  };
 
   const currentCompetition = competitions[currentCompetitionIndex];
 
@@ -266,12 +258,8 @@ export default function Home() {
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
-        onMouseDown={onMouseDown}
-        onMouseMove={onMouseMove}
-        onMouseUp={onMouseUp}
-        onMouseLeave={onMouseLeave}
+        onWheel={onWheel}
         style={{
-          cursor: isDragging ? 'grabbing' : 'grab',
           touchAction: 'pan-y',
           overscrollBehavior: 'none'
         }}
@@ -356,9 +344,9 @@ export default function Home() {
             })}
           </div>
 
-          {/* Swipe Indicator */}
+          {/* Swipe Indicator - Mobile Only */}
           {isDragging && (
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-30 pointer-events-none">
+            <div className="md:hidden absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-30 pointer-events-none">
               <div className="bg-black/70 rounded-full p-3 sm:p-4">
                 {dragOffset > minSwipeDistance && currentCompetitionIndex < competitions.length - 1 && (
                   <svg className="w-6 h-6 sm:w-8 sm:h-8 text-white animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
