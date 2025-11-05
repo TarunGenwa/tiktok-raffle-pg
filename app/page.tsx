@@ -253,7 +253,7 @@ export default function Home() {
           overscrollBehavior: 'none'
         }}
       >
-        <div className="w-full max-w-md h-[calc(100vh-8rem)] md:h-[calc(100vh-4rem)] mx-auto relative px-2 md:px-0">
+        <div className="w-full max-w-md h-[calc(100vh-8rem)] md:h-[calc(100vh-4rem)] mx-auto relative px-1 md:px-0">
           {/* Competitions Stack with Smooth Transitions */}
           <div className="relative w-full h-full">
             {competitions.map((competition, index) => {

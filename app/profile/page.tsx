@@ -130,7 +130,7 @@ export default function ProfilePage() {
     <div className="h-screen bg-black overflow-hidden">
       {/* Main Content Area */}
       <main className="h-full overflow-y-auto pb-20 md:pb-8">
-        <div className="max-w-md mx-auto px-4 sm:px-6 py-6 md:py-8">
+        <div className="max-w-md mx-auto px-2 sm:px-6 py-4 md:py-8">
           {/* Profile Header */}
           <div className="mb-6">
             {/* Avatar and Basic Info */}

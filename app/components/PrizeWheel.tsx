@@ -342,7 +342,7 @@ export default function PrizeWheel({ prizes, onClose, competitionTitle, isInline
           />
 
           {/* Drawer */}
-          <div className={`fixed bottom-0 left-1/2 z-50 bg-gradient-to-b from-gray-900 to-black rounded-t-3xl shadow-2xl border-t-4 border-yellow-500 transition-transform duration-500 ease-out max-h-[90vh] overflow-y-auto w-full max-w-md px-2 md:px-0 ${
+          <div className={`fixed bottom-0 left-1/2 z-50 bg-gradient-to-b from-gray-900 to-black rounded-t-3xl shadow-2xl border-t-4 border-yellow-500 transition-transform duration-500 ease-out max-h-[90vh] overflow-y-auto w-full max-w-md px-1 md:px-0 ${
             isDrawerOpen ? '-translate-x-1/2 translate-y-0' : '-translate-x-1/2 translate-y-full'
           }`}>
             <div className="flex flex-col items-center space-y-4 sm:space-y-6 p-6">

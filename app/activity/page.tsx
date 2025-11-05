@@ -193,7 +193,7 @@ export default function ActivityPage() {
     <div className="h-screen bg-black overflow-hidden">
       {/* Main Content Area */}
       <main className="h-full overflow-y-auto pb-20 md:pb-8">
-        <div className="max-w-md mx-auto px-4 sm:px-6 py-6 md:py-8">
+        <div className="max-w-md mx-auto px-2 sm:px-6 py-4 md:py-8">
           {/* Header */}
           {/* <div className="mb-6 md:mb-8">
             <div className="flex items-center gap-3 mb-2">

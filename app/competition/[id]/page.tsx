@@ -160,7 +160,7 @@ export default function CompetitionPage() {
       </button>
 
       {/* Main Content Area - Centered Slide Layout */}
-      <main className="h-full flex flex-col items-center justify-start overflow-y-auto py-16 md:py-8 pb-24 md:pb-8">
+      <main className="h-full flex flex-col items-center justify-start overflow-y-auto py-4 md:py-8 pb-20 md:pb-8">
         {/* Interaction Buttons - Prizes Tickets Tab */}
         <div className="w-full flex justify-center mb-4 z-10">
           <InteractionSidebar
@@ -170,7 +170,7 @@ export default function CompetitionPage() {
         </div>
 
         {/* Ticket Counter */}
-        <div className="w-full max-w-md mx-auto px-2 md:px-0 mb-4 z-10">
+        <div className="w-full max-w-md mx-auto px-1 md:px-0 mb-4 z-10">
           <div className="bg-gradient-to-b from-gray-800 to-gray-900 rounded-2xl border-2 border-gray-700 px-6 py-4 shadow-2xl">
             <div className="flex items-center justify-between gap-4">
               <button
@@ -199,7 +199,7 @@ export default function CompetitionPage() {
         </div>
 
         {/* PrizeWheel Container */}
-        <div className="w-full max-w-md mx-auto relative px-2 md:px-0 flex items-center">
+        <div className="w-full max-w-md mx-auto relative px-1 md:px-0 flex items-center">
           <PrizeWheel
             prizes={competition.prizes}
             onClose={() => router.back()}
