@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import PrizeWheel from './PrizeWheel';
 
 interface Prize {
   name: string;
@@ -27,6 +27,7 @@ interface CompetitionProps {
 }
 
 export default function Competition({
+  id,
   title,
   category,
   description,
@@ -39,7 +40,7 @@ export default function Competition({
   videoUrl,
   isActive = true
 }: CompetitionProps) {
-  const [isSpinnerOpen, setIsSpinnerOpen] = useState(false);
+  const router = useRouter();
   const [videoEnded, setVideoEnded] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -111,16 +112,7 @@ export default function Competition({
 
   return (
     <div className="relative w-full h-full bg-gradient-to-br from-gray-900 via-black to-gray-900 rounded-lg overflow-hidden">
-      {isSpinnerOpen ? (
-        /* Inline Spinner */
-        <PrizeWheel
-          prizes={prizes}
-          onClose={() => setIsSpinnerOpen(false)}
-          competitionTitle={title}
-          isInline={true}
-        />
-      ) : (
-        <>
+      <>
           {/* Video Background */}
           {videoUrl && (
             <>
@@ -226,7 +218,7 @@ export default function Competition({
 
               {/* Enter Button */}
               <Button
-                onClick={() => setIsSpinnerOpen(true)}
+                onClick={() => router.push(`/competition/${id}`)}
                 size="lg"
                 className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold text-xl px-16 py-6 rounded-full shadow-2xl transform transition-all hover:scale-105"
               >
@@ -251,8 +243,7 @@ export default function Competition({
             </>
           )}
           </div>
-        </>
-      )}
+      </>
     </div>
   );
 }

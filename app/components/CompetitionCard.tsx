@@ -1,8 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import PrizeWheel from './PrizeWheel';
 
 interface Prize {
   name: string;
@@ -26,6 +25,7 @@ interface CompetitionCardProps {
 }
 
 export default function CompetitionCard({
+  id,
   title,
   category,
   description,
@@ -37,7 +37,7 @@ export default function CompetitionCard({
   sponsored = false,
   videoUrl
 }: CompetitionCardProps) {
-  const [isSpinnerOpen, setIsSpinnerOpen] = useState(false);
+  const router = useRouter();
 
   const categoryColors = {
     crypto: 'from-orange-500 to-yellow-500',
@@ -77,21 +77,7 @@ export default function CompetitionCard({
   };
 
   return (
-    <>
-      {isSpinnerOpen && (
-        <div className="fixed inset-0 z-50 bg-black/95 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="w-full max-w-md h-[calc(100vh-8rem)] md:h-[calc(100vh-4rem)] mx-auto">
-            <PrizeWheel
-              prizes={prizes}
-              onClose={() => setIsSpinnerOpen(false)}
-              competitionTitle={title}
-              isInline={true}
-            />
-          </div>
-        </div>
-      )}
-
-      <div className="group relative bg-gradient-to-br from-gray-900 via-black to-gray-900 rounded-xl overflow-hidden border border-gray-800 hover:border-gray-700 transition-all hover:scale-[1.02] hover:shadow-2xl">
+    <div className="group relative bg-gradient-to-br from-gray-900 via-black to-gray-900 rounded-xl overflow-hidden border border-gray-800 hover:border-gray-700 transition-all hover:scale-[1.02] hover:shadow-2xl">
         {/* Video/Image Preview */}
         {videoUrl ? (
           <div className="relative h-48 bg-gray-950 overflow-hidden">
@@ -168,13 +154,12 @@ export default function CompetitionCard({
 
           {/* Enter Button */}
           <Button
-            onClick={() => setIsSpinnerOpen(true)}
+            onClick={() => router.push(`/competition/${id}`)}
             className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold py-2 rounded-lg shadow-lg transform transition-all hover:scale-105"
           >
             Enter & Spin
           </Button>
         </div>
       </div>
-    </>
   );
 }

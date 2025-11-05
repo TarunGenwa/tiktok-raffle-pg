@@ -15,9 +15,10 @@ interface PrizeWheelProps {
   onClose: () => void;
   competitionTitle: string;
   isInline?: boolean;
+  hideCloseButton?: boolean;
 }
 
-export default function PrizeWheel({ prizes, onClose, competitionTitle, isInline = false }: PrizeWheelProps) {
+export default function PrizeWheel({ prizes, onClose, competitionTitle, isInline = false, hideCloseButton = false }: PrizeWheelProps) {
   const [isSpinning, setIsSpinning] = useState(false);
   const [wonPrizes, setWonPrizes] = useState<Prize[] | null>(null);
   const [rowOffsets, setRowOffsets] = useState([0, 0, 0, 0, 0]);
@@ -183,21 +184,23 @@ export default function PrizeWheel({ prizes, onClose, competitionTitle, isInline
 
   return (
     <div
-      className={`${isInline ? 'relative w-full h-full' : 'fixed inset-0 z-50'} bg-black/95 backdrop-blur-md flex items-center justify-center p-4 transition-all duration-300 ${
+      className={`${hideCloseButton ? 'relative w-full h-full' : isInline ? 'relative w-full h-full' : 'fixed inset-0 z-50'} ${hideCloseButton ? 'bg-transparent' : 'bg-black/95 backdrop-blur-md'} flex items-center justify-center ${hideCloseButton ? 'p-0' : 'p-4'} transition-all duration-300 ${
         isVisible && !isExiting ? 'opacity-100' : 'opacity-0'
       }`}
     >
       {/* Close Button */}
-      <button
-        onClick={handleClose}
-        className={`absolute top-4 right-4 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-all duration-300 z-10 ${
-          isVisible && !isExiting ? 'scale-100 opacity-100' : 'scale-50 opacity-0'
-        }`}
-      >
-        <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-        </svg>
-      </button>
+      {!hideCloseButton && (
+        <button
+          onClick={handleClose}
+          className={`absolute top-4 right-4 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-all duration-300 z-10 ${
+            isVisible && !isExiting ? 'scale-100 opacity-100' : 'scale-50 opacity-0'
+          }`}
+        >
+          <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      )}
 
       {!wonPrizes ? (
         <div
