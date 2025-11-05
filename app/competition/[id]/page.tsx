@@ -2,6 +2,7 @@
 
 import { useRouter, useParams } from 'next/navigation';
 import PrizeWheel from '@/app/components/PrizeWheel';
+import InteractionSidebar from '@/app/components/InteractionSidebar';
 import { Button } from '@/components/ui/button';
 
 interface Prize {
@@ -145,8 +146,17 @@ export default function CompetitionPage() {
       </button>
 
       {/* Main Content Area - Centered Slide Layout */}
-      <main className="flex-1 flex items-start justify-center relative overflow-y-auto py-16 md:py-8">
-        <div className="w-full max-w-md mx-auto relative px-2 md:px-0 flex items-center min-h-full">
+      <main className="flex-1 flex flex-col items-center justify-start relative overflow-y-auto py-16 md:py-8">
+        {/* Interaction Buttons - Centered Above PrizeWheel */}
+        <div className="w-full flex justify-center mb-4 z-10">
+          <InteractionSidebar
+            prizes={competition.prizes}
+            competitionTitle={competition.title}
+          />
+        </div>
+
+        {/* PrizeWheel Container */}
+        <div className="w-full max-w-md mx-auto relative px-2 md:px-0 flex items-center">
           <PrizeWheel
             prizes={competition.prizes}
             onClose={() => router.back()}

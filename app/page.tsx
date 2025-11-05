@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import NavSidebar from './components/NavSidebar';
 import Competition from './components/Competition';
-import InteractionSidebar from './components/InteractionSidebar';
 import { Button } from '@/components/ui/button';
 
 interface Prize {
@@ -411,13 +410,6 @@ export default function Home() {
           </Button>
         </div>
 
-        {/* Right Sidebar - Interactions (Overlaid on media player) */}
-        <div className="absolute right-4 sm:right-6 md:right-10 top-1/2 -translate-y-1/2 z-10">
-          <InteractionSidebar
-            prizes={currentCompetition.prizes}
-            competitionTitle={currentCompetition.title}
-          />
-        </div>
       </main>
     </div>
   );
