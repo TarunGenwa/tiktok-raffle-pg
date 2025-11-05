@@ -131,7 +131,7 @@ export default function PrizeWheel({ prizes, onClose, competitionTitle, isInline
     setTimeout(() => {
       setWonPrizes(selectedPrizes);
       setIsSpinning(false);
-      // Don't auto-open drawer, let user click the button
+      setIsDrawerOpen(true); // Auto-open drawer
     }, stopTimes[stopTimes.length - 1] + 500);
   };
 
@@ -226,17 +226,6 @@ export default function PrizeWheel({ prizes, onClose, competitionTitle, isInline
             <h2 className={`${isInline ? 'text-lg sm:text-xl' : 'text-xl sm:text-2xl md:text-3xl'} font-bold text-white px-4`}>{competitionTitle}</h2>
             <p className={`${isInline ? 'text-xs sm:text-sm' : 'text-sm sm:text-base'} text-gray-400 px-4`}>Spin the slots to win your prize!</p>
           </div>
-
-          {/* View Prizes Button */}
-          {wonPrizes && !isSpinning && (
-            <Button
-              onClick={() => setIsDrawerOpen(true)}
-              size={isInline ? "default" : "lg"}
-              className={`bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold ${isInline ? 'text-sm px-6 py-3' : 'text-base sm:text-lg px-8 sm:px-12 py-4 sm:py-5'} rounded-full shadow-2xl transform transition-all hover:scale-105 animate-pulse`}
-            >
-              🎁 View Your Prizes ({numberOfTickets})
-            </Button>
-          )}
 
           {/* Slot Machine Container */}
           <div
@@ -353,9 +342,9 @@ export default function PrizeWheel({ prizes, onClose, competitionTitle, isInline
           />
 
           {/* Drawer */}
-          <div className={`fixed inset-x-0 bottom-0 z-50 bg-gradient-to-b from-gray-900 to-black rounded-t-3xl shadow-2xl border-t-4 border-yellow-500 transition-transform duration-500 ease-out ${
-            isDrawerOpen ? 'translate-y-0' : 'translate-y-full'
-          } max-h-[90vh] overflow-y-auto`}>
+          <div className={`fixed bottom-0 left-1/2 z-50 bg-gradient-to-b from-gray-900 to-black rounded-t-3xl shadow-2xl border-t-4 border-yellow-500 transition-transform duration-500 ease-out max-h-[90vh] overflow-y-auto w-full max-w-md px-2 md:px-0 ${
+            isDrawerOpen ? '-translate-x-1/2 translate-y-0' : '-translate-x-1/2 translate-y-full'
+          }`}>
             <div className="flex flex-col items-center space-y-4 sm:space-y-6 p-6">
               {/* Drag Handle */}
               <div className="w-12 h-1.5 bg-gray-600 rounded-full" />
@@ -404,22 +393,14 @@ export default function PrizeWheel({ prizes, onClose, competitionTitle, isInline
               ))}
             </div>
 
-            {/* Action Buttons */}
-            <div className="flex gap-3 justify-center w-full sm:w-auto">
+            {/* Action Button */}
+            <div className="flex justify-center w-full sm:w-auto">
               <Button
                 onClick={handlePlayAgain}
                 size={isInline ? "default" : "lg"}
-                className={`bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold ${isInline ? 'px-4 sm:px-6 py-2 sm:py-3 text-sm' : 'px-6 sm:px-8 py-3 sm:py-4'} rounded-full transform hover:scale-105 transition-transform flex-1 sm:flex-initial`}
+                className={`bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold ${isInline ? 'px-4 sm:px-6 py-2 sm:py-3 text-sm' : 'px-6 sm:px-8 py-3 sm:py-4'} rounded-full transform hover:scale-105 transition-transform w-full sm:w-auto`}
               >
                 Spin Again
-              </Button>
-              <Button
-                onClick={() => setIsDrawerOpen(false)}
-                size={isInline ? "default" : "lg"}
-                variant="outline"
-                className={`bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border-2 border-white/30 font-bold ${isInline ? 'px-4 sm:px-6 py-2 sm:py-3 text-sm' : 'px-6 sm:px-8 py-3 sm:py-4'} rounded-full transform hover:scale-105 transition-transform flex-1 sm:flex-initial`}
-              >
-                Close
               </Button>
             </div>
           </div>
