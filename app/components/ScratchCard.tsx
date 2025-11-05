@@ -61,28 +61,45 @@ export default function ScratchCard({
       canvas.height = rect.height * 2;
       ctx.scale(2, 2);
 
-      // Draw scratch surface
+      // Draw metallic scratch surface
       const gradient = ctx.createLinearGradient(0, 0, rect.width, rect.height);
-      gradient.addColorStop(0, '#9333ea'); // Purple
-      gradient.addColorStop(0.5, '#ec4899'); // Pink
-      gradient.addColorStop(1, '#3b82f6'); // Blue
+      gradient.addColorStop(0, '#94a3b8'); // Slate
+      gradient.addColorStop(0.5, '#cbd5e1'); // Light slate
+      gradient.addColorStop(1, '#64748b'); // Dark slate
       ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, rect.width, rect.height);
 
+      // Add metallic shine effect
+      const shineGradient = ctx.createLinearGradient(0, 0, rect.width, 0);
+      shineGradient.addColorStop(0, 'rgba(255, 255, 255, 0)');
+      shineGradient.addColorStop(0.5, 'rgba(255, 255, 255, 0.3)');
+      shineGradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+      ctx.fillStyle = shineGradient;
+      ctx.fillRect(0, 0, rect.width, rect.height);
+
       // Add text
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-      ctx.font = 'bold 16px Arial';
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+      ctx.font = 'bold 14px Arial';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillText('SCRATCH', rect.width / 2, rect.height / 2 - 10);
-      ctx.fillText('TO REVEAL', rect.width / 2, rect.height / 2 + 10);
+      ctx.fillText('SCRATCH', rect.width / 2, rect.height / 2 - 8);
+      ctx.fillText('TO REVEAL', rect.width / 2, rect.height / 2 + 8);
 
-      // Add sparkle pattern
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+      // Add texture pattern for realistic scratch effect
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+      for (let i = 0; i < 100; i++) {
+        const x = Math.random() * rect.width;
+        const y = Math.random() * rect.height;
+        const size = Math.random() * 2;
+        ctx.fillRect(x, y, size, size);
+      }
+
+      // Add darker texture
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
       for (let i = 0; i < 50; i++) {
         const x = Math.random() * rect.width;
         const y = Math.random() * rect.height;
-        const size = Math.random() * 3;
+        const size = Math.random() * 2;
         ctx.fillRect(x, y, size, size);
       }
 
@@ -174,7 +191,7 @@ export default function ScratchCard({
 
     ctx.globalCompositeOperation = 'destination-out';
     ctx.beginPath();
-    ctx.arc(x, y, 30, 0, Math.PI * 2);
+    ctx.arc(x, y, 40, 0, Math.PI * 2);
     ctx.fill();
 
     // Calculate scratch percentage
@@ -211,42 +228,47 @@ export default function ScratchCard({
 
   return (
     <div className="relative w-full h-full">
-      {/* Prize (revealed underneath) */}
-      <div
-        className={`absolute inset-0 bg-gradient-to-br ${rarityColors[prize.rarity]} rounded-xl p-4 flex flex-col items-center justify-center transition-all duration-300 ${
-          isRevealed ? `shadow-2xl ${rarityGlow[prize.rarity]} scale-105` : ''
-        }`}
-      >
-        {cardNumber && (
-          <div className="absolute top-2 left-2 bg-black/40 text-white text-xs font-bold px-2 py-1 rounded">
-            #{cardNumber}
-          </div>
-        )}
+      {/* Background - shown before reveal */}
+      {!isRevealed && (
+        <div className="absolute inset-0 bg-gradient-to-br from-gray-700 to-gray-800 rounded-xl flex items-center justify-center">
+          {cardNumber && (
+            <div className="absolute top-2 left-2 bg-black/40 text-white text-xs font-bold px-2 py-1 rounded">
+              #{cardNumber}
+            </div>
+          )}
+        </div>
+      )}
 
-        {prize.image && (
-          <div className="w-16 h-16 mb-2 relative">
-            <img
-              src={prize.image}
-              alt={prize.name}
-              className="w-full h-full object-contain drop-shadow-lg"
-            />
-          </div>
-        )}
+      {/* Prize (revealed) */}
+      {isRevealed && (
+        <div
+          className={`absolute inset-0 bg-gradient-to-br ${rarityColors[prize.rarity]} rounded-xl p-4 flex flex-col items-center justify-center transition-all duration-300 shadow-2xl ${rarityGlow[prize.rarity]} animate-in zoom-in-95 duration-300`}
+        >
+          {cardNumber && (
+            <div className="absolute top-2 left-2 bg-black/40 text-white text-xs font-bold px-2 py-1 rounded">
+              #{cardNumber}
+            </div>
+          )}
 
-        <p className="text-white font-bold text-center text-sm line-clamp-2">
-          {prize.name}
-        </p>
+          {prize.image && (
+            <div className="w-16 h-16 mb-2 relative">
+              <img
+                src={prize.image}
+                alt={prize.name}
+                className="w-full h-full object-contain drop-shadow-lg"
+              />
+            </div>
+          )}
 
-        <span className="text-xs text-white/80 capitalize mt-1">
-          {prize.rarity}
-        </span>
+          <p className="text-white font-bold text-center text-sm line-clamp-2">
+            {prize.name}
+          </p>
 
-        {isRevealed && (
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div className="absolute inset-0 bg-white/20 rounded-xl animate-ping" />
-          </div>
-        )}
-      </div>
+          <span className="text-xs text-white/80 capitalize mt-1">
+            {prize.rarity}
+          </span>
+        </div>
+      )}
 
       {/* Scratch layer */}
       {!isRevealed && (
