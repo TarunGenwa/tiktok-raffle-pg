@@ -22,6 +22,7 @@ interface PrizeWheelProps {
 export default function PrizeWheel({ prizes, onClose, competitionTitle, isInline = false, hideCloseButton = false, numberOfTickets = 5 }: PrizeWheelProps) {
   const [isSpinning, setIsSpinning] = useState(false);
   const [wonPrizes, setWonPrizes] = useState<Prize[] | null>(null);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   // Always maintain 5 offsets, only use first numberOfTickets
   const [rowOffsets, setRowOffsets] = useState([0, 0, 0, 0, 0]);
   const [isVisible, setIsVisible] = useState(false);
@@ -57,6 +58,7 @@ export default function PrizeWheel({ prizes, onClose, competitionTitle, isInline
   useEffect(() => {
     setWonPrizes(null);
     setRowOffsets([0, 0, 0, 0, 0]);
+    setIsDrawerOpen(false);
   }, [numberOfTickets]);
 
   const rarityGradients = {
@@ -129,6 +131,7 @@ export default function PrizeWheel({ prizes, onClose, competitionTitle, isInline
     setTimeout(() => {
       setWonPrizes(selectedPrizes);
       setIsSpinning(false);
+      // Don't auto-open drawer, let user click the button
     }, stopTimes[stopTimes.length - 1] + 500);
   };
 
@@ -178,6 +181,7 @@ export default function PrizeWheel({ prizes, onClose, competitionTitle, isInline
   const handlePlayAgain = () => {
     setWonPrizes(null);
     setRowOffsets([0, 0, 0, 0, 0]);
+    setIsDrawerOpen(false);
   };
 
   const handleClose = () => {
@@ -207,12 +211,12 @@ export default function PrizeWheel({ prizes, onClose, competitionTitle, isInline
         </button>
       )}
 
-      {!wonPrizes ? (
-        <div
-          className={`flex flex-col items-center ${isInline ? 'space-y-2 sm:space-y-3 md:space-y-4' : 'space-y-4 sm:space-y-6 md:space-y-8'} ${isInline ? 'max-w-md' : 'max-w-5xl'} w-full transition-all duration-500 ${
-            isVisible && !isExiting ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
-          }`}
-        >
+      {/* Always show slot machine */}
+      <div
+        className={`flex flex-col items-center ${isInline ? 'space-y-2 sm:space-y-3 md:space-y-4' : 'space-y-4 sm:space-y-6 md:space-y-8'} ${isInline ? 'max-w-md' : 'max-w-5xl'} w-full transition-all duration-500 ${
+          isVisible && !isExiting ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
+        }`}
+      >
           {/* Title */}
           <div
             className={`text-center space-y-1 transition-all duration-500 delay-100 ${
@@ -222,6 +226,17 @@ export default function PrizeWheel({ prizes, onClose, competitionTitle, isInline
             <h2 className={`${isInline ? 'text-lg sm:text-xl' : 'text-xl sm:text-2xl md:text-3xl'} font-bold text-white px-4`}>{competitionTitle}</h2>
             <p className={`${isInline ? 'text-xs sm:text-sm' : 'text-sm sm:text-base'} text-gray-400 px-4`}>Spin the slots to win your prize!</p>
           </div>
+
+          {/* View Prizes Button */}
+          {wonPrizes && !isSpinning && (
+            <Button
+              onClick={() => setIsDrawerOpen(true)}
+              size={isInline ? "default" : "lg"}
+              className={`bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold ${isInline ? 'text-sm px-6 py-3' : 'text-base sm:text-lg px-8 sm:px-12 py-4 sm:py-5'} rounded-full shadow-2xl transform transition-all hover:scale-105 animate-pulse`}
+            >
+              🎁 View Your Prizes ({numberOfTickets})
+            </Button>
+          )}
 
           {/* Slot Machine Container */}
           <div
@@ -325,12 +340,30 @@ export default function PrizeWheel({ prizes, onClose, competitionTitle, isInline
             </div>
           )}
         </div>
-      ) : (
-        <div className={`flex flex-col items-center ${isInline ? 'space-y-2 sm:space-y-3' : 'space-y-4 sm:space-y-6 md:space-y-8'} ${isInline ? 'max-w-md' : 'max-w-4xl'} w-full px-4 animate-[fadeIn_0.5s_ease-out]`}>
-          {/* Celebration */}
-          <div className="absolute inset-0 pointer-events-none">
-            <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/20 via-transparent to-green-500/20 animate-pulse"></div>
-          </div>
+
+      {/* Prizes Drawer - Slides up from bottom */}
+      {wonPrizes && (
+        <>
+          {/* Overlay */}
+          <div
+            className={`fixed inset-0 bg-black/80 backdrop-blur-sm z-40 transition-opacity duration-300 ${
+              isDrawerOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
+            }`}
+            onClick={() => setIsDrawerOpen(false)}
+          />
+
+          {/* Drawer */}
+          <div className={`fixed inset-x-0 bottom-0 z-50 bg-gradient-to-b from-gray-900 to-black rounded-t-3xl shadow-2xl border-t-4 border-yellow-500 transition-transform duration-500 ease-out ${
+            isDrawerOpen ? 'translate-y-0' : 'translate-y-full'
+          } max-h-[90vh] overflow-y-auto`}>
+            <div className="flex flex-col items-center space-y-4 sm:space-y-6 p-6">
+              {/* Drag Handle */}
+              <div className="w-12 h-1.5 bg-gray-600 rounded-full" />
+
+              {/* Celebration */}
+              <div className="absolute inset-0 pointer-events-none">
+                <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/20 via-transparent to-green-500/20 animate-pulse"></div>
+              </div>
 
           {/* Winner Content */}
           <div className={`relative z-10 text-center ${isInline ? 'space-y-2 sm:space-y-3' : 'space-y-4 sm:space-y-6'}`}>
@@ -372,17 +405,27 @@ export default function PrizeWheel({ prizes, onClose, competitionTitle, isInline
             </div>
 
             {/* Action Buttons */}
-            <div className={`flex justify-center animate-[fadeIn_0.5s_ease-out_0.7s_both] w-full sm:w-auto`}>
+            <div className="flex gap-3 justify-center w-full sm:w-auto">
               <Button
                 onClick={handlePlayAgain}
                 size={isInline ? "default" : "lg"}
-                className={`bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold ${isInline ? 'px-4 sm:px-6 py-2 sm:py-3 text-sm' : 'px-6 sm:px-8 py-3 sm:py-4'} rounded-full transform hover:scale-105 transition-transform w-full sm:w-auto`}
+                className={`bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold ${isInline ? 'px-4 sm:px-6 py-2 sm:py-3 text-sm' : 'px-6 sm:px-8 py-3 sm:py-4'} rounded-full transform hover:scale-105 transition-transform flex-1 sm:flex-initial`}
               >
                 Spin Again
               </Button>
+              <Button
+                onClick={() => setIsDrawerOpen(false)}
+                size={isInline ? "default" : "lg"}
+                variant="outline"
+                className={`bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border-2 border-white/30 font-bold ${isInline ? 'px-4 sm:px-6 py-2 sm:py-3 text-sm' : 'px-6 sm:px-8 py-3 sm:py-4'} rounded-full transform hover:scale-105 transition-transform flex-1 sm:flex-initial`}
+              >
+                Close
+              </Button>
             </div>
           </div>
-        </div>
+            </div>
+          </div>
+        </>
       )}
     </div>
   );
