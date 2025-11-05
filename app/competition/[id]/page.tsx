@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import PrizeWheel from '@/app/components/PrizeWheel';
 import InteractionSidebar from '@/app/components/InteractionSidebar';
-import BulkScratchCardsView from '@/app/components/BulkScratchCardsView';
+import PrizeColumnsView from '@/app/components/PrizeColumnsView';
 import { Button } from '@/components/ui/button';
 
 interface Prize {
@@ -127,8 +127,8 @@ export default function CompetitionPage() {
   const params = useParams();
   const competitionId = params.id as string;
   const [ticketCount, setTicketCount] = useState(1);
-  const [isBulkPlayMode, setIsBulkPlayMode] = useState(false);
-  const [bulkPrizes, setBulkPrizes] = useState<BulkPrize[]>([]);
+  const [showPrizeColumns, setShowPrizeColumns] = useState(false);
+  const [columnPrizes, setColumnPrizes] = useState<BulkPrize[]>([]);
   const MAX_TICKETS = 100;
 
   // Find the competition by ID
@@ -136,54 +136,24 @@ export default function CompetitionPage() {
 
   const incrementTickets = () => {
     if (ticketCount < MAX_TICKETS) {
-      const newCount = ticketCount + 1;
-      setTicketCount(newCount);
-      // Automatically switch to bulk mode when going above 5
-      if (newCount > 5 && !isBulkPlayMode) {
-        setIsBulkPlayMode(true);
-      }
+      setTicketCount(ticketCount + 1);
     }
   };
 
   const decrementTickets = () => {
     if (ticketCount > 1) {
-      const newCount = ticketCount - 1;
-      setTicketCount(newCount);
-      // Auto-switch back to normal mode when going to 5 or below
-      if (newCount <= 5 && isBulkPlayMode) {
-        setIsBulkPlayMode(false);
-      }
+      setTicketCount(ticketCount - 1);
     }
   };
 
-  const handleStartBulkPlay = () => {
-    if (!competition) return;
-
-    // Generate prizes for all tickets based on probabilities
-    const prizes: BulkPrize[] = [];
-    for (let i = 0; i < ticketCount; i++) {
-      const randomValue = Math.random() * 100;
-      let cumulativeProbability = 0;
-
-      for (const prize of competition.prizes) {
-        cumulativeProbability += prize.probability;
-        if (randomValue <= cumulativeProbability) {
-          prizes.push({
-            name: prize.name,
-            rarity: prize.rarity,
-            image: prize.imageUrl,
-          });
-          break;
-        }
-      }
-    }
-
-    setBulkPrizes(prizes);
+  const handleBulkPrizesWon = (prizes: BulkPrize[]) => {
+    setColumnPrizes(prizes);
+    setShowPrizeColumns(true);
   };
 
-  const handleCloseBulkView = () => {
-    setBulkPrizes([]);
-    setIsBulkPlayMode(false);
+  const handleClosePrizeColumns = () => {
+    setColumnPrizes([]);
+    setShowPrizeColumns(false);
     setTicketCount(1);
   };
 
@@ -198,13 +168,12 @@ export default function CompetitionPage() {
     );
   }
 
-  // If showing bulk scratch cards view
-  if (bulkPrizes.length > 0) {
+  // If showing prize columns view
+  if (showPrizeColumns) {
     return (
-      <BulkScratchCardsView
-        prizes={bulkPrizes}
-        onAllRevealed={() => {}}
-        onClose={handleCloseBulkView}
+      <PrizeColumnsView
+        prizes={columnPrizes}
+        onClose={handleClosePrizeColumns}
       />
     );
   }
@@ -270,12 +239,6 @@ export default function CompetitionPage() {
                   onChange={(e) => {
                     const newCount = parseInt(e.target.value);
                     setTicketCount(newCount);
-                    // Auto-switch modes based on ticket count
-                    if (newCount > 5 && !isBulkPlayMode) {
-                      setIsBulkPlayMode(true);
-                    } else if (newCount <= 5 && isBulkPlayMode) {
-                      setIsBulkPlayMode(false);
-                    }
                   }}
                   className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider-thumb"
                   style={{
@@ -288,50 +251,30 @@ export default function CompetitionPage() {
               <div className="flex items-center justify-center gap-2">
                 <span className="text-xs text-gray-400 mr-2">Quick add:</span>
                 <button
-                  onClick={() => {
-                    const newCount = Math.min(ticketCount + 5, isBulkPlayMode ? MAX_TICKETS : 5);
-                    if (newCount > 5 && !isBulkPlayMode) {
-                      setIsBulkPlayMode(true);
-                    }
-                    setTicketCount(newCount);
-                  }}
-                  disabled={ticketCount >= (isBulkPlayMode ? MAX_TICKETS : 5)}
+                  onClick={() => setTicketCount(Math.min(ticketCount + 5, MAX_TICKETS))}
+                  disabled={ticketCount >= MAX_TICKETS}
                   className="px-3 py-1.5 rounded-lg text-sm font-semibold bg-gray-700 hover:bg-gray-600 disabled:bg-gray-800 disabled:cursor-not-allowed text-white transition-colors disabled:opacity-50"
                 >
                   +5
                 </button>
                 <button
-                  onClick={() => {
-                    const newCount = Math.min(ticketCount + 10, MAX_TICKETS);
-                    if (!isBulkPlayMode) {
-                      setIsBulkPlayMode(true);
-                    }
-                    setTicketCount(newCount);
-                  }}
+                  onClick={() => setTicketCount(Math.min(ticketCount + 10, MAX_TICKETS))}
+                  disabled={ticketCount >= MAX_TICKETS}
                   className="px-3 py-1.5 rounded-lg text-sm font-semibold bg-gray-700 hover:bg-gray-600 disabled:bg-gray-800 disabled:cursor-not-allowed text-white transition-colors disabled:opacity-50"
                 >
                   +10
                 </button>
                 <button
-                  onClick={() => {
-                    const newCount = Math.min(ticketCount + 25, MAX_TICKETS);
-                    if (!isBulkPlayMode) {
-                      setIsBulkPlayMode(true);
-                    }
-                    setTicketCount(newCount);
-                  }}
+                  onClick={() => setTicketCount(Math.min(ticketCount + 25, MAX_TICKETS))}
+                  disabled={ticketCount >= MAX_TICKETS}
                   className="px-3 py-1.5 rounded-lg text-sm font-semibold bg-gray-700 hover:bg-gray-600 disabled:bg-gray-800 disabled:cursor-not-allowed text-white transition-colors disabled:opacity-50"
                 >
                   +25
                 </button>
                 <button
-                  onClick={() => {
-                    if (!isBulkPlayMode) {
-                      setIsBulkPlayMode(true);
-                    }
-                    setTicketCount(MAX_TICKETS);
-                  }}
-                  className="px-3 py-1.5 rounded-lg text-sm font-semibold bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-white transition-colors"
+                  onClick={() => setTicketCount(MAX_TICKETS)}
+                  disabled={ticketCount >= MAX_TICKETS}
+                  className="px-3 py-1.5 rounded-lg text-sm font-semibold bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Max
                 </button>
@@ -342,55 +285,16 @@ export default function CompetitionPage() {
 
         {/* Game Container */}
         <div className="w-full max-w-md mx-auto relative px-1 md:px-0 flex flex-col items-center gap-4">
-          {!isBulkPlayMode ? (
-            // Show slot machine in normal mode (1-5 tickets)
-            <PrizeWheel
-              prizes={competition.prizes}
-              onClose={() => router.back()}
-              competitionTitle={competition.title}
-              isInline={true}
-              hideCloseButton={true}
-              numberOfTickets={ticketCount}
-            />
-          ) : (
-            // Show bulk play button in bulk mode (6+ tickets)
-            <div className="w-full flex flex-col items-center gap-6 p-8">
-              <div className="text-center">
-                <h2 className="text-2xl font-bold text-white mb-2">
-                  Bulk Play Mode Active
-                </h2>
-                <p className="text-gray-400 mb-1">
-                  Ready to play {ticketCount} tickets at once
-                </p>
-                <p className="text-sm text-gray-500">
-                  Scratch cards will appear in a circular animation
-                </p>
-              </div>
-
-              <button
-                onClick={handleStartBulkPlay}
-                className="group relative px-8 py-4 rounded-xl font-bold text-xl bg-gradient-to-r from-emerald-500 via-green-500 to-lime-500 hover:from-emerald-400 hover:via-green-400 hover:to-lime-400 text-white shadow-2xl transition-all transform hover:scale-105 overflow-hidden"
-              >
-                <div className="absolute inset-0 bg-gradient-to-r from-emerald-600 via-green-600 to-lime-600 opacity-0 group-hover:opacity-100 transition-opacity" />
-                <span className="relative flex items-center gap-2">
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                  </svg>
-                  PLAY ALL
-                </span>
-              </button>
-
-              <button
-                onClick={() => {
-                  setIsBulkPlayMode(false);
-                  setTicketCount(1);
-                }}
-                className="text-gray-400 hover:text-white transition-colors text-sm underline"
-              >
-                Exit bulk mode
-              </button>
-            </div>
-          )}
+          <PrizeWheel
+            prizes={competition.prizes}
+            onClose={() => router.back()}
+            competitionTitle={competition.title}
+            isInline={true}
+            hideCloseButton={true}
+            numberOfTickets={Math.min(ticketCount, 5)}
+            totalTickets={ticketCount}
+            onBulkPrizesGenerated={ticketCount > 5 ? handleBulkPrizesWon : undefined}
+          />
         </div>
       </main>
     </div>

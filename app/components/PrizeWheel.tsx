@@ -10,6 +10,12 @@ interface Prize {
   imageUrl?: string;
 }
 
+interface BulkPrize {
+  name: string;
+  rarity: 'common' | 'rare' | 'epic' | 'legendary';
+  image?: string;
+}
+
 interface PrizeWheelProps {
   prizes: Prize[];
   onClose: () => void;
@@ -17,9 +23,20 @@ interface PrizeWheelProps {
   isInline?: boolean;
   hideCloseButton?: boolean;
   numberOfTickets?: number;
+  totalTickets?: number;
+  onBulkPrizesGenerated?: (prizes: BulkPrize[]) => void;
 }
 
-export default function PrizeWheel({ prizes, onClose, competitionTitle, isInline = false, hideCloseButton = false, numberOfTickets = 5 }: PrizeWheelProps) {
+export default function PrizeWheel({
+  prizes,
+  onClose,
+  competitionTitle,
+  isInline = false,
+  hideCloseButton = false,
+  numberOfTickets = 5,
+  totalTickets,
+  onBulkPrizesGenerated
+}: PrizeWheelProps) {
   const [isSpinning, setIsSpinning] = useState(false);
   const [wonPrizes, setWonPrizes] = useState<Prize[] | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -90,7 +107,12 @@ export default function PrizeWheel({ prizes, onClose, competitionTitle, isInline
       return prizes[0];
     };
 
-    const selectedPrizes = Array(numberOfTickets).fill(null).map(() => selectPrize());
+    // If bulk mode (totalTickets > 5), generate all prizes but only show 1 row
+    const ticketsToGenerate = totalTickets && totalTickets > 5 ? totalTickets : numberOfTickets;
+    const allSelectedPrizes = Array(ticketsToGenerate).fill(null).map(() => selectPrize());
+
+    // For display, only show first row in bulk mode
+    const selectedPrizes = totalTickets && totalTickets > 5 ? [allSelectedPrizes[0]] : allSelectedPrizes;
 
     // Calculate positions for each row to land on its specific winning prize
     const prizeWidth = isInline ? 110 : 130; // Width of each prize item (matching the actual rendered width)
@@ -98,7 +120,8 @@ export default function PrizeWheel({ prizes, onClose, competitionTitle, isInline
     const repetitions = 50; // Increased repetitions for proper circular loop
 
     // Create different spin amounts for each row (they'll stop at different times)
-    const newOffsets = rowRefs.slice(0, numberOfTickets).map((_, rowIndex) => {
+    const displayRows = selectedPrizes.length; // Number of rows to display (1 in bulk mode, numberOfTickets in normal mode)
+    const newOffsets = rowRefs.slice(0, displayRows).map((_, rowIndex) => {
       const selectedPrize = selectedPrizes[rowIndex];
       const prizeIndex = prizes.indexOf(selectedPrize);
 
@@ -116,11 +139,11 @@ export default function PrizeWheel({ prizes, onClose, competitionTitle, isInline
     });
 
     // Pad with zeros to always have 5 elements
-    const paddedOffsets = [...newOffsets, ...Array(5 - numberOfTickets).fill(0)];
+    const paddedOffsets = [...newOffsets, ...Array(5 - displayRows).fill(0)];
     setRowOffsets(paddedOffsets);
 
     // Staggered completion times for rows (1.8s base + 0.4s per row)
-    const stopTimes = Array(numberOfTickets).fill(0).map((_, i) => 1800 + i * 400);
+    const stopTimes = Array(selectedPrizes.length).fill(0).map((_, i) => 1800 + i * 400);
 
     // Stop ticking sound after last row stops
     setTimeout(() => {
@@ -129,9 +152,21 @@ export default function PrizeWheel({ prizes, onClose, competitionTitle, isInline
 
     // Show result after last row stops
     setTimeout(() => {
-      setWonPrizes(selectedPrizes);
       setIsSpinning(false);
-      setIsDrawerOpen(true); // Auto-open drawer
+
+      // If in bulk mode, call the callback with all prizes
+      if (totalTickets && totalTickets > 5 && onBulkPrizesGenerated) {
+        const bulkPrizes: BulkPrize[] = allSelectedPrizes.map(prize => ({
+          name: prize.name,
+          rarity: prize.rarity,
+          image: prize.imageUrl
+        }));
+        onBulkPrizesGenerated(bulkPrizes);
+      } else {
+        // Normal mode: show drawer with results
+        setWonPrizes(selectedPrizes);
+        setIsDrawerOpen(true); // Auto-open drawer
+      }
     }, stopTimes[stopTimes.length - 1] + 500);
   };
 
@@ -250,7 +285,7 @@ export default function PrizeWheel({ prizes, onClose, competitionTitle, isInline
 
               {/* Slot Rows */}
               <div className={`flex flex-col ${isInline ? 'gap-1 sm:gap-2' : 'gap-2 sm:gap-4'} relative`}>
-                {rowRefs.slice(0, numberOfTickets).map((ref, rowIndex) => (
+                {rowRefs.slice(0, totalTickets && totalTickets > 5 ? 1 : numberOfTickets).map((ref, rowIndex) => (
                   <div key={rowIndex} className="flex-1">
                     {/* Row Container */}
                     <div className={`bg-gray-950 rounded-xl p-1 sm:p-2 ${isInline ? 'w-[360px] sm:w-[420px]' : 'w-[480px] sm:w-[600px]'} overflow-hidden relative shadow-inner border-2 sm:border-4 border-gray-700`}>
@@ -356,7 +391,7 @@ export default function PrizeWheel({ prizes, onClose, competitionTitle, isInline
 
           {/* Winner Content */}
           <div className={`relative z-10 text-center ${isInline ? 'space-y-2 sm:space-y-3' : 'space-y-4 sm:space-y-6'}`}>
-            <h2 className={`${isInline ? 'text-xl sm:text-2xl' : 'text-3xl sm:text-4xl md:text-5xl'} font-bold text-white animate-[bounceIn_0.6s_ease-out]`}>🎉 YOU WON {numberOfTickets} PRIZE{numberOfTickets !== 1 ? 'S' : ''}! 🎉</h2>
+            <h2 className={`${isInline ? 'text-xl sm:text-2xl' : 'text-3xl sm:text-4xl md:text-5xl'} font-bold text-white animate-[bounceIn_0.6s_ease-out]`}>🎉 YOU WON {wonPrizes.length} PRIZE{wonPrizes.length !== 1 ? 'S' : ''}! 🎉</h2>
 
             {/* Prizes Display - with fixed width and wrapping */}
             <div className={`flex flex-wrap justify-center ${isInline ? 'gap-2' : 'gap-3 sm:gap-4'} w-full`}>
