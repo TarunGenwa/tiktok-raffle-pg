@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import PrizesModal from './PrizesModal';
+import TicketsModal from './TicketsModal';
 
 interface Prize {
   name: string;
@@ -17,6 +18,7 @@ interface InteractionSidebarProps {
 
 export default function InteractionSidebar({ prizes, competitionTitle }: InteractionSidebarProps) {
   const [isPrizesModalOpen, setIsPrizesModalOpen] = useState(false);
+  const [isTicketsModalOpen, setIsTicketsModalOpen] = useState(false);
 
   return (
     <>
@@ -35,6 +37,7 @@ export default function InteractionSidebar({ prizes, competitionTitle }: Interac
 
         {/* Tickets Button */}
         <Button
+          onClick={() => setIsTicketsModalOpen(true)}
           variant="ghost"
           className="flex items-center gap-2 h-auto px-4 py-2 transition-all hover:bg-gray-700/80 rounded-full"
         >
@@ -51,6 +54,14 @@ export default function InteractionSidebar({ prizes, competitionTitle }: Interac
           prizes={prizes}
           competitionTitle={competitionTitle}
           onClose={() => setIsPrizesModalOpen(false)}
+        />
+      )}
+
+      {/* Tickets Modal */}
+      {isTicketsModalOpen && (
+        <TicketsModal
+          competitionTitle={competitionTitle}
+          onClose={() => setIsTicketsModalOpen(false)}
         />
       )}
     </>
