@@ -273,6 +273,63 @@ export default function CompetitionPage() {
                 +
               </button>
             </div>
+
+            {/* Slider and quick increment buttons for bulk mode */}
+            {isBulkPlayMode && (
+              <div className="mt-3 space-y-3">
+                {/* Slider */}
+                <div className="px-2">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs text-gray-400">Slide to adjust:</span>
+                    <span className="text-xs text-gray-500">{ticketCount} / {MAX_TICKETS}</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="6"
+                    max={MAX_TICKETS}
+                    value={ticketCount}
+                    onChange={(e) => setTicketCount(parseInt(e.target.value))}
+                    className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider-thumb"
+                    style={{
+                      background: `linear-gradient(to right, rgb(5, 150, 105) 0%, rgb(5, 150, 105) ${((ticketCount - 6) / (MAX_TICKETS - 6)) * 100}%, rgb(55, 65, 81) ${((ticketCount - 6) / (MAX_TICKETS - 6)) * 100}%, rgb(55, 65, 81) 100%)`
+                    }}
+                  />
+                </div>
+
+                {/* Quick add buttons */}
+                <div className="flex items-center justify-center gap-2">
+                  <span className="text-xs text-gray-400 mr-2">Quick add:</span>
+                  <button
+                    onClick={() => setTicketCount(Math.min(ticketCount + 5, MAX_TICKETS))}
+                    disabled={ticketCount >= MAX_TICKETS}
+                    className="px-3 py-1.5 rounded-lg text-sm font-semibold bg-gray-700 hover:bg-gray-600 disabled:bg-gray-800 disabled:cursor-not-allowed text-white transition-colors disabled:opacity-50"
+                  >
+                    +5
+                  </button>
+                  <button
+                    onClick={() => setTicketCount(Math.min(ticketCount + 10, MAX_TICKETS))}
+                    disabled={ticketCount >= MAX_TICKETS}
+                    className="px-3 py-1.5 rounded-lg text-sm font-semibold bg-gray-700 hover:bg-gray-600 disabled:bg-gray-800 disabled:cursor-not-allowed text-white transition-colors disabled:opacity-50"
+                  >
+                    +10
+                  </button>
+                  <button
+                    onClick={() => setTicketCount(Math.min(ticketCount + 25, MAX_TICKETS))}
+                    disabled={ticketCount >= MAX_TICKETS}
+                    className="px-3 py-1.5 rounded-lg text-sm font-semibold bg-gray-700 hover:bg-gray-600 disabled:bg-gray-800 disabled:cursor-not-allowed text-white transition-colors disabled:opacity-50"
+                  >
+                    +25
+                  </button>
+                  <button
+                    onClick={() => setTicketCount(MAX_TICKETS)}
+                    disabled={ticketCount >= MAX_TICKETS}
+                    className="px-3 py-1.5 rounded-lg text-sm font-semibold bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 disabled:from-gray-800 disabled:to-gray-800 disabled:cursor-not-allowed text-white transition-colors disabled:opacity-50"
+                  >
+                    Max
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
@@ -312,7 +369,7 @@ export default function CompetitionPage() {
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                   </svg>
-                  REVEAL ALL PRIZES
+                  PLAY ALL
                 </span>
               </button>
 
