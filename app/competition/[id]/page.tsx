@@ -15,6 +15,12 @@ interface Prize {
   imageUrl?: string;
 }
 
+interface BulkPrize {
+  name: string;
+  rarity: 'common' | 'rare' | 'epic' | 'legendary';
+  image?: string;
+}
+
 interface CompetitionType {
   id: string;
   title: string;
@@ -124,7 +130,7 @@ export default function CompetitionPage() {
   const [ticketCount, setTicketCount] = useState(1);
   const [showBulkModal, setShowBulkModal] = useState(false);
   const [isBulkPlayMode, setIsBulkPlayMode] = useState(false);
-  const [bulkPrizes, setBulkPrizes] = useState<Prize[]>([]);
+  const [bulkPrizes, setBulkPrizes] = useState<BulkPrize[]>([]);
   const MAX_TICKETS = 100;
 
   // Find the competition by ID
@@ -161,7 +167,7 @@ export default function CompetitionPage() {
     if (!competition) return;
 
     // Generate prizes for all tickets based on probabilities
-    const prizes: Prize[] = [];
+    const prizes: BulkPrize[] = [];
     for (let i = 0; i < ticketCount; i++) {
       const randomValue = Math.random() * 100;
       let cumulativeProbability = 0;
