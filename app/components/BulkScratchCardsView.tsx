@@ -81,7 +81,7 @@ export default function BulkScratchCardsView({
   const allRevealed = revealedCards.size === prizes.length;
 
   return (
-    <div className="fixed inset-0 z-50 bg-gradient-to-br from-purple-900 via-indigo-900 to-blue-900 overflow-hidden">
+    <div className="fixed inset-0 md:left-20 z-50 bg-gradient-to-br from-purple-900 via-indigo-900 to-blue-900 overflow-hidden">
       {/* Background animated circles */}
       <div className="absolute inset-0 overflow-hidden">
         {[...Array(5)].map((_, i) => (

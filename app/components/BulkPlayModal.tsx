@@ -51,6 +51,9 @@ export default function BulkPlayModal({
       {/* Backdrop */}
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
 
+      {/* Spacer for sidebar on desktop */}
+      <div className="hidden md:block md:w-20 flex-shrink-0" />
+
       {/* Modal */}
       <div
         className={`relative bg-gradient-to-b from-gray-800 to-gray-900 rounded-2xl shadow-2xl max-w-md w-full border-2 border-gray-700 transition-all duration-200 ${
