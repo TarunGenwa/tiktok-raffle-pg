@@ -247,7 +247,7 @@ export default function PrizeWheel({ prizes, onClose, competitionTitle, isInline
               {/* Slot Rows */}
               <div className={`flex flex-col ${isInline ? 'gap-1 sm:gap-2' : 'gap-2 sm:gap-4'} relative`}>
                 {rowRefs.slice(0, numberOfTickets).map((ref, rowIndex) => (
-                  <div key={rowIndex} className={`flex-1 ${rowIndex >= 3 ? 'hidden sm:block' : ''}`}>
+                  <div key={rowIndex} className="flex-1">
                     {/* Row Container */}
                     <div className={`bg-gray-950 rounded-xl p-1 sm:p-2 ${isInline ? 'w-[360px] sm:w-[420px]' : 'w-[480px] sm:w-[600px]'} overflow-hidden relative shadow-inner border-2 sm:border-4 border-gray-700`}>
                       {/* Scrolling Row */}
