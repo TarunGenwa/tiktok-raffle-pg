@@ -344,6 +344,28 @@ export default function PrizeWheel({
               </div>
           </div>
 
+          {/* Bulk Play Mode Indicator */}
+          {totalTickets && totalTickets > 5 && (
+            <div
+              className={`w-full flex flex-col items-center gap-3 sm:gap-4 py-4 sm:py-6 transition-all duration-500 delay-300 ${
+                isVisible && !isExiting ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
+              }`}
+            >
+              <div className="text-center">
+                <div className="text-4xl sm:text-5xl md:text-6xl mb-3 sm:mb-4 animate-bounce">🎰</div>
+                <h2 className="text-xl sm:text-2xl font-bold text-white mb-2">
+                  Bulk Play Mode
+                </h2>
+                <p className="text-sm sm:text-base text-gray-400 mb-1">
+                  Ready to play {totalTickets} tickets
+                </p>
+                <p className="text-xs sm:text-sm text-gray-500">
+                  Click the button below to reveal all prizes
+                </p>
+              </div>
+            </div>
+          )}
+
           {/* Spin Button - Conditionally hidden */}
           {!hideSpinButton && (
             <Button
