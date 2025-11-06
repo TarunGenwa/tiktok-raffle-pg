@@ -116,8 +116,8 @@ export default function PrizeWheel({
 
     // Calculate positions for each row to land on its specific winning prize
     // Use average width for calculation to work across breakpoints
-    const prizeWidth = isInline ? 100 : 120; // Width of each prize item (average of responsive widths)
-    const containerWidth = isInline ? 320 : 440; // Container width (average of responsive widths)
+    const prizeWidth = isInline ? 80 : 96; // Width of each prize item (average of responsive widths)
+    const containerWidth = isInline ? 300 : 400; // Container width (average of responsive widths)
     const repetitions = 50; // Increased repetitions for proper circular loop
 
     // Create different spin amounts for each row (they'll stop at different times)
@@ -249,7 +249,7 @@ export default function PrizeWheel({
 
       {/* Always show slot machine */}
       <div
-        className={`flex flex-col items-center ${isInline ? 'space-y-2 sm:space-y-3 md:space-y-4' : 'space-y-4 sm:space-y-6 md:space-y-8'} ${isInline ? 'max-w-md' : 'max-w-5xl'} w-full transition-all duration-500 ${
+        className={`flex flex-col items-center ${isInline ? 'space-y-2 sm:space-y-3 md:space-y-4' : 'space-y-4 sm:space-y-6 md:space-y-8'} ${isInline ? 'max-w-md' : 'max-w-5xl'} w-full px-2 sm:px-4 transition-all duration-500 ${
           isVisible && !isExiting ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
         }`}
       >
@@ -265,7 +265,7 @@ export default function PrizeWheel({
 
           {/* Slot Machine Container */}
           <div
-            className={`relative transition-all duration-500 delay-200 ${
+            className={`relative w-full flex justify-center transition-all duration-500 delay-200 ${
               isVisible && !isExiting ? 'scale-100 opacity-100' : 'scale-95 opacity-0'
             }`}
           >
@@ -273,23 +273,22 @@ export default function PrizeWheel({
             <div className="absolute inset-0 bg-gradient-to-br from-green-500/30 to-emerald-500/30 rounded-2xl blur-3xl"></div>
 
             {/* Slot Machine Frame */}
-            <div className={`relative bg-gradient-to-b from-gray-800 to-gray-900 ${isInline ? 'p-2 sm:p-4' : 'p-4 sm:p-8'} rounded-2xl sm:rounded-3xl shadow-2xl ${isInline ? 'border-2 sm:border-4' : 'border-4 sm:border-8'} border-yellow-500/50`}>
+            <div className={`relative bg-gradient-to-b from-gray-800 to-gray-900 ${isInline ? 'p-2 sm:p-4' : 'p-4 sm:p-8'} rounded-2xl sm:rounded-3xl shadow-2xl ${isInline ? 'border-2 sm:border-4' : 'border-4 sm:border-8'} border-yellow-500/50 w-full flex flex-col items-center`}>
               {/* Top Decoration */}
               <div className={`absolute ${isInline ? '-top-2 xs:-top-3 sm:-top-4' : '-top-3 sm:-top-4 md:-top-6'} left-1/2 -translate-x-1/2 bg-gradient-to-r from-yellow-500 to-orange-500 ${isInline ? 'px-2 xs:px-3 sm:px-6 py-0.5 sm:py-1' : 'px-3 sm:px-4 md:px-8 py-0.5 sm:py-1 md:py-2'} rounded-full text-white font-bold ${isInline ? 'text-[10px] xs:text-xs sm:text-base' : 'text-xs sm:text-sm md:text-xl'} shadow-lg`}>
                 JACKPOT
               </div>
 
-              {/* Selection Indicator */}
-              <div className="absolute top-0 bottom-0 left-1/2 -translate-x-1/2 z-10 pointer-events-none flex items-center">
-                <div className={`${isInline ? 'my-2 sm:my-4' : 'my-4 sm:my-8'} ${isInline ? 'border-2' : 'border-2 sm:border-4'} border-red-500 rounded-lg ${isInline ? 'w-[90px] xs:w-[110px] sm:w-[130px]' : 'w-[110px] sm:w-[130px] md:w-[150px]'} h-full bg-red-500/10 shadow-[0_0_30px_rgba(239,68,68,0.5)]`}></div>
-              </div>
-
               {/* Slot Rows */}
-              <div className={`flex flex-col ${isInline ? 'gap-1 sm:gap-2' : 'gap-2 sm:gap-4'} relative`}>
+              <div className={`flex flex-col ${isInline ? 'gap-1 sm:gap-2' : 'gap-2 sm:gap-4'} relative w-full`}>
+                {/* Selection Indicator */}
+                <div className={`absolute top-0 bottom-0 left-1/2 -translate-x-1/2 z-10 pointer-events-none flex items-center ${isInline ? 'my-2 sm:my-4' : 'my-4 sm:my-8'}`}>
+                  <div className={`${isInline ? 'border-2' : 'border-2 sm:border-4'} border-red-500 rounded-lg ${isInline ? 'w-[70px] xs:w-[80px] sm:w-[90px]' : 'w-[80px] sm:w-[96px] md:w-[120px]'} h-full bg-red-500/10 shadow-[0_0_30px_rgba(239,68,68,0.5)]`}></div>
+                </div>
                 {rowRefs.slice(0, totalTickets && totalTickets > 5 ? 1 : numberOfTickets).map((ref, rowIndex) => (
-                  <div key={rowIndex} className="flex-1">
+                  <div key={rowIndex} className="flex-1 flex justify-center">
                     {/* Row Container */}
-                    <div className={`bg-gray-950 rounded-xl p-1 sm:p-2 ${isInline ? 'w-full max-w-[360px] sm:max-w-[420px]' : 'w-full max-w-[480px] sm:max-w-[600px]'} overflow-hidden relative shadow-inner border-2 sm:border-4 border-gray-700`}>
+                    <div className={`bg-gray-950 rounded-xl p-1 sm:p-2 ${isInline ? 'w-[280px] xs:w-[320px] sm:w-[360px]' : 'w-[320px] sm:w-[480px] md:w-[600px]'} overflow-hidden relative shadow-inner border-2 sm:border-4 border-gray-700`}>
                       {/* Scrolling Row */}
                       <div
                         ref={ref}
@@ -305,10 +304,10 @@ export default function PrizeWheel({
                         {(Array(50).fill(prizes).flat() as Prize[]).map((prize, idx) => (
                           <div
                             key={idx}
-                            className={`${isInline ? 'w-[90px] xs:w-[110px] sm:w-[130px]' : 'w-[110px] sm:w-[130px] md:w-[150px]'} flex-shrink-0 flex items-center justify-center border-r-2 border-gray-800 bg-gradient-to-br ${rarityGradients[prize.rarity]} p-2`}
+                            className={`${isInline ? 'w-[70px] xs:w-[80px] sm:w-[90px]' : 'w-[80px] sm:w-[96px] md:w-[120px]'} flex-shrink-0 flex items-center justify-center border-r-2 border-gray-800 bg-gradient-to-br ${rarityGradients[prize.rarity]} p-1 sm:p-2`}
                           >
                             {prize.imageUrl ? (
-                              <div className={`relative ${isInline ? 'w-12 xs:w-14 sm:w-16' : 'w-16 sm:w-20'} ${isInline ? 'h-12 xs:h-14 sm:h-16' : 'h-16 sm:h-20'} flex items-center justify-center`}>
+                              <div className={`relative ${isInline ? 'w-10 xs:w-12 sm:w-14' : 'w-12 sm:w-16 md:w-20'} ${isInline ? 'h-10 xs:h-12 sm:h-14' : 'h-12 sm:h-16 md:h-20'} flex items-center justify-center`}>
                                 <img
                                   src={prize.imageUrl}
                                   alt={prize.name}
@@ -316,9 +315,9 @@ export default function PrizeWheel({
                                 />
                               </div>
                             ) : (
-                              <div className="text-center px-1 sm:px-2 py-1 sm:py-2">
-                                <div className={`text-white font-bold ${isInline ? 'text-[9px] xs:text-[10px] sm:text-xs' : 'text-xs sm:text-sm'} mb-1 leading-tight`}>{prize.name}</div>
-                                <div className={`${isInline ? 'text-[7px] xs:text-[8px] sm:text-[10px]' : 'text-[10px] sm:text-xs'} text-white/80 capitalize`}>{prize.rarity}</div>
+                              <div className="text-center px-0.5 xs:px-1 sm:px-2 py-0.5 sm:py-1">
+                                <div className={`text-white font-bold ${isInline ? 'text-[8px] xs:text-[9px] sm:text-[10px]' : 'text-[10px] sm:text-xs'} mb-0.5 leading-tight`}>{prize.name}</div>
+                                <div className={`${isInline ? 'text-[6px] xs:text-[7px] sm:text-[8px]' : 'text-[8px] sm:text-[10px]'} text-white/80 capitalize`}>{prize.rarity}</div>
                               </div>
                             )}
                           </div>
