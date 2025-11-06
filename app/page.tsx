@@ -27,24 +27,6 @@ interface CompetitionType {
 export default function Home() {
   const competitions: CompetitionType[] = [
     {
-      id: '0',
-      title: 'Lennie Special',
-      category: 'gaming',
-      description: 'Exclusive gaming prizes with special video showcase!',
-      entryPrice: 2.50,
-      prizePool: 15000,
-      participants: 9876,
-      timeRemaining: '4h 10m',
-      sponsored: true,
-      videoUrl: '/lennie.mp4',
-      prizes: [
-        { name: 'Gaming Headset', rarity: 'common', probability: 35, imageUrl: '/CTSP credit 1gbp.png' },
-        { name: 'RGB Keyboard', rarity: 'rare', probability: 30, imageUrl: '/CTSP credit 5gbp.png' },
-        { name: 'Gaming Chair', rarity: 'epic', probability: 20, imageUrl: '/CTSP credit 20gbp.png' },
-        { name: 'RTX 4090', rarity: 'legendary', probability: 15, imageUrl: '/CTSP credit 1000gbp.png' }
-      ]
-    },
-    {
       id: '1',
       title: 'Bitcoin Bonanza',
       category: 'crypto',
@@ -124,7 +106,7 @@ export default function Home() {
 
           {/* Competition Cards */}
           {competitions.map((competition) => (
-            <div key={competition.id} className="w-full h-[70vh]">
+            <div key={competition.id} className="w-full h-[70vh] px-2">
               <Competition
                 id={competition.id}
                 title={competition.title}

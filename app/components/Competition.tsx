@@ -162,7 +162,7 @@ export default function Competition({
   };
 
   return (
-    <div className="relative w-full h-full p-0 md:p-[3px] rounded-lg md:bg-gradient-to-br md:from-emerald-500 md:via-green-500 md:to-teal-500 md:shadow-xl md:shadow-emerald-500/20">
+    <div className="relative w-full h-full p-[1.5px] md:p-[3px] rounded-lg bg-gradient-to-br from-emerald-500 via-green-500 to-teal-500 shadow-xl shadow-emerald-500/20">
       <div className="relative w-full h-full bg-gradient-to-br from-gray-900 via-black to-gray-900 rounded-lg overflow-hidden flex flex-col">
 
       {/* Entry Price Badge - Top Left */}
@@ -292,7 +292,6 @@ export default function Competition({
         {/* Competition Info */}
         <div className="text-center space-y-1 sm:space-y-2 max-w-md">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white tracking-tight">{title}</h2>
-          <p className="text-sm sm:text-base md:text-lg text-gray-300">{description}</p>
         </div>
 
         {/* Enter Button */}
@@ -304,21 +303,7 @@ export default function Competition({
           Enter & Spin Now
         </Button>
 
-        {/* Trust Indicators */}
-        <div className="flex items-center gap-3 sm:gap-4 text-xs sm:text-sm text-gray-400">
-          <div className="flex items-center gap-1">
-            <svg className="w-3 h-3 sm:w-4 sm:h-4 text-green-500" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z"/>
-            </svg>
-            <span>Verified</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <svg className="w-3 h-3 sm:w-4 sm:h-4 text-blue-500" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
-            </svg>
-            <span>Instant Win</span>
-          </div>
-        </div>
+
       </div>
       </div>
     </div>
