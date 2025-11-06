@@ -292,15 +292,15 @@ export default function Competition({
         )}
 
         {/* Competition Title - Bottom Center */}
-        <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 z-30 max-w-[90%]">
-          <div className="relative">
-            {/* Glow effect */}
-            <div className="absolute inset-0 bg-gradient-to-r from-emerald-500 via-green-400 to-teal-500 blur-xl opacity-60"></div>
-            {/* Title */}
-            <h2 className="relative text-2xl sm:text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 via-green-200 to-teal-300 drop-shadow-2xl text-center px-4 py-2">
-              {title}
-            </h2>
-          </div>
+        <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 z-30">
+          <h2
+            className="text-2xl sm:text-3xl font-extrabold text-emerald-500 text-center px-4 py-2 whitespace-nowrap"
+            style={{
+              textShadow: '2px 2px 4px rgba(0, 0, 0, 0.8)'
+            }}
+          >
+            {title}
+          </h2>
         </div>
       </div>
 
