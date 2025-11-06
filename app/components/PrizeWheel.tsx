@@ -113,8 +113,8 @@ export default function PrizeWheel({
     const selectedPrizes = totalTickets && totalTickets > 5 ? [allSelectedPrizes[0]] : allSelectedPrizes;
 
     // Calculate positions for each row to land on its specific winning prize
-    // Updated widths for new horizontal design (card width + margin)
-    const prizeWidth = isInline ? 85 + 8 : 100 + 8; // Width of each prize card + mx-1 margin (average of responsive widths)
+    // Updated widths for new horizontal design (card width + gap)
+    const prizeWidth = isInline ? 85 + 8 : 100 + 8; // Width of each prize card + 8px gap (average of responsive widths)
     const containerWidth = isInline ? 320 : 480; // Container width (average of responsive widths)
     const repetitions = 50; // Repetitions for smooth circular loop
 
@@ -258,22 +258,6 @@ export default function PrizeWheel({
           >
             {/* Horizontal Spinner Rows */}
             <div className={`flex flex-col ${isInline ? 'gap-3 sm:gap-4' : 'gap-4 sm:gap-5'} relative w-full`}>
-                {/* Center Selection Indicator - Vertical Bar */}
-                <div className={`absolute top-0 bottom-0 left-1/2 -translate-x-1/2 z-20 pointer-events-none flex items-center`}>
-                  <div className={`${isInline ? 'w-[83px] xs:w-[93px] sm:w-[103px]' : 'w-[93px] sm:w-[108px] md:w-[133px]'} h-full relative`}>
-                    {/* Selection frame with glow */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-emerald-500/20 to-transparent rounded-xl"></div>
-                    <div className={`absolute inset-0 border-[3px] border-emerald-500 rounded-xl shadow-[0_0_25px_rgba(16,185,129,0.8),inset_0_0_15px_rgba(16,185,129,0.2)]`}></div>
-                    {/* Top arrow */}
-                    <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                      <div className="w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-t-[14px] border-t-emerald-500 drop-shadow-[0_0_10px_rgba(16,185,129,1)]"></div>
-                    </div>
-                    {/* Bottom arrow */}
-                    <div className="absolute -bottom-4 left-1/2 -translate-x-1/2">
-                      <div className="w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-b-[14px] border-b-emerald-500 drop-shadow-[0_0_10px_rgba(16,185,129,1)]"></div>
-                    </div>
-                  </div>
-                </div>
                 {rowRefs.slice(0, totalTickets && totalTickets > 5 ? 1 : numberOfTickets).map((ref, rowIndex) => (
                   <div key={rowIndex} className="flex-1 flex justify-center">
                     {/* Horizontal Strip Container - Minimal */}
@@ -285,7 +269,7 @@ export default function PrizeWheel({
                       {/* Scrolling Strip */}
                       <div
                         ref={ref}
-                        className="relative flex items-center"
+                        className="relative flex items-center gap-2"
                         style={{
                           transform: `translateX(-${rowOffsets[rowIndex]}px)`,
                           transition: isSpinning
@@ -298,7 +282,7 @@ export default function PrizeWheel({
                         {(Array(50).fill(prizes).flat() as Prize[]).map((prize, idx) => (
                           <div
                             key={idx}
-                            className={`${isInline ? 'w-[75px] xs:w-[85px] sm:w-[95px]' : 'w-[85px] sm:w-[100px] md:w-[125px]'} ${isInline ? 'h-[75px] xs:h-[85px] sm:h-[95px]' : 'h-[85px] sm:h-[100px] md:h-[125px]'} flex-shrink-0 flex items-center justify-center relative mx-1`}
+                            className={`${isInline ? 'w-[75px] xs:w-[85px] sm:w-[95px]' : 'w-[85px] sm:w-[100px] md:w-[125px]'} ${isInline ? 'h-[75px] xs:h-[85px] sm:h-[95px]' : 'h-[85px] sm:h-[100px] md:h-[125px]'} flex-shrink-0 flex items-center justify-center relative`}
                           >
                             {/* Prize card - Minimal design */}
                             <div className={`w-full h-full bg-gradient-to-br ${rarityGradients[prize.rarity]} rounded-xl ${isInline ? 'p-2 sm:p-2.5' : 'p-2.5 sm:p-3'} shadow-2xl transition-all`}>
