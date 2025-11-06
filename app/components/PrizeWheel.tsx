@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
+import PixiSlotMachine, { PixiSlotMachineRef } from './PixiSlotMachine';
 
 interface Prize {
   name: string;
@@ -48,35 +49,14 @@ export default function PrizeWheel({
   const [isSpinning, setIsSpinning] = useState(false);
   const [wonPrizes, setWonPrizes] = useState<Prize[] | null>(null);
   const [bulkPrizes, setBulkPrizes] = useState<BulkPrize[] | null>(null);
-  // Always maintain 5 offsets, only use first numberOfTickets
-  const [rowOffsets, setRowOffsets] = useState([0, 0, 0, 0, 0]);
   const [isVisible, setIsVisible] = useState(false);
   const [isExiting, setIsExiting] = useState(false);
 
-  // Always create 5 refs (maximum), but only use the first numberOfTickets
-  const rowRefs = [
-    useRef<HTMLDivElement>(null),
-    useRef<HTMLDivElement>(null),
-    useRef<HTMLDivElement>(null),
-    useRef<HTMLDivElement>(null),
-    useRef<HTMLDivElement>(null),
-  ];
-
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-  const tickingIntervalRef = useRef<NodeJS.Timeout | null>(null);
-  const audioContextRef = useRef<AudioContext | null>(null);
+  const pixiSlotMachineRef = useRef<PixiSlotMachineRef>(null);
 
   // Entrance animation
   useEffect(() => {
     setTimeout(() => setIsVisible(true), 10);
-
-    // Cleanup on unmount
-    return () => {
-      stopTickingSound();
-      if (audioContextRef.current) {
-        audioContextRef.current.close();
-      }
-    };
   }, []);
 
   // Expose spin trigger to parent (update when numberOfTickets changes)
@@ -95,18 +75,19 @@ export default function PrizeWheel({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [onResetTrigger]);
 
-  // Notify parent when prizes state changes
+  // Notify parent when prizes state changes (only for bulk prizes now)
   useEffect(() => {
     if (onPrizesStateChange) {
-      onPrizesStateChange(wonPrizes !== null || bulkPrizes !== null);
+      onPrizesStateChange(bulkPrizes !== null);
     }
-  }, [wonPrizes, bulkPrizes, onPrizesStateChange]);
+  }, [bulkPrizes, onPrizesStateChange]);
 
   // Reset when numberOfTickets changes
   useEffect(() => {
-    setWonPrizes(null);
     setBulkPrizes(null);
-    setRowOffsets([0, 0, 0, 0, 0]);
+    if (pixiSlotMachineRef.current) {
+      pixiSlotMachineRef.current.reset();
+    }
   }, [numberOfTickets]);
 
   const rarityGradients = {
@@ -119,7 +100,7 @@ export default function PrizeWheel({
   const handleSpin = () => {
     if (isSpinning) return;
 
-    setWonPrizes(null);
+    setBulkPrizes(null);
 
     // Select prizes based on probability (one for each row)
     const selectPrize = () => {
@@ -154,104 +135,18 @@ export default function PrizeWheel({
       return;
     }
 
-    // Normal mode: show spinning animation
+    // Normal mode: use PixiJS slot machine
     setIsSpinning(true);
-
-    // Play ticking sound
-    playTickingSound();
-
-    const allSelectedPrizes = Array(numberOfTickets).fill(null).map(() => selectPrize());
-
-    // Calculate positions for each row to land on its specific winning prize
-    // Updated widths for full-width horizontal design (card width + gap)
-    const prizeWidth = isInline ? 85 + 8 : 100 + 8; // Width of each prize card + 8px gap (average of responsive widths)
-    const containerWidth = typeof window !== 'undefined' ? window.innerWidth - 16 : 400; // Full viewport width minus 8px padding on each side
-    const repetitions = 50; // Repetitions for smooth circular loop
-
-    // Create different spin amounts for each row (staggered stopping)
-    const displayRows = allSelectedPrizes.length;
-    const newOffsets = rowRefs.slice(0, displayRows).map((_, rowIndex) => {
-      const selectedPrize = allSelectedPrizes[rowIndex];
-      const prizeIndex = prizes.indexOf(selectedPrize);
-
-      // Base spins: 10-15 full rotations for dramatic effect
-      const baseSpins = 10 + rowIndex * 1.5;
-      // Land on a prize in the middle repetitions
-      const landingPosition = (repetitions / 2) * prizes.length + prizeIndex;
-
-      // Center the winning prize in the selection indicator
-      const centeringOffset = containerWidth / 2 - prizeWidth / 2;
-      const totalOffset = (baseSpins * prizes.length + landingPosition) * prizeWidth - centeringOffset;
-
-      return totalOffset;
-    });
-
-    // Pad with zeros to always have 5 elements
-    const paddedOffsets = [...newOffsets, ...Array(5 - displayRows).fill(0)];
-    setRowOffsets(paddedOffsets);
-
-    // Staggered completion times for rows (2.5s base + 0.3s per row for smoother effect)
-    const stopTimes = Array(allSelectedPrizes.length).fill(0).map((_, i) => 2500 + i * 300);
-
-    // Stop ticking sound after last row stops
-    setTimeout(() => {
-      stopTickingSound();
-    }, stopTimes[stopTimes.length - 1]);
-
-    // Show result after last row stops
-    setTimeout(() => {
-      setIsSpinning(false);
-      setWonPrizes(allSelectedPrizes);
-    }, stopTimes[stopTimes.length - 1] + 500);
-  };
-
-  // Generate ticking sound using Web Audio API
-  const playTickingSound = () => {
-    // Initialize audio context if not already created
-    if (!audioContextRef.current) {
-      audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
-    }
-
-    const audioContext = audioContextRef.current;
-    const tickInterval = 50; // Tick every 50ms for fast ticking sound
-
-    const playTick = () => {
-      const oscillator = audioContext.createOscillator();
-      const gainNode = audioContext.createGain();
-
-      oscillator.connect(gainNode);
-      gainNode.connect(audioContext.destination);
-
-      oscillator.frequency.value = 800; // Higher pitch for tick sound
-      oscillator.type = 'sine';
-
-      gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
-      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.02);
-
-      oscillator.start(audioContext.currentTime);
-      oscillator.stop(audioContext.currentTime + 0.02);
-    };
-
-    // Clear any existing interval
-    if (tickingIntervalRef.current) {
-      clearInterval(tickingIntervalRef.current);
-    }
-
-    // Play tick sound repeatedly
-    tickingIntervalRef.current = setInterval(playTick, tickInterval);
-  };
-
-  const stopTickingSound = () => {
-    if (tickingIntervalRef.current) {
-      clearInterval(tickingIntervalRef.current);
-      tickingIntervalRef.current = null;
+    if (pixiSlotMachineRef.current) {
+      pixiSlotMachineRef.current.spin();
     }
   };
 
   const handlePlayAgain = () => {
-    setWonPrizes(null);
     setBulkPrizes(null);
-    setRowOffsets([0, 0, 0, 0, 0]);
+    if (pixiSlotMachineRef.current) {
+      pixiSlotMachineRef.current.reset();
+    }
   };
 
   const handleClose = () => {
@@ -281,8 +176,8 @@ export default function PrizeWheel({
         </button>
       )}
 
-      {/* Show slot machine or prizes based on state */}
-      {!wonPrizes && !bulkPrizes ? (
+      {/* Show slot machine or bulk prizes */}
+      {!bulkPrizes ? (
         // Slot machine or Bulk Mode Indicator
         <div
           className={`flex flex-col items-center ${isInline ? 'space-y-2 sm:space-y-3 md:space-y-4' : 'space-y-4 sm:space-y-6 md:space-y-8'} w-full px-2 transition-all duration-500 ${
@@ -296,58 +191,16 @@ export default function PrizeWheel({
                 isVisible && !isExiting ? 'scale-100 opacity-100' : 'scale-95 opacity-0'
               }`}
             >
-              {/* Horizontal Spinner Rows */}
-              <div className={`flex flex-col ${isInline ? 'gap-3 sm:gap-4' : 'gap-4 sm:gap-5'} relative w-full`}>
-                  {rowRefs.slice(0, numberOfTickets).map((ref, rowIndex) => (
-                    <div key={rowIndex} className="flex-1 flex justify-center">
-                      {/* Horizontal Strip Container - Full Width */}
-                      <div className="w-full overflow-hidden relative">
-                        {/* Edge fade effects */}
-                        <div className="absolute left-0 top-0 bottom-0 w-12 bg-gradient-to-r from-gray-900 to-transparent z-10 pointer-events-none"></div>
-                        <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-gray-900 to-transparent z-10 pointer-events-none"></div>
-
-                        {/* Scrolling Strip */}
-                        <div
-                          ref={ref}
-                          className="relative flex items-center gap-2"
-                          style={{
-                            transform: `translateX(-${rowOffsets[rowIndex]}px)`,
-                            transition: isSpinning
-                              ? `transform ${2.5 + rowIndex * 0.3}s cubic-bezier(0.17, 0.67, 0.35, 0.99)`
-                              : 'none',
-                            filter: isSpinning ? 'blur(1px)' : 'none',
-                          }}
-                        >
-                          {/* Repeat prizes 50 times for smooth scrolling */}
-                          {(Array(50).fill(prizes).flat() as Prize[]).map((prize, idx) => (
-                            <div
-                              key={idx}
-                              className={`${isInline ? 'w-[75px] xs:w-[85px] sm:w-[95px]' : 'w-[85px] sm:w-[100px] md:w-[125px]'} ${isInline ? 'h-[75px] xs:h-[85px] sm:h-[95px]' : 'h-[85px] sm:h-[100px] md:h-[125px]'} flex-shrink-0 flex items-center justify-center relative`}
-                            >
-                              {/* Prize card - Minimal design */}
-                              <div className={`w-full h-full bg-gradient-to-br ${rarityGradients[prize.rarity]} rounded-xl ${isInline ? 'p-2 sm:p-2.5' : 'p-2.5 sm:p-3'} shadow-2xl transition-all`}>
-                                {prize.imageUrl ? (
-                                  <div className="relative w-full h-full flex items-center justify-center">
-                                    <img
-                                      src={prize.imageUrl}
-                                      alt={prize.name}
-                                      className="w-full h-full object-contain"
-                                    />
-                                  </div>
-                                ) : (
-                                  <div className="flex flex-col items-center justify-center h-full">
-                                    <div className={`text-white font-bold ${isInline ? 'text-[9px] sm:text-[10px]' : 'text-[10px] sm:text-xs'} text-center leading-tight mb-1`}>{prize.name}</div>
-                                    <div className={`${isInline ? 'text-[7px] sm:text-[8px]' : 'text-[8px] sm:text-[9px]'} text-white/70 capitalize px-1 py-0.5 bg-black/30 rounded`}>{prize.rarity}</div>
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+              <PixiSlotMachine
+                ref={pixiSlotMachineRef}
+                prizes={prizes}
+                numberOfReels={numberOfTickets}
+                onSpinStart={() => setIsSpinning(true)}
+                onSpinComplete={(selectedPrizes) => {
+                  setIsSpinning(false);
+                  // Don't set wonPrizes - let the slot machine show the winners with highlights
+                }}
+              />
             </div>
           )}
 
@@ -445,55 +298,6 @@ export default function PrizeWheel({
             </div>
             </div>
           )}
-        </div>
-      ) : wonPrizes ? (
-        // Regular Prizes Display - In place of slot machine
-        <div
-          className={`flex flex-col items-center ${isInline ? 'space-y-2 sm:space-y-3 md:space-y-4' : 'space-y-4 sm:space-y-6 md:space-y-8'} w-full px-2 transition-all duration-500`}
-        >
-          {/* Celebration Background */}
-          <div className="absolute inset-0 pointer-events-none">
-            <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/20 via-transparent to-green-500/20 animate-pulse"></div>
-          </div>
-
-          {/* Winner Content */}
-          <div className={`relative z-10 text-center ${isInline ? 'space-y-4 sm:space-y-6' : 'space-y-4 sm:space-y-6'}`}>
-            <h2 className={`${isInline ? 'text-2xl sm:text-3xl' : 'text-3xl sm:text-4xl md:text-5xl'} font-bold text-white animate-[bounceIn_0.6s_ease-out]`}>
-              🎉 YOU WON {wonPrizes.length} PRIZE{wonPrizes.length !== 1 ? 'S' : ''}! 🎉
-            </h2>
-
-            {/* Prizes Display - Use available space */}
-            <div className={`flex flex-wrap justify-center ${isInline ? 'gap-4' : 'gap-3 sm:gap-4'} w-full max-w-2xl mx-auto px-4`}>
-              {wonPrizes.map((prize, index) => (
-                <div
-                  key={index}
-                  className={`relative flex-shrink-0 ${isInline ? 'w-[110px] sm:w-[130px] h-[110px] sm:h-[130px]' : 'w-[140px] sm:w-[160px]'}`}
-                >
-                  {/* Prize card - Larger to fill space */}
-                  <div className={`w-full h-full bg-gradient-to-br ${rarityGradients[prize.rarity]} rounded-xl ${isInline ? 'p-3 sm:p-4' : 'p-3 sm:p-4'} shadow-2xl transition-all transform hover:scale-105 border-2 border-white/30`}>
-                    {prize.imageUrl ? (
-                      <div className="relative w-full h-full flex items-center justify-center">
-                        <img
-                          src={prize.imageUrl}
-                          alt={prize.name}
-                          className="w-full h-full object-contain"
-                        />
-                      </div>
-                    ) : (
-                      <div className="flex flex-col items-center justify-center h-full">
-                        <div className={`text-white font-bold ${isInline ? 'text-xs sm:text-sm' : 'text-[10px] sm:text-xs'} text-center leading-tight mb-1`}>{prize.name}</div>
-                        <div className={`${isInline ? 'text-[9px] sm:text-[10px]' : 'text-[8px] sm:text-[9px]'} text-white/70 capitalize px-1 py-0.5 bg-black/30 rounded`}>{prize.rarity}</div>
-                      </div>
-                    )}
-                  </div>
-                  {/* Number badge */}
-                  <div className={`absolute -top-2 -right-2 bg-white text-black ${isInline ? 'px-2 py-0.5 text-[10px]' : 'px-2 py-0.5 sm:px-3 sm:py-1 text-[10px] sm:text-xs'} rounded-full font-bold uppercase shadow-lg`}>
-                    #{index + 1}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
         </div>
       ) : bulkPrizes ? (
         // Bulk Prizes Display - Grouped by type inline
