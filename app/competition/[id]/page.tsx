@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import PrizeWheel from '@/app/components/PrizeWheel';
 import InteractionSidebar from '@/app/components/InteractionSidebar';
@@ -135,17 +135,17 @@ export default function CompetitionPage() {
   // Find the competition by ID
   const competition = competitions.find(c => c.id === competitionId);
 
-  const incrementTickets = () => {
-    if (ticketCount < MAX_TICKETS) {
-      setTicketCount(ticketCount + 1);
-    }
-  };
+  const incrementTickets = useCallback((e?: React.MouseEvent | React.TouchEvent) => {
+    e?.preventDefault();
+    e?.stopPropagation();
+    setTicketCount(prev => prev < MAX_TICKETS ? prev + 1 : prev);
+  }, [MAX_TICKETS]);
 
-  const decrementTickets = () => {
-    if (ticketCount > 1) {
-      setTicketCount(ticketCount - 1);
-    }
-  };
+  const decrementTickets = useCallback((e?: React.MouseEvent | React.TouchEvent) => {
+    e?.preventDefault();
+    e?.stopPropagation();
+    setTicketCount(prev => prev > 1 ? prev - 1 : prev);
+  }, []);
 
   const handleStartBulkPlay = () => {
     setShowBulkPlayModal(true);
@@ -263,19 +263,21 @@ export default function CompetitionPage() {
           <div className="bg-gradient-to-b from-gray-800 to-gray-900 rounded-2xl border-2 border-gray-700 px-6 py-4 shadow-2xl">
             <div className="flex items-center justify-between gap-4">
               <button
-                onClick={decrementTickets}
+                type="button"
+                onPointerDown={decrementTickets}
                 disabled={ticketCount <= 1}
-                className="w-12 h-12 rounded-full bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 disabled:from-gray-800 disabled:to-gray-900 disabled:cursor-not-allowed flex items-center justify-center text-white font-bold text-2xl transition-all hover:scale-105 disabled:hover:scale-100 shadow-lg disabled:opacity-50"
+                className="w-12 h-12 rounded-full bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 disabled:from-gray-800 disabled:to-gray-900 disabled:cursor-not-allowed flex items-center justify-center text-white font-bold text-2xl transition-all hover:scale-105 disabled:hover:scale-100 shadow-lg disabled:opacity-50 select-none touch-none"
               >
                 -
               </button>
               <div className="flex items-center gap-3 flex-1 justify-center">
-                <span className="text-4xl font-bold text-white">{ticketCount}</span>
+                <span className="text-4xl font-bold text-white select-none">{ticketCount}</span>
               </div>
               <button
-                onClick={incrementTickets}
+                type="button"
+                onPointerDown={incrementTickets}
                 disabled={ticketCount >= MAX_TICKETS}
-                className="w-12 h-12 rounded-full bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 disabled:from-gray-800 disabled:to-gray-900 disabled:cursor-not-allowed flex items-center justify-center text-white font-bold text-2xl transition-all hover:scale-105 disabled:hover:scale-100 shadow-lg disabled:opacity-50"
+                className="w-12 h-12 rounded-full bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 disabled:from-gray-800 disabled:to-gray-900 disabled:cursor-not-allowed flex items-center justify-center text-white font-bold text-2xl transition-all hover:scale-105 disabled:hover:scale-100 shadow-lg disabled:opacity-50 select-none touch-none"
               >
                 +
               </button>
@@ -309,30 +311,50 @@ export default function CompetitionPage() {
               <div className="flex items-center justify-center gap-2">
                 <span className="text-xs text-gray-400 mr-2">Quick add:</span>
                 <button
-                  onClick={() => setTicketCount(Math.min(ticketCount + 5, MAX_TICKETS))}
+                  type="button"
+                  onPointerDown={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setTicketCount(prev => Math.min(prev + 5, MAX_TICKETS));
+                  }}
                   disabled={ticketCount >= MAX_TICKETS}
-                  className="px-3 py-1.5 rounded-lg text-sm font-semibold bg-gray-700 hover:bg-gray-600 disabled:bg-gray-800 disabled:cursor-not-allowed text-white transition-colors disabled:opacity-50"
+                  className="px-3 py-1.5 rounded-lg text-sm font-semibold bg-gray-700 hover:bg-gray-600 disabled:bg-gray-800 disabled:cursor-not-allowed text-white transition-colors disabled:opacity-50 select-none touch-none"
                 >
                   +5
                 </button>
                 <button
-                  onClick={() => setTicketCount(Math.min(ticketCount + 10, MAX_TICKETS))}
+                  type="button"
+                  onPointerDown={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setTicketCount(prev => Math.min(prev + 10, MAX_TICKETS));
+                  }}
                   disabled={ticketCount >= MAX_TICKETS}
-                  className="px-3 py-1.5 rounded-lg text-sm font-semibold bg-gray-700 hover:bg-gray-600 disabled:bg-gray-800 disabled:cursor-not-allowed text-white transition-colors disabled:opacity-50"
+                  className="px-3 py-1.5 rounded-lg text-sm font-semibold bg-gray-700 hover:bg-gray-600 disabled:bg-gray-800 disabled:cursor-not-allowed text-white transition-colors disabled:opacity-50 select-none touch-none"
                 >
                   +10
                 </button>
                 <button
-                  onClick={() => setTicketCount(Math.min(ticketCount + 25, MAX_TICKETS))}
+                  type="button"
+                  onPointerDown={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setTicketCount(prev => Math.min(prev + 25, MAX_TICKETS));
+                  }}
                   disabled={ticketCount >= MAX_TICKETS}
-                  className="px-3 py-1.5 rounded-lg text-sm font-semibold bg-gray-700 hover:bg-gray-600 disabled:bg-gray-800 disabled:cursor-not-allowed text-white transition-colors disabled:opacity-50"
+                  className="px-3 py-1.5 rounded-lg text-sm font-semibold bg-gray-700 hover:bg-gray-600 disabled:bg-gray-800 disabled:cursor-not-allowed text-white transition-colors disabled:opacity-50 select-none touch-none"
                 >
                   +25
                 </button>
                 <button
-                  onClick={() => setTicketCount(MAX_TICKETS)}
+                  type="button"
+                  onPointerDown={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setTicketCount(MAX_TICKETS);
+                  }}
                   disabled={ticketCount >= MAX_TICKETS}
-                  className="px-3 py-1.5 rounded-lg text-sm font-semibold bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-3 py-1.5 rounded-lg text-sm font-semibold bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed select-none touch-none"
                 >
                   Max
                 </button>
