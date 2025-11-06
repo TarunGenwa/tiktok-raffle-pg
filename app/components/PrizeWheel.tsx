@@ -253,16 +253,6 @@ export default function PrizeWheel({
           isVisible && !isExiting ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
         }`}
       >
-          {/* Title */}
-          <div
-            className={`text-center space-y-1 transition-all duration-500 delay-100 ${
-              isVisible && !isExiting ? 'translate-y-0 opacity-100' : '-translate-y-4 opacity-0'
-            }`}
-          >
-            <h2 className={`${isInline ? 'text-base xs:text-lg sm:text-xl' : 'text-lg sm:text-xl md:text-2xl lg:text-3xl'} font-bold text-white px-4`}>{competitionTitle}</h2>
-            <p className={`${isInline ? 'text-[11px] xs:text-xs sm:text-sm' : 'text-xs sm:text-sm md:text-base'} text-gray-400 px-4`}>Spin the slots to win your prize!</p>
-          </div>
-
           {/* Slot Machine Container */}
           <div
             className={`relative w-full flex justify-center transition-all duration-500 delay-200 ${

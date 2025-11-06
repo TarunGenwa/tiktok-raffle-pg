@@ -189,29 +189,77 @@ export default function CompetitionPage() {
   }
 
   return (
-    <div className="h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 overflow-hidden relative">
-      {/* Back Button - Top Left */}
-      <button
-        onClick={() => router.back()}
-        className="absolute top-4 left-4 z-50 w-12 h-12 rounded-full bg-black/50 hover:bg-black/70 backdrop-blur-sm flex items-center justify-center transition-all border border-white/20 shadow-xl"
-      >
-        <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-        </svg>
-      </button>
+    <div className="h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 overflow-hidden relative flex flex-col">
+      {/* Header with Back Button and Competition Name */}
+      <div className="flex items-center px-4 py-4 z-50 relative">
+        <button
+          onClick={() => router.back()}
+          className="w-10 h-10 rounded-full bg-black/50 hover:bg-black/70 backdrop-blur-sm flex items-center justify-center transition-all border border-white/20 shadow-xl flex-shrink-0 absolute left-4"
+        >
+          <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
+        <h1 className="text-xl md:text-2xl font-bold text-white truncate text-center flex-1 px-14">{competition.title}</h1>
+      </div>
 
-      {/* Main Content Area - Centered Slide Layout */}
-      <main className="h-full flex flex-col items-center justify-start overflow-y-auto py-4 md:py-8 pb-20 md:pb-8">
+      {/* Main Content Area - Scrollable */}
+      <main className="flex-1 flex flex-col items-center overflow-y-auto pb-[240px] md:pb-32">
         {/* Interaction Buttons - Prizes Tickets Tab */}
-        <div className="w-full flex justify-center mb-4 z-10">
+        <div className="w-full flex justify-center mb-4 px-4">
           <InteractionSidebar
             prizes={competition.prizes}
             competitionTitle={competition.title}
           />
         </div>
 
-        {/* Ticket Counter */}
-        <div className="w-full max-w-md mx-auto px-1 md:px-0 mb-4 z-10">
+        {/* Game Container */}
+        <div className="w-full max-w-md mx-auto relative px-1 md:px-0 flex flex-col items-center gap-4">
+          {ticketCount <= 5 ? (
+            // Show slot machine for 1-5 tickets
+            <PrizeWheel
+              prizes={competition.prizes}
+              onClose={() => router.back()}
+              competitionTitle={competition.title}
+              isInline={true}
+              hideCloseButton={true}
+              numberOfTickets={ticketCount}
+            />
+          ) : (
+            // Show bulk play button for 6+ tickets
+            <div className="w-full flex flex-col items-center gap-6 p-8">
+              <div className="text-center">
+                <h2 className="text-2xl font-bold text-white mb-2">
+                  Bulk Play Mode
+                </h2>
+                <p className="text-gray-400 mb-1">
+                  Ready to play {ticketCount} tickets
+                </p>
+                <p className="text-sm text-gray-500">
+                  Click below to spin and reveal all prizes
+                </p>
+              </div>
+
+              <button
+                onClick={handleStartBulkPlay}
+                className="group relative px-8 py-4 rounded-xl font-bold text-xl bg-gradient-to-r from-emerald-500 via-green-500 to-lime-500 hover:from-emerald-400 hover:via-green-400 hover:to-lime-400 text-white shadow-2xl transition-all transform hover:scale-105 overflow-hidden"
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-emerald-600 via-green-600 to-lime-600 opacity-0 group-hover:opacity-100 transition-opacity" />
+                <span className="relative flex items-center gap-2">
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                  PLAY ALL {ticketCount} TICKETS
+                </span>
+              </button>
+            </div>
+          )}
+        </div>
+      </main>
+
+      {/* Ticket Counter - Fixed Above Bottom Nav */}
+      <div className="fixed bottom-16 md:bottom-0 left-0 right-0 bg-gradient-to-t from-gray-900 via-gray-900/95 to-transparent backdrop-blur-sm z-30 px-4 pb-4 pt-6">
+        <div className="w-full max-w-md mx-auto">
           <div className="bg-gradient-to-b from-gray-800 to-gray-900 rounded-2xl border-2 border-gray-700 px-6 py-4 shadow-2xl">
             <div className="flex items-center justify-between gap-4">
               <button
@@ -292,50 +340,7 @@ export default function CompetitionPage() {
             </div>
           </div>
         </div>
-
-        {/* Game Container */}
-        <div className="w-full max-w-md mx-auto relative px-1 md:px-0 flex flex-col items-center gap-4">
-          {ticketCount <= 5 ? (
-            // Show slot machine for 1-5 tickets
-            <PrizeWheel
-              prizes={competition.prizes}
-              onClose={() => router.back()}
-              competitionTitle={competition.title}
-              isInline={true}
-              hideCloseButton={true}
-              numberOfTickets={ticketCount}
-            />
-          ) : (
-            // Show bulk play button for 6+ tickets
-            <div className="w-full flex flex-col items-center gap-6 p-8">
-              <div className="text-center">
-                <h2 className="text-2xl font-bold text-white mb-2">
-                  Bulk Play Mode
-                </h2>
-                <p className="text-gray-400 mb-1">
-                  Ready to play {ticketCount} tickets
-                </p>
-                <p className="text-sm text-gray-500">
-                  Click below to spin and reveal all prizes
-                </p>
-              </div>
-
-              <button
-                onClick={handleStartBulkPlay}
-                className="group relative px-8 py-4 rounded-xl font-bold text-xl bg-gradient-to-r from-emerald-500 via-green-500 to-lime-500 hover:from-emerald-400 hover:via-green-400 hover:to-lime-400 text-white shadow-2xl transition-all transform hover:scale-105 overflow-hidden"
-              >
-                <div className="absolute inset-0 bg-gradient-to-r from-emerald-600 via-green-600 to-lime-600 opacity-0 group-hover:opacity-100 transition-opacity" />
-                <span className="relative flex items-center gap-2">
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                  </svg>
-                  PLAY ALL {ticketCount} TICKETS
-                </span>
-              </button>
-            </div>
-          )}
-        </div>
-      </main>
+      </div>
 
       {/* Bulk Play Modal */}
       {showBulkPlayModal && (
