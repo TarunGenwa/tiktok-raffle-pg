@@ -119,11 +119,7 @@ export default function PrizeWheel({
   const handleSpin = () => {
     if (isSpinning) return;
 
-    setIsSpinning(true);
     setWonPrizes(null);
-
-    // Play ticking sound
-    playTickingSound();
 
     // Select prizes based on probability (one for each row)
     const selectPrize = () => {
@@ -138,12 +134,33 @@ export default function PrizeWheel({
       return prizes[0];
     };
 
-    // If bulk mode (totalTickets > 5), generate all prizes but only show 1 row
-    const ticketsToGenerate = totalTickets && totalTickets > 5 ? totalTickets : numberOfTickets;
-    const allSelectedPrizes = Array(ticketsToGenerate).fill(null).map(() => selectPrize());
+    // If bulk mode (totalTickets > 5), skip spinning and reveal prizes immediately
+    if (totalTickets && totalTickets > 5) {
+      setIsSpinning(true);
+      const allSelectedPrizes = Array(totalTickets).fill(null).map(() => selectPrize());
 
-    // For display, only show first row in bulk mode
-    const selectedPrizes = totalTickets && totalTickets > 5 ? [allSelectedPrizes[0]] : allSelectedPrizes;
+      // Show bulk prizes immediately
+      const bulkPrizesData: BulkPrize[] = allSelectedPrizes.map(prize => ({
+        name: prize.name,
+        rarity: prize.rarity,
+        image: prize.imageUrl
+      }));
+
+      // Small delay for UI feedback
+      setTimeout(() => {
+        setIsSpinning(false);
+        setBulkPrizes(bulkPrizesData);
+      }, 300);
+      return;
+    }
+
+    // Normal mode: show spinning animation
+    setIsSpinning(true);
+
+    // Play ticking sound
+    playTickingSound();
+
+    const allSelectedPrizes = Array(numberOfTickets).fill(null).map(() => selectPrize());
 
     // Calculate positions for each row to land on its specific winning prize
     // Updated widths for full-width horizontal design (card width + gap)
@@ -152,9 +169,9 @@ export default function PrizeWheel({
     const repetitions = 50; // Repetitions for smooth circular loop
 
     // Create different spin amounts for each row (staggered stopping)
-    const displayRows = selectedPrizes.length; // Number of rows to display (1 in bulk mode, numberOfTickets in normal mode)
+    const displayRows = allSelectedPrizes.length;
     const newOffsets = rowRefs.slice(0, displayRows).map((_, rowIndex) => {
-      const selectedPrize = selectedPrizes[rowIndex];
+      const selectedPrize = allSelectedPrizes[rowIndex];
       const prizeIndex = prizes.indexOf(selectedPrize);
 
       // Base spins: 10-15 full rotations for dramatic effect
@@ -174,7 +191,7 @@ export default function PrizeWheel({
     setRowOffsets(paddedOffsets);
 
     // Staggered completion times for rows (2.5s base + 0.3s per row for smoother effect)
-    const stopTimes = Array(selectedPrizes.length).fill(0).map((_, i) => 2500 + i * 300);
+    const stopTimes = Array(allSelectedPrizes.length).fill(0).map((_, i) => 2500 + i * 300);
 
     // Stop ticking sound after last row stops
     setTimeout(() => {
@@ -184,19 +201,7 @@ export default function PrizeWheel({
     // Show result after last row stops
     setTimeout(() => {
       setIsSpinning(false);
-
-      // If in bulk mode, show bulk prizes inline
-      if (totalTickets && totalTickets > 5) {
-        const bulkPrizesData: BulkPrize[] = allSelectedPrizes.map(prize => ({
-          name: prize.name,
-          rarity: prize.rarity,
-          image: prize.imageUrl
-        }));
-        setBulkPrizes(bulkPrizesData);
-      } else {
-        // Normal mode: show prizes in place
-        setWonPrizes(selectedPrizes);
-      }
+      setWonPrizes(allSelectedPrizes);
     }, stopTimes[stopTimes.length - 1] + 500);
   };
 
@@ -278,74 +283,76 @@ export default function PrizeWheel({
 
       {/* Show slot machine or prizes based on state */}
       {!wonPrizes && !bulkPrizes ? (
-        // Slot machine
+        // Slot machine or Bulk Mode Indicator
         <div
           className={`flex flex-col items-center ${isInline ? 'space-y-2 sm:space-y-3 md:space-y-4' : 'space-y-4 sm:space-y-6 md:space-y-8'} w-full px-2 transition-all duration-500 ${
             isVisible && !isExiting ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
           }`}
         >
-          {/* Horizontal Spinner Container - Native Feel */}
-          <div
-            className={`relative w-full flex justify-center transition-all duration-500 delay-200 ${
-              isVisible && !isExiting ? 'scale-100 opacity-100' : 'scale-95 opacity-0'
-            }`}
-          >
-            {/* Horizontal Spinner Rows */}
-            <div className={`flex flex-col ${isInline ? 'gap-3 sm:gap-4' : 'gap-4 sm:gap-5'} relative w-full`}>
-                {rowRefs.slice(0, totalTickets && totalTickets > 5 ? 1 : numberOfTickets).map((ref, rowIndex) => (
-                  <div key={rowIndex} className="flex-1 flex justify-center">
-                    {/* Horizontal Strip Container - Full Width */}
-                    <div className="w-full overflow-hidden relative">
-                      {/* Edge fade effects */}
-                      <div className="absolute left-0 top-0 bottom-0 w-12 bg-gradient-to-r from-gray-900 to-transparent z-10 pointer-events-none"></div>
-                      <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-gray-900 to-transparent z-10 pointer-events-none"></div>
+          {/* Only show slot machine in normal mode (not bulk mode) */}
+          {!(totalTickets && totalTickets > 5) && (
+            <div
+              className={`relative w-full flex justify-center transition-all duration-500 delay-200 ${
+                isVisible && !isExiting ? 'scale-100 opacity-100' : 'scale-95 opacity-0'
+              }`}
+            >
+              {/* Horizontal Spinner Rows */}
+              <div className={`flex flex-col ${isInline ? 'gap-3 sm:gap-4' : 'gap-4 sm:gap-5'} relative w-full`}>
+                  {rowRefs.slice(0, numberOfTickets).map((ref, rowIndex) => (
+                    <div key={rowIndex} className="flex-1 flex justify-center">
+                      {/* Horizontal Strip Container - Full Width */}
+                      <div className="w-full overflow-hidden relative">
+                        {/* Edge fade effects */}
+                        <div className="absolute left-0 top-0 bottom-0 w-12 bg-gradient-to-r from-gray-900 to-transparent z-10 pointer-events-none"></div>
+                        <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-gray-900 to-transparent z-10 pointer-events-none"></div>
 
-                      {/* Scrolling Strip */}
-                      <div
-                        ref={ref}
-                        className="relative flex items-center gap-2"
-                        style={{
-                          transform: `translateX(-${rowOffsets[rowIndex]}px)`,
-                          transition: isSpinning
-                            ? `transform ${2.5 + rowIndex * 0.3}s cubic-bezier(0.17, 0.67, 0.35, 0.99)`
-                            : 'none',
-                          filter: isSpinning ? 'blur(1px)' : 'none',
-                        }}
-                      >
-                        {/* Repeat prizes 50 times for smooth scrolling */}
-                        {(Array(50).fill(prizes).flat() as Prize[]).map((prize, idx) => (
-                          <div
-                            key={idx}
-                            className={`${isInline ? 'w-[75px] xs:w-[85px] sm:w-[95px]' : 'w-[85px] sm:w-[100px] md:w-[125px]'} ${isInline ? 'h-[75px] xs:h-[85px] sm:h-[95px]' : 'h-[85px] sm:h-[100px] md:h-[125px]'} flex-shrink-0 flex items-center justify-center relative`}
-                          >
-                            {/* Prize card - Minimal design */}
-                            <div className={`w-full h-full bg-gradient-to-br ${rarityGradients[prize.rarity]} rounded-xl ${isInline ? 'p-2 sm:p-2.5' : 'p-2.5 sm:p-3'} shadow-2xl transition-all`}>
-                              {prize.imageUrl ? (
-                                <div className="relative w-full h-full flex items-center justify-center">
-                                  <img
-                                    src={prize.imageUrl}
-                                    alt={prize.name}
-                                    className="w-full h-full object-contain"
-                                  />
-                                </div>
-                              ) : (
-                                <div className="flex flex-col items-center justify-center h-full">
-                                  <div className={`text-white font-bold ${isInline ? 'text-[9px] sm:text-[10px]' : 'text-[10px] sm:text-xs'} text-center leading-tight mb-1`}>{prize.name}</div>
-                                  <div className={`${isInline ? 'text-[7px] sm:text-[8px]' : 'text-[8px] sm:text-[9px]'} text-white/70 capitalize px-1 py-0.5 bg-black/30 rounded`}>{prize.rarity}</div>
-                                </div>
-                              )}
+                        {/* Scrolling Strip */}
+                        <div
+                          ref={ref}
+                          className="relative flex items-center gap-2"
+                          style={{
+                            transform: `translateX(-${rowOffsets[rowIndex]}px)`,
+                            transition: isSpinning
+                              ? `transform ${2.5 + rowIndex * 0.3}s cubic-bezier(0.17, 0.67, 0.35, 0.99)`
+                              : 'none',
+                            filter: isSpinning ? 'blur(1px)' : 'none',
+                          }}
+                        >
+                          {/* Repeat prizes 50 times for smooth scrolling */}
+                          {(Array(50).fill(prizes).flat() as Prize[]).map((prize, idx) => (
+                            <div
+                              key={idx}
+                              className={`${isInline ? 'w-[75px] xs:w-[85px] sm:w-[95px]' : 'w-[85px] sm:w-[100px] md:w-[125px]'} ${isInline ? 'h-[75px] xs:h-[85px] sm:h-[95px]' : 'h-[85px] sm:h-[100px] md:h-[125px]'} flex-shrink-0 flex items-center justify-center relative`}
+                            >
+                              {/* Prize card - Minimal design */}
+                              <div className={`w-full h-full bg-gradient-to-br ${rarityGradients[prize.rarity]} rounded-xl ${isInline ? 'p-2 sm:p-2.5' : 'p-2.5 sm:p-3'} shadow-2xl transition-all`}>
+                                {prize.imageUrl ? (
+                                  <div className="relative w-full h-full flex items-center justify-center">
+                                    <img
+                                      src={prize.imageUrl}
+                                      alt={prize.name}
+                                      className="w-full h-full object-contain"
+                                    />
+                                  </div>
+                                ) : (
+                                  <div className="flex flex-col items-center justify-center h-full">
+                                    <div className={`text-white font-bold ${isInline ? 'text-[9px] sm:text-[10px]' : 'text-[10px] sm:text-xs'} text-center leading-tight mb-1`}>{prize.name}</div>
+                                    <div className={`${isInline ? 'text-[7px] sm:text-[8px]' : 'text-[8px] sm:text-[9px]'} text-white/70 capitalize px-1 py-0.5 bg-black/30 rounded`}>{prize.rarity}</div>
+                                  </div>
+                                )}
+                              </div>
                             </div>
-                          </div>
-                        ))}
+                          ))}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-          </div>
+                  ))}
+                </div>
+            </div>
+          )}
 
           {/* Bulk Play Mode Indicator */}
-          {totalTickets && totalTickets > 5 && (
+          {totalTickets && totalTickets > 5 && !isSpinning && (
             <div
               className={`w-full flex flex-col items-center gap-3 sm:gap-4 py-4 sm:py-6 transition-all duration-500 delay-300 ${
                 isVisible && !isExiting ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
@@ -362,6 +369,23 @@ export default function PrizeWheel({
                 <p className="text-xs sm:text-sm text-gray-500">
                   Click the button below to reveal all prizes
                 </p>
+              </div>
+            </div>
+          )}
+
+          {/* Loading state for bulk mode */}
+          {totalTickets && totalTickets > 5 && isSpinning && (
+            <div
+              className={`w-full flex flex-col items-center gap-3 sm:gap-4 py-4 sm:py-6 transition-all duration-500`}
+            >
+              <div className="text-center">
+                <svg className="animate-spin w-12 h-12 sm:w-16 sm:h-16 text-white mx-auto mb-4" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <h2 className="text-xl sm:text-2xl font-bold text-white mb-2">
+                  Revealing Prizes...
+                </h2>
               </div>
             </div>
           )}
