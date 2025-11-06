@@ -161,7 +161,12 @@ export default function Home() {
     setDragOffset(diff);
     setTouchEnd(currentTouch);
 
-    // Prevent pull-to-refresh when swiping up
+    // Allow pull-to-refresh when on first slide and swiping down
+    if (currentCompetitionIndex === 0 && diff < 0) {
+      return; // Don't prevent default, allow pull-to-refresh
+    }
+
+    // Prevent pull-to-refresh when swiping up or not on first slide
     if (diff > 0) {
       e.preventDefault();
     }
@@ -251,7 +256,7 @@ export default function Home() {
         onWheel={onWheel}
         style={{
           touchAction: 'pan-y',
-          overscrollBehavior: 'none'
+          overscrollBehavior: currentCompetitionIndex === 0 ? 'auto' : 'none'
         }}
       >
         <div className="w-full max-w-md h-[calc(100vh-5rem)] md:h-[calc(100vh-4rem)] mx-auto relative px-1 md:px-0">
