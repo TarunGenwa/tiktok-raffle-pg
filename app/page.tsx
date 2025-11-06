@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Competition from './components/Competition';
+import PromoSlide from './components/PromoSlide';
 import { Button } from '@/components/ui/button';
 
 interface Prize {
@@ -113,7 +114,9 @@ export default function Home() {
     }
   ];
 
-  const [currentCompetitionIndex, setCurrentCompetitionIndex] = useState(0);
+  // Total slides = 1 promo slide + competitions
+  const totalSlides = 1 + competitions.length;
+  const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -126,20 +129,20 @@ export default function Home() {
   // Minimum time between scroll events (in ms) to prevent too rapid scrolling
   const scrollDebounceTime = 800;
 
-  const goToNextCompetition = () => {
-    if (currentCompetitionIndex < competitions.length - 1 && !isTransitioning) {
+  const goToNextSlide = () => {
+    if (currentSlideIndex < totalSlides - 1 && !isTransitioning) {
       setIsTransitioning(true);
-      setCurrentCompetitionIndex((prev) => prev + 1);
+      setCurrentSlideIndex((prev) => prev + 1);
       setTimeout(() => {
         setIsTransitioning(false);
       }, 400);
     }
   };
 
-  const goToPreviousCompetition = () => {
-    if (currentCompetitionIndex > 0 && !isTransitioning) {
+  const goToPreviousSlide = () => {
+    if (currentSlideIndex > 0 && !isTransitioning) {
       setIsTransitioning(true);
-      setCurrentCompetitionIndex((prev) => prev - 1);
+      setCurrentSlideIndex((prev) => prev - 1);
       setTimeout(() => {
         setIsTransitioning(false);
       }, 400);
@@ -162,7 +165,7 @@ export default function Home() {
     setTouchEnd(currentTouch);
 
     // Allow pull-to-refresh when on first slide and swiping down
-    if (currentCompetitionIndex === 0 && diff < 0) {
+    if (currentSlideIndex === 0 && diff < 0) {
       return; // Don't prevent default, allow pull-to-refresh
     }
 
@@ -184,9 +187,9 @@ export default function Home() {
     const isSwipeDown = distance < -minSwipeDistance;
 
     if (isSwipeUp) {
-      goToNextCompetition();
+      goToNextSlide();
     } else if (isSwipeDown) {
-      goToPreviousCompetition();
+      goToPreviousSlide();
     }
 
     setIsDragging(false);
@@ -217,20 +220,18 @@ export default function Home() {
 
     if (e.deltaY > 0) {
       // Scrolling down - go to next
-      if (currentCompetitionIndex < competitions.length - 1) {
+      if (currentSlideIndex < totalSlides - 1) {
         setLastScrollTime(now);
-        goToNextCompetition();
+        goToNextSlide();
       }
     } else if (e.deltaY < 0) {
       // Scrolling up - go to previous
-      if (currentCompetitionIndex > 0) {
+      if (currentSlideIndex > 0) {
         setLastScrollTime(now);
-        goToPreviousCompetition();
+        goToPreviousSlide();
       }
     }
   };
-
-  const currentCompetition = competitions[currentCompetitionIndex];
 
   // Calculate opacity and transform based on drag
   const getOpacity = () => {
@@ -256,15 +257,75 @@ export default function Home() {
         onWheel={onWheel}
         style={{
           touchAction: 'pan-y',
-          overscrollBehavior: currentCompetitionIndex === 0 ? 'auto' : 'none'
+          overscrollBehavior: currentSlideIndex === 0 ? 'auto' : 'none'
         }}
       >
         <div className="w-full max-w-md h-[calc(100vh-5rem)] md:h-[calc(100vh-4rem)] mx-auto relative px-1 md:px-0">
-          {/* Competitions Stack with Smooth Transitions */}
+          {/* Slides Stack with Smooth Transitions */}
           <div className="relative w-full h-full">
-            {competitions.map((competition, index) => {
-              const offset = index - currentCompetitionIndex;
-              const isActive = index === currentCompetitionIndex;
+            {/* Promo Slide - Always at index 0 */}
+            {(() => {
+              const slideIndex = 0;
+              const offset = slideIndex - currentSlideIndex;
+              const isActive = slideIndex === currentSlideIndex;
+              const isPrev = offset === -1;
+              const isNext = offset === 1;
+              const isVisible = Math.abs(offset) <= 1;
+
+              if (!isVisible) return null;
+
+              // Calculate transform based on position and drag
+              let translateY = offset * 100; // Base offset in vh
+              if (isDragging) {
+                translateY -= (dragOffset / window.innerHeight) * 100;
+              }
+
+              // Calculate opacity
+              let opacity = 1;
+              if (!isActive) {
+                opacity = 0.3;
+              }
+              if (isDragging && isActive) {
+                const progress = Math.abs(dragOffset) / 300;
+                opacity = Math.max(1 - progress, 0.3);
+              }
+
+              // Calculate scale
+              let scale = 1;
+              if (!isActive) {
+                scale = 0.85;
+              }
+              if (isDragging && isActive) {
+                const progress = Math.abs(dragOffset) / 300;
+                scale = Math.max(1 - progress * 0.15, 0.85);
+              }
+
+              // Calculate blur
+              const blur = isActive ? 0 : 8;
+
+              return (
+                <div
+                  key="promo-slide"
+                  className="absolute inset-0 w-full h-full"
+                  style={{
+                    transform: `translateY(${translateY}%) scale(${scale})`,
+                    opacity: opacity,
+                    filter: `blur(${blur}px)`,
+                    transition: isDragging ? 'none' : 'all 0.5s cubic-bezier(0.4, 0.0, 0.2, 1)',
+                    pointerEvents: isActive ? 'auto' : 'none',
+                    zIndex: isActive ? 10 : isPrev ? 9 : isNext ? 8 : 0,
+                  }}
+                >
+                  <PromoSlide isActive={isActive} />
+                </div>
+              );
+            })()}
+
+            {/* Competition Slides - Starting from index 1 */}
+            {competitions.map((competition, competitionIndex) => {
+              const slideIndex = competitionIndex + 1; // +1 because promo is at 0
+              const offset = slideIndex - currentSlideIndex;
+              const isActive = slideIndex === currentSlideIndex;
               const isPrev = offset === -1;
               const isNext = offset === 1;
               const isVisible = Math.abs(offset) <= 1;
@@ -327,13 +388,6 @@ export default function Home() {
                     videoUrl={competition.videoUrl}
                     isActive={isActive}
                   />
-
-                  {/* Competition Counter (Mobile Only) */}
-                  {isActive && (
-                    <div className="md:hidden absolute top-2 right-2 sm:top-4 sm:right-4 bg-black/50 backdrop-blur-sm px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-white text-xs sm:text-sm z-20 pointer-events-none">
-                      {index + 1} / {competitions.length}
-                    </div>
-                  )}
                 </div>
               );
             })}
@@ -343,12 +397,12 @@ export default function Home() {
           {isDragging && (
             <div className="md:hidden absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-30 pointer-events-none">
               <div className="bg-black/70 rounded-full p-3 sm:p-4">
-                {dragOffset > minSwipeDistance && currentCompetitionIndex < competitions.length - 1 && (
+                {dragOffset > minSwipeDistance && currentSlideIndex < totalSlides - 1 && (
                   <svg className="w-6 h-6 sm:w-8 sm:h-8 text-white animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M19 9l-7 7-7-7" />
                   </svg>
                 )}
-                {dragOffset < -minSwipeDistance && currentCompetitionIndex > 0 && (
+                {dragOffset < -minSwipeDistance && currentSlideIndex > 0 && (
                   <svg className="w-6 h-6 sm:w-8 sm:h-8 text-white animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 15l7-7 7 7" />
                   </svg>
@@ -362,8 +416,8 @@ export default function Home() {
         <div className="hidden md:flex absolute left-24 top-1/2 -translate-y-1/2 flex-col gap-4 z-20">
           {/* Up Button */}
           <Button
-            onClick={goToPreviousCompetition}
-            disabled={currentCompetitionIndex === 0}
+            onClick={goToPreviousSlide}
+            disabled={currentSlideIndex === 0}
             size="icon"
             className="w-14 h-14 rounded-full bg-gray-800/80 hover:bg-gray-700/80 border-2 border-white/20 disabled:opacity-30 disabled:cursor-not-allowed shadow-xl"
           >
@@ -372,17 +426,17 @@ export default function Home() {
             </svg>
           </Button>
 
-          {/* Competition Progress Indicator */}
+          {/* Slide Progress Indicator */}
           <div className="bg-gray-800/80 rounded-full px-4 py-2 border-2 border-white/20 shadow-xl">
             <div className="text-white text-sm font-bold text-center">
-              {currentCompetitionIndex + 1} / {competitions.length}
+              {currentSlideIndex + 1} / {totalSlides}
             </div>
           </div>
 
           {/* Down Button */}
           <Button
-            onClick={goToNextCompetition}
-            disabled={currentCompetitionIndex === competitions.length - 1}
+            onClick={goToNextSlide}
+            disabled={currentSlideIndex === totalSlides - 1}
             size="icon"
             className="w-14 h-14 rounded-full bg-gray-800/80 hover:bg-gray-700/80 border-2 border-white/20 disabled:opacity-30 disabled:cursor-not-allowed shadow-xl"
           >
