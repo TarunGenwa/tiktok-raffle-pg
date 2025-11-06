@@ -181,20 +181,6 @@ const PixiSlotMachine = forwardRef<PixiSlotMachineRef, PixiSlotMachineProps>(
         // Store for later use in highlighting winners
         (reelContainer as any).selectionIndicators = selectionIndicators;
 
-        // Create edge fade effects using simple rectangles
-        const fadeWidth = 60;
-
-        const leftFade = new PIXI.Graphics();
-        leftFade.rect(0, 0, fadeWidth, app.screen.height);
-        leftFade.fill({ color: 0x000000, alpha: 0.7 });
-
-        const rightFade = new PIXI.Graphics();
-        rightFade.rect(app.screen.width - fadeWidth, 0, fadeWidth, app.screen.height);
-        rightFade.fill({ color: 0x000000, alpha: 0.7 });
-
-        app.stage.addChild(leftFade);
-        app.stage.addChild(rightFade);
-
         // Function to update reel positions
         const updateReelPositions = () => {
           for (let i = 0; i < reels.length; i++) {
