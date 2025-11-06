@@ -113,8 +113,8 @@ export default function PrizeWheel({
     const selectedPrizes = totalTickets && totalTickets > 5 ? [allSelectedPrizes[0]] : allSelectedPrizes;
 
     // Calculate positions for each row to land on its specific winning prize
-    // Updated widths for new horizontal design
-    const prizeWidth = isInline ? 85 : 100; // Width of each prize card (average of responsive widths)
+    // Updated widths for new horizontal design (card width + margin)
+    const prizeWidth = isInline ? 85 + 8 : 100 + 8; // Width of each prize card + mx-1 margin (average of responsive widths)
     const containerWidth = isInline ? 320 : 480; // Container width (average of responsive widths)
     const repetitions = 50; // Repetitions for smooth circular loop
 
@@ -250,47 +250,37 @@ export default function PrizeWheel({
             isVisible && !isExiting ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
           }`}
         >
-          {/* Horizontal Spinner Container */}
+          {/* Horizontal Spinner Container - Native Feel */}
           <div
             className={`relative w-full flex justify-center transition-all duration-500 delay-200 ${
               isVisible && !isExiting ? 'scale-100 opacity-100' : 'scale-95 opacity-0'
             }`}
           >
-            {/* Outer glow */}
-            <div className="absolute inset-0 bg-gradient-to-br from-green-500/20 to-emerald-500/20 rounded-3xl blur-2xl"></div>
-
-            {/* Spinner Frame */}
-            <div className={`relative bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 ${isInline ? 'p-3 sm:p-5' : 'p-5 sm:p-8'} rounded-2xl sm:rounded-3xl shadow-2xl ${isInline ? 'border-2' : 'border-2 sm:border-3'} border-gray-700/50 w-full flex flex-col items-center backdrop-blur-sm`}>
-              {/* Top Badge */}
-              <div className={`absolute ${isInline ? '-top-3 xs:-top-4' : '-top-3 sm:-top-4'} left-1/2 -translate-x-1/2 bg-gradient-to-r from-emerald-500 via-green-500 to-lime-500 ${isInline ? 'px-3 xs:px-4 sm:px-6 py-1 sm:py-1.5' : 'px-4 sm:px-6 md:px-8 py-1 sm:py-1.5'} rounded-full text-white font-bold ${isInline ? 'text-[10px] xs:text-xs sm:text-sm' : 'text-xs sm:text-sm md:text-base'} shadow-lg border-2 border-white/20`}>
-                🎰 SPIN TO WIN
-              </div>
-
-              {/* Horizontal Spinner Rows */}
-              <div className={`flex flex-col ${isInline ? 'gap-2 sm:gap-3' : 'gap-3 sm:gap-4'} relative w-full`}>
+            {/* Horizontal Spinner Rows */}
+            <div className={`flex flex-col ${isInline ? 'gap-3 sm:gap-4' : 'gap-4 sm:gap-5'} relative w-full`}>
                 {/* Center Selection Indicator - Vertical Bar */}
                 <div className={`absolute top-0 bottom-0 left-1/2 -translate-x-1/2 z-20 pointer-events-none flex items-center`}>
-                  <div className={`${isInline ? 'w-[85px] xs:w-[95px] sm:w-[105px]' : 'w-[95px] sm:w-[110px] md:w-[135px]'} h-full relative`}>
+                  <div className={`${isInline ? 'w-[83px] xs:w-[93px] sm:w-[103px]' : 'w-[93px] sm:w-[108px] md:w-[133px]'} h-full relative`}>
                     {/* Selection frame with glow */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-emerald-500/30 to-transparent rounded-xl"></div>
-                    <div className={`absolute inset-0 ${isInline ? 'border-3' : 'border-3 sm:border-4'} border-emerald-500 rounded-xl shadow-[0_0_20px_rgba(16,185,129,0.6),inset_0_0_20px_rgba(16,185,129,0.3)]`}></div>
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-emerald-500/20 to-transparent rounded-xl"></div>
+                    <div className={`absolute inset-0 border-[3px] border-emerald-500 rounded-xl shadow-[0_0_25px_rgba(16,185,129,0.8),inset_0_0_15px_rgba(16,185,129,0.2)]`}></div>
                     {/* Top arrow */}
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                      <div className="w-0 h-0 border-l-[8px] border-l-transparent border-r-[8px] border-r-transparent border-t-[12px] border-t-emerald-500 drop-shadow-[0_0_8px_rgba(16,185,129,0.8)]"></div>
+                    <div className="absolute -top-4 left-1/2 -translate-x-1/2">
+                      <div className="w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-t-[14px] border-t-emerald-500 drop-shadow-[0_0_10px_rgba(16,185,129,1)]"></div>
                     </div>
                     {/* Bottom arrow */}
-                    <div className="absolute -bottom-3 left-1/2 -translate-x-1/2">
-                      <div className="w-0 h-0 border-l-[8px] border-l-transparent border-r-[8px] border-r-transparent border-b-[12px] border-b-emerald-500 drop-shadow-[0_0_8px_rgba(16,185,129,0.8)]"></div>
+                    <div className="absolute -bottom-4 left-1/2 -translate-x-1/2">
+                      <div className="w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-b-[14px] border-b-emerald-500 drop-shadow-[0_0_10px_rgba(16,185,129,1)]"></div>
                     </div>
                   </div>
                 </div>
                 {rowRefs.slice(0, totalTickets && totalTickets > 5 ? 1 : numberOfTickets).map((ref, rowIndex) => (
                   <div key={rowIndex} className="flex-1 flex justify-center">
-                    {/* Horizontal Strip Container */}
-                    <div className={`bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 rounded-xl ${isInline ? 'p-1 sm:p-1.5' : 'p-1.5 sm:p-2'} ${isInline ? 'w-[280px] xs:w-[320px] sm:w-[360px]' : 'w-[320px] sm:w-[480px] md:w-[600px]'} overflow-hidden relative shadow-[inset_0_2px_10px_rgba(0,0,0,0.5)] border border-gray-700/50`}>
+                    {/* Horizontal Strip Container - Minimal */}
+                    <div className={`${isInline ? 'w-[280px] xs:w-[320px] sm:w-[360px]' : 'w-[320px] sm:w-[480px] md:w-[600px]'} overflow-hidden relative`}>
                       {/* Edge fade effects */}
-                      <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-gray-900 to-transparent z-10 pointer-events-none"></div>
-                      <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-gray-900 to-transparent z-10 pointer-events-none"></div>
+                      <div className="absolute left-0 top-0 bottom-0 w-12 bg-gradient-to-r from-gray-900 to-transparent z-10 pointer-events-none"></div>
+                      <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-gray-900 to-transparent z-10 pointer-events-none"></div>
 
                       {/* Scrolling Strip */}
                       <div
@@ -308,28 +298,25 @@ export default function PrizeWheel({
                         {(Array(50).fill(prizes).flat() as Prize[]).map((prize, idx) => (
                           <div
                             key={idx}
-                            className={`${isInline ? 'w-[75px] xs:w-[85px] sm:w-[95px]' : 'w-[85px] sm:w-[100px] md:w-[125px]'} ${isInline ? 'h-[75px] xs:h-[85px] sm:h-[95px]' : 'h-[85px] sm:h-[100px] md:h-[125px]'} flex-shrink-0 flex items-center justify-center relative group`}
+                            className={`${isInline ? 'w-[75px] xs:w-[85px] sm:w-[95px]' : 'w-[85px] sm:w-[100px] md:w-[125px]'} ${isInline ? 'h-[75px] xs:h-[85px] sm:h-[95px]' : 'h-[85px] sm:h-[100px] md:h-[125px]'} flex-shrink-0 flex items-center justify-center relative mx-1`}
                           >
-                            {/* Prize card */}
-                            <div className={`w-full h-full bg-gradient-to-br ${rarityGradients[prize.rarity]} rounded-lg ${isInline ? 'p-1.5 sm:p-2' : 'p-2 sm:p-2.5'} shadow-lg border border-white/10 transition-all`}>
+                            {/* Prize card - Minimal design */}
+                            <div className={`w-full h-full bg-gradient-to-br ${rarityGradients[prize.rarity]} rounded-xl ${isInline ? 'p-2 sm:p-2.5' : 'p-2.5 sm:p-3'} shadow-2xl transition-all`}>
                               {prize.imageUrl ? (
                                 <div className="relative w-full h-full flex items-center justify-center">
                                   <img
                                     src={prize.imageUrl}
                                     alt={prize.name}
-                                    className="w-full h-full object-contain drop-shadow-lg"
+                                    className="w-full h-full object-contain"
                                   />
                                 </div>
                               ) : (
                                 <div className="flex flex-col items-center justify-center h-full">
                                   <div className={`text-white font-bold ${isInline ? 'text-[9px] sm:text-[10px]' : 'text-[10px] sm:text-xs'} text-center leading-tight mb-1`}>{prize.name}</div>
-                                  <div className={`${isInline ? 'text-[7px] sm:text-[8px]' : 'text-[8px] sm:text-[9px]'} text-white/70 capitalize px-1 py-0.5 bg-black/20 rounded`}>{prize.rarity}</div>
+                                  <div className={`${isInline ? 'text-[7px] sm:text-[8px]' : 'text-[8px] sm:text-[9px]'} text-white/70 capitalize px-1 py-0.5 bg-black/30 rounded`}>{prize.rarity}</div>
                                 </div>
                               )}
                             </div>
-
-                            {/* Separator */}
-                            <div className="absolute -right-[1px] top-1/2 -translate-y-1/2 w-[2px] h-3/4 bg-gradient-to-b from-transparent via-gray-700 to-transparent"></div>
                           </div>
                         ))}
                       </div>
@@ -337,7 +324,6 @@ export default function PrizeWheel({
                   </div>
                 ))}
               </div>
-            </div>
           </div>
 
           {/* Spin Button */}
