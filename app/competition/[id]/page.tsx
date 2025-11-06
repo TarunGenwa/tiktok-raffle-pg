@@ -4,7 +4,6 @@ import { useState, useCallback, useRef } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import PrizeWheel from '@/app/components/PrizeWheel';
 import InteractionSidebar from '@/app/components/InteractionSidebar';
-import PrizeColumnsView from '@/app/components/PrizeColumnsView';
 import { Button } from '@/components/ui/button';
 
 interface Prize {
@@ -12,12 +11,6 @@ interface Prize {
   rarity: 'common' | 'rare' | 'epic' | 'legendary';
   probability: number;
   imageUrl?: string;
-}
-
-interface BulkPrize {
-  name: string;
-  rarity: 'common' | 'rare' | 'epic' | 'legendary';
-  image?: string;
 }
 
 interface CompetitionType {
@@ -127,8 +120,6 @@ export default function CompetitionPage() {
   const params = useParams();
   const competitionId = params.id as string;
   const [ticketCount, setTicketCount] = useState(1);
-  const [showPrizeColumns, setShowPrizeColumns] = useState(false);
-  const [columnPrizes, setColumnPrizes] = useState<BulkPrize[]>([]);
   const [hasPrizesShown, setHasPrizesShown] = useState(false);
   const triggerSpinRef = useRef<(() => void) | null>(null);
   const triggerResetRef = useRef<(() => void) | null>(null);
@@ -149,17 +140,6 @@ export default function CompetitionPage() {
     setTicketCount(prev => prev > 1 ? prev - 1 : prev);
   }, []);
 
-  const handleBulkPrizesWon = (prizes: BulkPrize[]) => {
-    setColumnPrizes(prizes);
-    setShowPrizeColumns(true);
-  };
-
-  const handleClosePrizeColumns = () => {
-    setColumnPrizes([]);
-    setShowPrizeColumns(false);
-    setTicketCount(1);
-  };
-
   if (!competition) {
     return (
       <div className="flex h-screen bg-black items-center justify-center">
@@ -168,16 +148,6 @@ export default function CompetitionPage() {
           <Button onClick={() => router.push('/')}>Go Back Home</Button>
         </div>
       </div>
-    );
-  }
-
-  // If showing prize columns view
-  if (showPrizeColumns) {
-    return (
-      <PrizeColumnsView
-        prizes={columnPrizes}
-        onClose={handleClosePrizeColumns}
-      />
     );
   }
 
@@ -227,7 +197,6 @@ export default function CompetitionPage() {
             onPrizesStateChange={(hasWonPrizes) => {
               setHasPrizesShown(hasWonPrizes);
             }}
-            onBulkPrizesGenerated={ticketCount > 5 ? handleBulkPrizesWon : undefined}
           />
         </div>
       </main>

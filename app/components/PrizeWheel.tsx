@@ -47,6 +47,7 @@ export default function PrizeWheel({
 }: PrizeWheelProps) {
   const [isSpinning, setIsSpinning] = useState(false);
   const [wonPrizes, setWonPrizes] = useState<Prize[] | null>(null);
+  const [bulkPrizes, setBulkPrizes] = useState<BulkPrize[] | null>(null);
   // Always maintain 5 offsets, only use first numberOfTickets
   const [rowOffsets, setRowOffsets] = useState([0, 0, 0, 0, 0]);
   const [isVisible, setIsVisible] = useState(false);
@@ -97,13 +98,14 @@ export default function PrizeWheel({
   // Notify parent when prizes state changes
   useEffect(() => {
     if (onPrizesStateChange) {
-      onPrizesStateChange(wonPrizes !== null);
+      onPrizesStateChange(wonPrizes !== null || bulkPrizes !== null);
     }
-  }, [wonPrizes, onPrizesStateChange]);
+  }, [wonPrizes, bulkPrizes, onPrizesStateChange]);
 
   // Reset when numberOfTickets changes
   useEffect(() => {
     setWonPrizes(null);
+    setBulkPrizes(null);
     setRowOffsets([0, 0, 0, 0, 0]);
   }, [numberOfTickets]);
 
@@ -183,14 +185,14 @@ export default function PrizeWheel({
     setTimeout(() => {
       setIsSpinning(false);
 
-      // If in bulk mode, call the callback with all prizes
-      if (totalTickets && totalTickets > 5 && onBulkPrizesGenerated) {
-        const bulkPrizes: BulkPrize[] = allSelectedPrizes.map(prize => ({
+      // If in bulk mode, show bulk prizes inline
+      if (totalTickets && totalTickets > 5) {
+        const bulkPrizesData: BulkPrize[] = allSelectedPrizes.map(prize => ({
           name: prize.name,
           rarity: prize.rarity,
           image: prize.imageUrl
         }));
-        onBulkPrizesGenerated(bulkPrizes);
+        setBulkPrizes(bulkPrizesData);
       } else {
         // Normal mode: show prizes in place
         setWonPrizes(selectedPrizes);
@@ -243,6 +245,7 @@ export default function PrizeWheel({
 
   const handlePlayAgain = () => {
     setWonPrizes(null);
+    setBulkPrizes(null);
     setRowOffsets([0, 0, 0, 0, 0]);
   };
 
@@ -274,7 +277,7 @@ export default function PrizeWheel({
       )}
 
       {/* Show slot machine or prizes based on state */}
-      {!wonPrizes ? (
+      {!wonPrizes && !bulkPrizes ? (
         // Slot machine
         <div
           className={`flex flex-col items-center ${isInline ? 'space-y-2 sm:space-y-3 md:space-y-4' : 'space-y-4 sm:space-y-6 md:space-y-8'} w-full px-2 transition-all duration-500 ${
@@ -397,8 +400,8 @@ export default function PrizeWheel({
             </div>
           )}
         </div>
-      ) : (
-        // Prizes Display - In place of slot machine
+      ) : wonPrizes ? (
+        // Regular Prizes Display - In place of slot machine
         <div
           className={`flex flex-col items-center ${isInline ? 'space-y-2 sm:space-y-3 md:space-y-4' : 'space-y-4 sm:space-y-6 md:space-y-8'} w-full px-2 transition-all duration-500`}
         >
@@ -446,7 +449,83 @@ export default function PrizeWheel({
             </div>
           </div>
         </div>
-      )}
+      ) : bulkPrizes ? (
+        // Bulk Prizes Display - Grouped by type inline
+        <div
+          className={`flex flex-col items-center ${isInline ? 'space-y-3 sm:space-y-4' : 'space-y-4 sm:space-y-6'} w-full px-2 transition-all duration-500`}
+        >
+          {/* Celebration Background */}
+          <div className="absolute inset-0 pointer-events-none">
+            <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/20 via-transparent to-green-500/20 animate-pulse"></div>
+          </div>
+
+          {/* Bulk Winner Content */}
+          <div className={`relative z-10 text-center ${isInline ? 'space-y-3 sm:space-y-4' : 'space-y-4 sm:space-y-6'}`}>
+            <div>
+              <h2 className={`${isInline ? 'text-xl sm:text-2xl' : 'text-3xl sm:text-4xl md:text-5xl'} font-bold text-white animate-[bounceIn_0.6s_ease-out]`}>
+                🎉 Your Prizes! 🎉
+              </h2>
+              <p className={`${isInline ? 'text-sm' : 'text-base'} text-gray-300 mt-2`}>
+                {bulkPrizes.length} ticket{bulkPrizes.length !== 1 ? 's' : ''} played
+              </p>
+            </div>
+
+            {/* Grouped Prizes Display */}
+            <div className={`flex flex-wrap justify-center ${isInline ? 'gap-3' : 'gap-4'} w-full max-w-2xl mx-auto px-4`}>
+              {(() => {
+                // Group prizes by name
+                const grouped = bulkPrizes.reduce((acc, prize) => {
+                  if (!acc[prize.name]) {
+                    acc[prize.name] = { prize, count: 0 };
+                  }
+                  acc[prize.name].count++;
+                  return acc;
+                }, {} as Record<string, { prize: BulkPrize; count: number }>);
+
+                return Object.values(grouped).map(({ prize, count }, index) => (
+                  <div
+                    key={prize.name}
+                    className={`relative flex-shrink-0 ${isInline ? 'w-[110px] sm:w-[130px]' : 'w-[140px] sm:w-[160px]'}`}
+                  >
+                    {/* Prize card with count */}
+                    <div className={`bg-gradient-to-br ${rarityGradients[prize.rarity]} rounded-xl ${isInline ? 'p-3 sm:p-4' : 'p-3 sm:p-4'} shadow-2xl transition-all transform hover:scale-105 border-2 border-white/30`}>
+                      {prize.image ? (
+                        <div className={`${isInline ? 'w-16 h-16 sm:w-20 sm:h-20' : 'w-20 h-20'} mx-auto mb-2 relative`}>
+                          <img
+                            src={prize.image}
+                            alt={prize.name}
+                            className="w-full h-full object-contain drop-shadow-lg"
+                          />
+                        </div>
+                      ) : (
+                        <div className={`${isInline ? 'w-12 h-12 sm:w-16 sm:h-16' : 'w-16 h-16'} mx-auto mb-2 flex items-center justify-center`}>
+                          <svg className="w-full h-full text-white" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                          </svg>
+                        </div>
+                      )}
+                      <div className="text-center">
+                        <p className={`text-white font-bold ${isInline ? 'text-xs sm:text-sm' : 'text-sm'} mb-1 leading-tight`}>
+                          {prize.name}
+                        </p>
+                        <span className={`${isInline ? 'text-[9px] sm:text-[10px]' : 'text-xs'} text-white/70 capitalize block mb-2`}>
+                          {prize.rarity}
+                        </span>
+                        {/* Count badge */}
+                        <div className="bg-white/20 backdrop-blur-sm rounded-full px-2 py-1 inline-flex items-center gap-1">
+                          <span className={`text-white font-bold ${isInline ? 'text-[10px]' : 'text-xs'}`}>
+                            ×{count}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ));
+              })()}
+            </div>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }
