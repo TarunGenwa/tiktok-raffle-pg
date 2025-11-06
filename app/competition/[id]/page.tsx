@@ -127,6 +127,7 @@ export default function CompetitionPage() {
   const params = useParams();
   const competitionId = params.id as string;
   const [ticketCount, setTicketCount] = useState(1);
+  const [showBulkPlayModal, setShowBulkPlayModal] = useState(false);
   const [showPrizeColumns, setShowPrizeColumns] = useState(false);
   const [columnPrizes, setColumnPrizes] = useState<BulkPrize[]>([]);
   const MAX_TICKETS = 100;
@@ -146,8 +147,13 @@ export default function CompetitionPage() {
     }
   };
 
+  const handleStartBulkPlay = () => {
+    setShowBulkPlayModal(true);
+  };
+
   const handleBulkPrizesWon = (prizes: BulkPrize[]) => {
     setColumnPrizes(prizes);
+    setShowBulkPlayModal(false);
     setShowPrizeColumns(true);
   };
 
@@ -155,6 +161,10 @@ export default function CompetitionPage() {
     setColumnPrizes([]);
     setShowPrizeColumns(false);
     setTicketCount(1);
+  };
+
+  const handleCloseBulkModal = () => {
+    setShowBulkPlayModal(false);
   };
 
   if (!competition) {
@@ -285,18 +295,63 @@ export default function CompetitionPage() {
 
         {/* Game Container */}
         <div className="w-full max-w-md mx-auto relative px-1 md:px-0 flex flex-col items-center gap-4">
-          <PrizeWheel
-            prizes={competition.prizes}
-            onClose={() => router.back()}
-            competitionTitle={competition.title}
-            isInline={true}
-            hideCloseButton={true}
-            numberOfTickets={Math.min(ticketCount, 5)}
-            totalTickets={ticketCount}
-            onBulkPrizesGenerated={ticketCount > 5 ? handleBulkPrizesWon : undefined}
-          />
+          {ticketCount <= 5 ? (
+            // Show slot machine for 1-5 tickets
+            <PrizeWheel
+              prizes={competition.prizes}
+              onClose={() => router.back()}
+              competitionTitle={competition.title}
+              isInline={true}
+              hideCloseButton={true}
+              numberOfTickets={ticketCount}
+            />
+          ) : (
+            // Show bulk play button for 6+ tickets
+            <div className="w-full flex flex-col items-center gap-6 p-8">
+              <div className="text-center">
+                <h2 className="text-2xl font-bold text-white mb-2">
+                  Bulk Play Mode
+                </h2>
+                <p className="text-gray-400 mb-1">
+                  Ready to play {ticketCount} tickets
+                </p>
+                <p className="text-sm text-gray-500">
+                  Click below to spin and reveal all prizes
+                </p>
+              </div>
+
+              <button
+                onClick={handleStartBulkPlay}
+                className="group relative px-8 py-4 rounded-xl font-bold text-xl bg-gradient-to-r from-emerald-500 via-green-500 to-lime-500 hover:from-emerald-400 hover:via-green-400 hover:to-lime-400 text-white shadow-2xl transition-all transform hover:scale-105 overflow-hidden"
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-emerald-600 via-green-600 to-lime-600 opacity-0 group-hover:opacity-100 transition-opacity" />
+                <span className="relative flex items-center gap-2">
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                  PLAY ALL {ticketCount} TICKETS
+                </span>
+              </button>
+            </div>
+          )}
         </div>
       </main>
+
+      {/* Bulk Play Modal */}
+      {showBulkPlayModal && (
+        <div className="fixed inset-0 z-50 bg-black/95 backdrop-blur-md flex items-center justify-center">
+          <PrizeWheel
+            prizes={competition.prizes}
+            onClose={handleCloseBulkModal}
+            competitionTitle={competition.title}
+            isInline={false}
+            hideCloseButton={false}
+            numberOfTickets={1}
+            totalTickets={ticketCount}
+            onBulkPrizesGenerated={handleBulkPrizesWon}
+          />
+        </div>
+      )}
     </div>
   );
 }
