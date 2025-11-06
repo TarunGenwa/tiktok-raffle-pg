@@ -61,34 +61,20 @@ export default function PromoSlide() {
           </div>
 
           {/* Promo Banner */}
-          <div className="mt-2 relative rounded-xl sm:rounded-2xl p-6 sm:p-8 shadow-2xl transform hover:scale-105 transition-transform overflow-hidden min-h-[200px] sm:min-h-[240px] flex flex-col justify-center border-[6px] border-lime-400 shadow-[0_0_30px_rgba(163,230,53,0.8),0_0_60px_rgba(163,230,53,0.4)]">
-            {/* Background Image with Overlay */}
+          <div
+            className="mt-2 relative rounded-xl sm:rounded-2xl p-6 sm:p-8 transform hover:scale-105 transition-transform overflow-hidden min-h-[200px] sm:min-h-[240px] flex flex-col justify-center"
+            style={{ border: '6px solid #10b981' }}
+          >
+            {/* Background Image */}
             <div className="absolute inset-0 z-0">
               <img
                 src="/CTSP credit 1000gbp.png"
                 alt="Prize"
                 className="w-full h-full object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-r from-orange-600/95 via-pink-600/90 to-purple-600/95"></div>
             </div>
 
-            {/* Content */}
-            <div className="relative z-10 text-center">
-              <div className="flex items-center justify-center gap-2 sm:gap-3 mb-2 sm:mb-3">
-                <span className="text-2xl sm:text-3xl">🎉</span>
-                <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-white drop-shadow-lg">Special Offer</h2>
-                <span className="text-2xl sm:text-3xl">🎉</span>
-              </div>
-              <p className="text-sm sm:text-base md:text-lg text-white font-semibold mb-4 sm:mb-5 drop-shadow-md">
-                Get 50% more tickets on your first purchase!
-              </p>
-              <button
-                onClick={() => router.push('/explore')}
-                className="bg-white text-orange-600 font-bold px-6 sm:px-8 py-2.5 sm:py-3 rounded-full text-sm sm:text-base hover:bg-gray-100 transition-colors shadow-lg hover:shadow-xl"
-              >
-                Claim Now
-              </button>
-            </div>
+
           </div>
         </div>
 
