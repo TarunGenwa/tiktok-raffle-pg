@@ -316,7 +316,7 @@ export default function Competition({
       <div className="relative h-[25%] w-full flex flex-col items-center justify-center p-3 sm:p-4 bg-gradient-to-b from-transparent to-black/40 z-10">
         {/* Enter Button */}
         <Button
-          onClick={() => router.push(`/competition/${id}`)}
+          onClick={() => router.push(`/competition/0`)}
           size="lg"
           className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold text-base sm:text-lg md:text-xl px-8 sm:px-12 md:px-16 py-3 sm:py-4 md:py-6 rounded-full shadow-2xl transform transition-all hover:scale-105"
         >
