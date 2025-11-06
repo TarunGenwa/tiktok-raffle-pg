@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import PrizeWheel from '@/app/components/PrizeWheel';
 import InteractionSidebar from '@/app/components/InteractionSidebar';
@@ -130,6 +130,7 @@ export default function CompetitionPage() {
   const [showBulkPlayModal, setShowBulkPlayModal] = useState(false);
   const [showPrizeColumns, setShowPrizeColumns] = useState(false);
   const [columnPrizes, setColumnPrizes] = useState<BulkPrize[]>([]);
+  const triggerSpinRef = useRef<(() => void) | null>(null);
   const MAX_TICKETS = 100;
 
   // Find the competition by ID
@@ -204,7 +205,7 @@ export default function CompetitionPage() {
       </div>
 
       {/* Main Content Area - Scrollable */}
-      <main className="flex-1 flex flex-col items-center overflow-y-auto pb-[240px] md:pb-32">
+      <main className="flex-1 flex flex-col items-center overflow-y-auto pb-[320px] md:pb-[240px]">
         {/* Interaction Buttons - Prizes Tickets Tab */}
         <div className="w-full flex justify-center mb-4 px-4 relative z-40">
           <InteractionSidebar
@@ -214,7 +215,7 @@ export default function CompetitionPage() {
         </div>
 
         {/* Game Container */}
-        <div className="w-full max-w-md mx-auto relative px-1 md:px-0 flex flex-col items-center gap-4 z-10">
+        <div className="w-full relative px-1 md:px-0 flex flex-col items-center gap-4 z-10">
           {ticketCount <= 5 ? (
             // Show slot machine for 1-5 tickets
             <PrizeWheel
@@ -224,11 +225,16 @@ export default function CompetitionPage() {
               isInline={true}
               hideCloseButton={true}
               numberOfTickets={ticketCount}
+              hideSpinButton={true}
+              onSpinTrigger={(spinFn) => {
+                triggerSpinRef.current = spinFn;
+              }}
             />
           ) : (
-            // Show bulk play button for 6+ tickets
-            <div className="w-full flex flex-col items-center gap-6 p-8">
+            // Show message for bulk play mode
+            <div className="w-full flex flex-col items-center gap-6 p-8 min-h-[400px] justify-center">
               <div className="text-center">
+                <div className="text-6xl mb-4">🎰</div>
                 <h2 className="text-2xl font-bold text-white mb-2">
                   Bulk Play Mode
                 </h2>
@@ -236,26 +242,40 @@ export default function CompetitionPage() {
                   Ready to play {ticketCount} tickets
                 </p>
                 <p className="text-sm text-gray-500">
-                  Click below to spin and reveal all prizes
+                  Click the button below to reveal all prizes
                 </p>
               </div>
-
-              <button
-                onClick={handleStartBulkPlay}
-                className="group relative px-8 py-4 rounded-xl font-bold text-xl bg-gradient-to-r from-emerald-500 via-green-500 to-lime-500 hover:from-emerald-400 hover:via-green-400 hover:to-lime-400 text-white shadow-2xl transition-all transform hover:scale-105 overflow-hidden"
-              >
-                <div className="absolute inset-0 bg-gradient-to-r from-emerald-600 via-green-600 to-lime-600 opacity-0 group-hover:opacity-100 transition-opacity" />
-                <span className="relative flex items-center gap-2">
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                  </svg>
-                  PLAY ALL {ticketCount} TICKETS
-                </span>
-              </button>
             </div>
           )}
         </div>
       </main>
+
+      {/* Spin Button - Fixed Above Ticket Counter */}
+      <div className="fixed bottom-[240px] md:bottom-[180px] left-0 right-0 z-[35] px-4 pb-3">
+        <div className="w-full max-w-md mx-auto">
+          <button
+            type="button"
+            onClick={() => {
+              if (ticketCount <= 5 && triggerSpinRef.current) {
+                triggerSpinRef.current();
+              } else if (ticketCount > 5) {
+                handleStartBulkPlay();
+              }
+            }}
+            className="w-full relative overflow-hidden bg-gradient-to-r from-emerald-500 via-green-500 to-lime-500 hover:from-emerald-400 hover:via-green-400 hover:to-lime-400 text-white font-bold text-base sm:text-lg px-8 py-4 sm:py-5 rounded-full shadow-[0_0_30px_rgba(16,185,129,0.5)] transform transition-all hover:scale-105 hover:shadow-[0_0_50px_rgba(16,185,129,0.7)] border-2 border-white/20"
+          >
+            {/* Shine effect */}
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent group-hover:animate-shine"></div>
+
+            <span className="relative flex items-center justify-center gap-2">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+              SPIN FOR {ticketCount} {ticketCount === 1 ? 'TICKET' : 'TICKETS'}
+            </span>
+          </button>
+        </div>
+      </div>
 
       {/* Ticket Counter - Fixed Above Bottom Nav */}
       <div className="fixed bottom-16 md:bottom-0 left-0 right-0 bg-gradient-to-t from-gray-900 via-gray-900/95 to-transparent backdrop-blur-sm z-30 px-4 pb-4 pt-6">
