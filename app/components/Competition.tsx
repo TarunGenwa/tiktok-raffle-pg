@@ -176,28 +176,61 @@ export default function Competition({
         )}
       </div>
 
+      {/* Tickets Sold Progress Bar */}
+      <div className="relative w-full h-2 bg-gray-800/80 z-10">
+        <div
+          className="h-full bg-emerald-500 transition-all duration-500"
+          style={{ width: `${(participants / 20000) * 100}%` }}
+        ></div>
+      </div>
+
+      {/* Countdown Timer */}
+      <div className="relative w-full py-3 sm:py-4 px-4 bg-black/40 z-10">
+        <div className="flex items-center justify-center gap-2 sm:gap-3">
+          {/* Days */}
+          <div className="flex flex-col items-center">
+            <div className="bg-gray-800/80 backdrop-blur-sm rounded-lg px-2.5 sm:px-3 py-1.5 sm:py-2 border border-gray-700 min-w-[40px] sm:min-w-[50px]">
+              <div className="text-lg sm:text-xl md:text-2xl font-bold text-white text-center">0</div>
+            </div>
+            <div className="text-[10px] sm:text-xs text-gray-400 mt-1 uppercase tracking-wide">Days</div>
+          </div>
+          <div className="text-white text-xl font-bold pb-4">:</div>
+          {/* Hours */}
+          <div className="flex flex-col items-center">
+            <div className="bg-gray-800/80 backdrop-blur-sm rounded-lg px-2.5 sm:px-3 py-1.5 sm:py-2 border border-gray-700 min-w-[40px] sm:min-w-[50px]">
+              <div className="text-lg sm:text-xl md:text-2xl font-bold text-white text-center">
+                {timeRemaining.includes('h') ? timeRemaining.split('h')[0].trim() : '0'}
+              </div>
+            </div>
+            <div className="text-[10px] sm:text-xs text-gray-400 mt-1 uppercase tracking-wide">Hours</div>
+          </div>
+          <div className="text-white text-xl font-bold pb-4">:</div>
+          {/* Minutes */}
+          <div className="flex flex-col items-center">
+            <div className="bg-gray-800/80 backdrop-blur-sm rounded-lg px-2.5 sm:px-3 py-1.5 sm:py-2 border border-gray-700 min-w-[40px] sm:min-w-[50px]">
+              <div className="text-lg sm:text-xl md:text-2xl font-bold text-white text-center">
+                {timeRemaining.includes('m') ? timeRemaining.split('h')[1]?.split('m')[0]?.trim() || timeRemaining.split('m')[0].trim() : '0'}
+              </div>
+            </div>
+            <div className="text-[10px] sm:text-xs text-gray-400 mt-1 uppercase tracking-wide">Minutes</div>
+          </div>
+          <div className="text-white text-xl font-bold pb-4">:</div>
+          {/* Seconds */}
+          <div className="flex flex-col items-center">
+            <div className="bg-gray-800/80 backdrop-blur-sm rounded-lg px-2.5 sm:px-3 py-1.5 sm:py-2 border border-gray-700 min-w-[40px] sm:min-w-[50px]">
+              <div className="text-lg sm:text-xl md:text-2xl font-bold text-white text-center">0</div>
+            </div>
+            <div className="text-[10px] sm:text-xs text-gray-400 mt-1 uppercase tracking-wide">Seconds</div>
+          </div>
+        </div>
+      </div>
+
       {/* Bottom Section - Content (50%) */}
       <div className="relative h-1/2 w-full flex flex-col items-center justify-center p-4 sm:p-6 space-y-3 sm:space-y-4 bg-gradient-to-b from-transparent to-black/40 z-10">
         {/* Competition Info */}
         <div className="text-center space-y-1 sm:space-y-2 max-w-md">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white tracking-tight">{title}</h2>
           <p className="text-sm sm:text-base md:text-lg text-gray-300">{description}</p>
-        </div>
-
-        {/* Stats Grid */}
-        <div className="grid grid-cols-3 gap-2 sm:gap-3 w-full max-w-md">
-          <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg sm:rounded-xl p-2 sm:p-3 border border-gray-700">
-            <div className="text-gray-400 text-xs sm:text-sm font-medium">Prize Pool</div>
-            <div className="text-base sm:text-lg md:text-xl font-bold text-green-400">${prizePool.toLocaleString()}</div>
-          </div>
-          <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg sm:rounded-xl p-2 sm:p-3 border border-gray-700">
-            <div className="text-gray-400 text-xs sm:text-sm font-medium">Participants</div>
-            <div className="text-base sm:text-lg md:text-xl font-bold text-blue-400">{participants.toLocaleString()}</div>
-          </div>
-          <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg sm:rounded-xl p-2 sm:p-3 border border-gray-700">
-            <div className="text-gray-400 text-xs sm:text-sm font-medium">Time Left</div>
-            <div className="text-base sm:text-lg md:text-xl font-bold text-orange-400">{timeRemaining}</div>
-          </div>
         </div>
 
         {/* Enter Button */}
