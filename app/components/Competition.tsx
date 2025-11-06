@@ -162,7 +162,7 @@ export default function Competition({
   };
 
   return (
-    <div className="relative w-full h-full p-[3px] rounded-lg bg-gradient-to-br from-emerald-500 via-green-500 to-teal-500 shadow-xl shadow-emerald-500/20">
+    <div className="relative w-full h-full p-0 md:p-[3px] rounded-lg md:bg-gradient-to-br md:from-emerald-500 md:via-green-500 md:to-teal-500 md:shadow-xl md:shadow-emerald-500/20">
       <div className="relative w-full h-full bg-gradient-to-br from-gray-900 via-black to-gray-900 rounded-lg overflow-hidden flex flex-col">
 
       {/* Entry Price Badge - Top Left */}

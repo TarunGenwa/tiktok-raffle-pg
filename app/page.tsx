@@ -244,7 +244,7 @@ export default function Home() {
     <div className="flex h-screen bg-black overflow-hidden overscroll-none">
       {/* Main Content Area - Media Player */}
       <main
-        className="flex-1 flex items-center justify-center relative overflow-hidden select-none pb-20 md:pb-0 touch-pan-y"
+        className="flex-1 flex items-start md:items-center justify-center relative overflow-hidden select-none touch-pan-y"
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
@@ -254,7 +254,7 @@ export default function Home() {
           overscrollBehavior: 'none'
         }}
       >
-        <div className="w-full max-w-md h-[calc(100vh-8rem)] md:h-[calc(100vh-4rem)] mx-auto relative px-1 md:px-0">
+        <div className="w-full max-w-md h-[calc(100vh-5rem)] md:h-[calc(100vh-4rem)] mx-auto relative px-1 md:px-0">
           {/* Competitions Stack with Smooth Transitions */}
           <div className="relative w-full h-full">
             {competitions.map((competition, index) => {
