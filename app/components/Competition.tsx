@@ -104,9 +104,10 @@ export default function Competition({
   };
 
   return (
-    <div className="relative w-full h-full bg-gradient-to-br from-gray-900 via-black to-gray-900 rounded-lg overflow-hidden flex flex-col">
+    <div className="relative w-full h-full p-[3px] rounded-lg bg-gradient-to-br from-emerald-500 via-green-500 to-teal-500 shadow-xl shadow-emerald-500/20">
+      <div className="relative w-full h-full bg-gradient-to-br from-gray-900 via-black to-gray-900 rounded-lg overflow-hidden flex flex-col">
       {/* Top Section - Video/Avatar (50%) */}
-      <div className="relative h-1/2 w-full">
+      <div className="relative h-1/2 w-full z-10">
         {videoUrl ? (
           <>
             {/* Video Player */}
@@ -163,7 +164,7 @@ export default function Competition({
       </div>
 
       {/* Bottom Section - Content (50%) */}
-      <div className="relative h-1/2 w-full flex flex-col items-center justify-center p-4 sm:p-6 space-y-3 sm:space-y-4 bg-gradient-to-b from-transparent to-black/40">
+      <div className="relative h-1/2 w-full flex flex-col items-center justify-center p-4 sm:p-6 space-y-3 sm:space-y-4 bg-gradient-to-b from-transparent to-black/40 z-10">
         {/* Competition Info */}
         <div className="text-center space-y-1 sm:space-y-2 max-w-md">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white tracking-tight">{title}</h2>
@@ -214,6 +215,7 @@ export default function Competition({
             <span>Instant Win</span>
           </div>
         </div>
+      </div>
       </div>
     </div>
   );
