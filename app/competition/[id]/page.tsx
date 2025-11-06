@@ -167,7 +167,7 @@ export default function CompetitionPage() {
       </div>
 
       {/* Main Content Area - Scrollable */}
-      <main className="flex-1 flex flex-col items-center overflow-y-auto pb-[320px] md:pb-[240px]">
+      <main className="flex-1 flex flex-col items-center overflow-y-auto pb-20">
         {/* Interaction Buttons - Prizes Tickets Tab */}
         <div className="w-full flex justify-center mb-4 px-4 relative z-40">
           <InteractionSidebar
@@ -177,7 +177,7 @@ export default function CompetitionPage() {
         </div>
 
         {/* Game Container */}
-        <div className="w-full relative px-1 md:px-0 flex flex-col items-center gap-4 z-10">
+        <div className="w-full relative px-1 md:px-0 flex flex-col items-center gap-4 z-10 max-w-md mx-auto">
           {/* Always show slot machine inline, even for bulk play */}
           <PrizeWheel
             prizes={competition.prizes}
@@ -198,161 +198,157 @@ export default function CompetitionPage() {
               setHasPrizesShown(hasWonPrizes);
             }}
           />
-        </div>
-      </main>
 
-      {/* Spin Button - Fixed Above Ticket Counter */}
-      <div className="fixed bottom-[240px] md:bottom-[180px] left-0 right-0 z-[35] px-4 pb-3">
-        <div className="w-full max-w-md mx-auto">
-          <button
-            type="button"
-            onClick={() => {
-              if (hasPrizesShown && triggerResetRef.current) {
-                // Reset mode - clear prizes and reset
-                triggerResetRef.current();
-              } else if (triggerSpinRef.current) {
-                // Spin mode - trigger spin
-                triggerSpinRef.current();
-              }
-            }}
-            className={`w-full relative overflow-hidden ${
-              hasPrizesShown
-                ? 'bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 hover:from-blue-400 hover:via-indigo-400 hover:to-purple-400 shadow-[0_0_30px_rgba(99,102,241,0.5)] hover:shadow-[0_0_50px_rgba(99,102,241,0.7)]'
-                : 'bg-gradient-to-r from-emerald-500 via-green-500 to-lime-500 hover:from-emerald-400 hover:via-green-400 hover:to-lime-400 shadow-[0_0_30px_rgba(16,185,129,0.5)] hover:shadow-[0_0_50px_rgba(16,185,129,0.7)]'
-            } text-white font-bold text-base sm:text-lg px-8 py-4 sm:py-5 rounded-full transform transition-all hover:scale-105 border-2 border-white/20`}
-          >
-            {/* Shine effect */}
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent group-hover:animate-shine"></div>
-
-            <span className="relative flex items-center justify-center gap-2">
-              {hasPrizesShown ? (
-                <>
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                  </svg>
-                  RESET
-                </>
-              ) : (
-                <>
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                  </svg>
-                  SPIN FOR {ticketCount} {ticketCount === 1 ? 'TICKET' : 'TICKETS'}
-                </>
-              )}
-            </span>
-          </button>
-        </div>
-      </div>
-
-      {/* Ticket Counter - Fixed Above Bottom Nav */}
-      <div className="fixed bottom-16 md:bottom-0 left-0 right-0 bg-gradient-to-t from-gray-900 via-gray-900/95 to-transparent backdrop-blur-sm z-30 px-4 pb-4 pt-6">
-        <div className="w-full max-w-md mx-auto">
-          <div className="bg-gradient-to-b from-gray-800 to-gray-900 rounded-2xl border-2 border-gray-700 px-6 py-4 shadow-2xl">
-            <div className="flex items-center justify-between gap-4">
-              <button
-                type="button"
-                onPointerDown={decrementTickets}
-                disabled={ticketCount <= 1}
-                className="w-12 h-12 rounded-full bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 disabled:from-gray-800 disabled:to-gray-900 disabled:cursor-not-allowed flex items-center justify-center text-white font-bold text-2xl transition-all hover:scale-105 disabled:hover:scale-100 shadow-lg disabled:opacity-50 select-none touch-none"
-              >
-                -
-              </button>
-              <div className="flex items-center gap-3 flex-1 justify-center">
-                <span className="text-4xl font-bold text-white select-none">{ticketCount}</span>
-              </div>
-              <button
-                type="button"
-                onPointerDown={incrementTickets}
-                disabled={ticketCount >= MAX_TICKETS}
-                className="w-12 h-12 rounded-full bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 disabled:from-gray-800 disabled:to-gray-900 disabled:cursor-not-allowed flex items-center justify-center text-white font-bold text-2xl transition-all hover:scale-105 disabled:hover:scale-100 shadow-lg disabled:opacity-50 select-none touch-none"
-              >
-                +
-              </button>
-            </div>
-
-            {/* Slider and quick increment buttons */}
-            <div className="mt-3 space-y-3">
-              {/* Slider */}
-              <div className="px-2">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs text-gray-400">Slide to adjust:</span>
-                  <span className="text-xs text-gray-500">{ticketCount} / {MAX_TICKETS}</span>
+          {/* Ticket Counter - Below Slot Machine */}
+          <div className="w-full px-4">
+            <div className="bg-gradient-to-b from-gray-800 to-gray-900 rounded-2xl border-2 border-gray-700 px-6 py-4 shadow-2xl">
+              <div className="flex items-center justify-between gap-4">
+                <button
+                  type="button"
+                  onPointerDown={decrementTickets}
+                  disabled={ticketCount <= 1}
+                  className="w-12 h-12 rounded-full bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 disabled:from-gray-800 disabled:to-gray-900 disabled:cursor-not-allowed flex items-center justify-center text-white font-bold text-2xl transition-all hover:scale-105 disabled:hover:scale-100 shadow-lg disabled:opacity-50 select-none touch-none"
+                >
+                  -
+                </button>
+                <div className="flex items-center gap-3 flex-1 justify-center">
+                  <span className="text-4xl font-bold text-white select-none">{ticketCount}</span>
                 </div>
-                <input
-                  type="range"
-                  min="1"
-                  max={MAX_TICKETS}
-                  value={ticketCount}
-                  onChange={(e) => {
-                    const newCount = parseInt(e.target.value);
-                    if (newCount >= 1 && newCount <= MAX_TICKETS) {
-                      setTicketCount(newCount);
-                    }
-                  }}
-                  className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider-thumb"
-                  style={{
-                    background: `linear-gradient(to right, rgb(5, 150, 105) 0%, rgb(5, 150, 105) ${((ticketCount - 1) / (MAX_TICKETS - 1)) * 100}%, rgb(55, 65, 81) ${((ticketCount - 1) / (MAX_TICKETS - 1)) * 100}%, rgb(55, 65, 81) 100%)`
-                  }}
-                />
+                <button
+                  type="button"
+                  onPointerDown={incrementTickets}
+                  disabled={ticketCount >= MAX_TICKETS}
+                  className="w-12 h-12 rounded-full bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 disabled:from-gray-800 disabled:to-gray-900 disabled:cursor-not-allowed flex items-center justify-center text-white font-bold text-2xl transition-all hover:scale-105 disabled:hover:scale-100 shadow-lg disabled:opacity-50 select-none touch-none"
+                >
+                  +
+                </button>
               </div>
 
-              {/* Quick add buttons */}
-              <div className="flex items-center justify-center gap-2">
-                <span className="text-xs text-gray-400 mr-2">Quick add:</span>
-                <button
-                  type="button"
-                  onPointerDown={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    setTicketCount(prev => Math.min(prev + 5, MAX_TICKETS));
-                  }}
-                  disabled={ticketCount >= MAX_TICKETS}
-                  className="px-3 py-1.5 rounded-lg text-sm font-semibold bg-gray-700 hover:bg-gray-600 disabled:bg-gray-800 disabled:cursor-not-allowed text-white transition-colors disabled:opacity-50 select-none touch-none"
-                >
-                  +5
-                </button>
-                <button
-                  type="button"
-                  onPointerDown={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    setTicketCount(prev => Math.min(prev + 10, MAX_TICKETS));
-                  }}
-                  disabled={ticketCount >= MAX_TICKETS}
-                  className="px-3 py-1.5 rounded-lg text-sm font-semibold bg-gray-700 hover:bg-gray-600 disabled:bg-gray-800 disabled:cursor-not-allowed text-white transition-colors disabled:opacity-50 select-none touch-none"
-                >
-                  +10
-                </button>
-                <button
-                  type="button"
-                  onPointerDown={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    setTicketCount(prev => Math.min(prev + 25, MAX_TICKETS));
-                  }}
-                  disabled={ticketCount >= MAX_TICKETS}
-                  className="px-3 py-1.5 rounded-lg text-sm font-semibold bg-gray-700 hover:bg-gray-600 disabled:bg-gray-800 disabled:cursor-not-allowed text-white transition-colors disabled:opacity-50 select-none touch-none"
-                >
-                  +25
-                </button>
-                <button
-                  type="button"
-                  onPointerDown={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    setTicketCount(MAX_TICKETS);
-                  }}
-                  disabled={ticketCount >= MAX_TICKETS}
-                  className="px-3 py-1.5 rounded-lg text-sm font-semibold bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed select-none touch-none"
-                >
-                  Max
-                </button>
+              {/* Slider and quick increment buttons */}
+              <div className="mt-3 space-y-3">
+                {/* Slider */}
+                <div className="px-2">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs text-gray-400">Slide to adjust:</span>
+                    <span className="text-xs text-gray-500">{ticketCount} / {MAX_TICKETS}</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="1"
+                    max={MAX_TICKETS}
+                    value={ticketCount}
+                    onChange={(e) => {
+                      const newCount = parseInt(e.target.value);
+                      if (newCount >= 1 && newCount <= MAX_TICKETS) {
+                        setTicketCount(newCount);
+                      }
+                    }}
+                    className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider-thumb"
+                    style={{
+                      background: `linear-gradient(to right, rgb(5, 150, 105) 0%, rgb(5, 150, 105) ${((ticketCount - 1) / (MAX_TICKETS - 1)) * 100}%, rgb(55, 65, 81) ${((ticketCount - 1) / (MAX_TICKETS - 1)) * 100}%, rgb(55, 65, 81) 100%)`
+                    }}
+                  />
+                </div>
+
+                {/* Quick add buttons */}
+                <div className="flex items-center justify-center gap-2">
+                  <span className="text-xs text-gray-400 mr-2">Quick add:</span>
+                  <button
+                    type="button"
+                    onPointerDown={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setTicketCount(prev => Math.min(prev + 5, MAX_TICKETS));
+                    }}
+                    disabled={ticketCount >= MAX_TICKETS}
+                    className="px-3 py-1.5 rounded-lg text-sm font-semibold bg-gray-700 hover:bg-gray-600 disabled:bg-gray-800 disabled:cursor-not-allowed text-white transition-colors disabled:opacity-50 select-none touch-none"
+                  >
+                    +5
+                  </button>
+                  <button
+                    type="button"
+                    onPointerDown={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setTicketCount(prev => Math.min(prev + 10, MAX_TICKETS));
+                    }}
+                    disabled={ticketCount >= MAX_TICKETS}
+                    className="px-3 py-1.5 rounded-lg text-sm font-semibold bg-gray-700 hover:bg-gray-600 disabled:bg-gray-800 disabled:cursor-not-allowed text-white transition-colors disabled:opacity-50 select-none touch-none"
+                  >
+                    +10
+                  </button>
+                  <button
+                    type="button"
+                    onPointerDown={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setTicketCount(prev => Math.min(prev + 25, MAX_TICKETS));
+                    }}
+                    disabled={ticketCount >= MAX_TICKETS}
+                    className="px-3 py-1.5 rounded-lg text-sm font-semibold bg-gray-700 hover:bg-gray-600 disabled:bg-gray-800 disabled:cursor-not-allowed text-white transition-colors disabled:opacity-50 select-none touch-none"
+                  >
+                    +25
+                  </button>
+                  <button
+                    type="button"
+                    onPointerDown={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setTicketCount(MAX_TICKETS);
+                    }}
+                    disabled={ticketCount >= MAX_TICKETS}
+                    className="px-3 py-1.5 rounded-lg text-sm font-semibold bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed select-none touch-none"
+                  >
+                    Max
+                  </button>
+                </div>
               </div>
             </div>
           </div>
+
+          {/* Spin Button - Below Ticket Counter */}
+          <div className="w-full px-4">
+            <button
+              type="button"
+              onClick={() => {
+                if (hasPrizesShown && triggerResetRef.current) {
+                  // Reset mode - clear prizes and reset
+                  triggerResetRef.current();
+                } else if (triggerSpinRef.current) {
+                  // Spin mode - trigger spin
+                  triggerSpinRef.current();
+                }
+              }}
+              className={`w-full relative overflow-hidden ${
+                hasPrizesShown
+                  ? 'bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 hover:from-blue-400 hover:via-indigo-400 hover:to-purple-400 shadow-[0_0_30px_rgba(99,102,241,0.5)] hover:shadow-[0_0_50px_rgba(99,102,241,0.7)]'
+                  : 'bg-gradient-to-r from-emerald-500 via-green-500 to-lime-500 hover:from-emerald-400 hover:via-green-400 hover:to-lime-400 shadow-[0_0_30px_rgba(16,185,129,0.5)] hover:shadow-[0_0_50px_rgba(16,185,129,0.7)]'
+              } text-white font-bold text-base sm:text-lg px-8 py-4 sm:py-5 rounded-full transform transition-all hover:scale-105 border-2 border-white/20`}
+            >
+              {/* Shine effect */}
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent group-hover:animate-shine"></div>
+
+              <span className="relative flex items-center justify-center gap-2">
+                {hasPrizesShown ? (
+                  <>
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                    RESET
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                    SPIN FOR {ticketCount} {ticketCount === 1 ? 'TICKET' : 'TICKETS'}
+                  </>
+                )}
+              </span>
+            </button>
+          </div>
         </div>
-      </div>
+      </main>
 
     </div>
   );
