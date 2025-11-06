@@ -408,39 +408,36 @@ export default function PrizeWheel({
           </div>
 
           {/* Winner Content */}
-          <div className={`relative z-10 text-center ${isInline ? 'space-y-3 sm:space-y-4' : 'space-y-4 sm:space-y-6'}`}>
+          <div className={`relative z-10 text-center ${isInline ? 'space-y-4 sm:space-y-6' : 'space-y-4 sm:space-y-6'}`}>
             <h2 className={`${isInline ? 'text-2xl sm:text-3xl' : 'text-3xl sm:text-4xl md:text-5xl'} font-bold text-white animate-[bounceIn_0.6s_ease-out]`}>
               🎉 YOU WON {wonPrizes.length} PRIZE{wonPrizes.length !== 1 ? 'S' : ''}! 🎉
             </h2>
 
-            {/* Prizes Display */}
-            <div className={`flex flex-wrap justify-center ${isInline ? 'gap-3' : 'gap-3 sm:gap-4'} w-full`}>
+            {/* Prizes Display - Use available space */}
+            <div className={`flex flex-wrap justify-center ${isInline ? 'gap-4' : 'gap-3 sm:gap-4'} w-full max-w-2xl mx-auto px-4`}>
               {wonPrizes.map((prize, index) => (
                 <div
                   key={index}
-                  className={`relative ${isInline ? 'p-3 sm:p-4' : 'p-3 sm:p-4'} bg-gradient-to-br ${rarityGradients[prize.rarity]} rounded-xl sm:rounded-2xl shadow-xl border-2 border-white/30 transform hover:scale-105 transition-all ${isInline ? 'w-[120px] sm:w-[140px]' : 'w-[140px] sm:w-[160px]'} flex-shrink-0`}
+                  className={`relative flex-shrink-0 ${isInline ? 'w-[110px] sm:w-[130px] h-[110px] sm:h-[130px]' : 'w-[140px] sm:w-[160px]'}`}
                 >
-                  <div className={`bg-white/10 backdrop-blur-sm rounded-lg ${isInline ? 'p-2 sm:p-3' : 'p-3 sm:p-4'}`}>
-                    <div className={`text-center ${isInline ? 'space-y-2' : 'space-y-2'}`}>
-                      {prize.imageUrl ? (
-                        <div className={`${isInline ? 'w-14 h-14 sm:w-16 sm:h-16' : 'w-16 h-16'} flex items-center justify-center mx-auto`}>
-                          <img
-                            src={prize.imageUrl}
-                            alt={prize.name}
-                            className="w-full h-full object-contain"
-                          />
-                        </div>
-                      ) : (
-                        <svg className={`${isInline ? 'w-10 h-10 sm:w-12 sm:h-12' : 'w-12 h-12 sm:w-16 sm:h-16'} text-white mx-auto`} fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                        </svg>
-                      )}
-                      <div>
-                        <div className={`${isInline ? 'text-sm sm:text-base' : 'text-sm sm:text-base md:text-lg'} font-bold text-white`}>{prize.name}</div>
-                        <div className={`${isInline ? 'text-xs' : 'text-xs sm:text-sm'} text-white/80 capitalize mt-1`}>{prize.rarity}</div>
+                  {/* Prize card - Larger to fill space */}
+                  <div className={`w-full h-full bg-gradient-to-br ${rarityGradients[prize.rarity]} rounded-xl ${isInline ? 'p-3 sm:p-4' : 'p-3 sm:p-4'} shadow-2xl transition-all transform hover:scale-105 border-2 border-white/30`}>
+                    {prize.imageUrl ? (
+                      <div className="relative w-full h-full flex items-center justify-center">
+                        <img
+                          src={prize.imageUrl}
+                          alt={prize.name}
+                          className="w-full h-full object-contain"
+                        />
                       </div>
-                    </div>
+                    ) : (
+                      <div className="flex flex-col items-center justify-center h-full">
+                        <div className={`text-white font-bold ${isInline ? 'text-xs sm:text-sm' : 'text-[10px] sm:text-xs'} text-center leading-tight mb-1`}>{prize.name}</div>
+                        <div className={`${isInline ? 'text-[9px] sm:text-[10px]' : 'text-[8px] sm:text-[9px]'} text-white/70 capitalize px-1 py-0.5 bg-black/30 rounded`}>{prize.rarity}</div>
+                      </div>
+                    )}
                   </div>
+                  {/* Number badge */}
                   <div className={`absolute -top-2 -right-2 bg-white text-black ${isInline ? 'px-2 py-0.5 text-[10px]' : 'px-2 py-0.5 sm:px-3 sm:py-1 text-[10px] sm:text-xs'} rounded-full font-bold uppercase shadow-lg`}>
                     #{index + 1}
                   </div>
