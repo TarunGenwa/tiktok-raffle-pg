@@ -33,6 +33,8 @@ const PixiSlotMachine = forwardRef<PixiSlotMachineRef, PixiSlotMachineProps>(
     const tweening = useRef<any[]>([]);
     const [isReady, setIsReady] = useState(false);
     const runningRef = useRef(false);
+    const audioContextRef = useRef<AudioContext | null>(null);
+    const tickingIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
     // Expose spin and reset methods
     useImperativeHandle(ref, () => ({
@@ -249,12 +251,109 @@ const PixiSlotMachine = forwardRef<PixiSlotMachineRef, PixiSlotMachineProps>(
       // Cleanup
       return () => {
         isMounted = false;
+        stopTickingSound();
+        if (audioContextRef.current) {
+          audioContextRef.current.close();
+        }
         if (appRef.current) {
           appRef.current.destroy(true);
           appRef.current = null;
         }
       };
     }, [numberOfReels, prizes]);
+
+    // Generate ticking sound using Web Audio API
+    const playTickingSound = () => {
+      // Initialize audio context if not already created
+      if (!audioContextRef.current) {
+        audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+      }
+
+      const audioContext = audioContextRef.current;
+      const tickInterval = 50; // Tick every 50ms for fast ticking sound
+
+      const playTick = () => {
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+
+        oscillator.frequency.value = 800; // Higher pitch for tick sound
+        oscillator.type = 'sine';
+
+        gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.02);
+
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 0.02);
+      };
+
+      // Clear any existing interval
+      if (tickingIntervalRef.current) {
+        clearInterval(tickingIntervalRef.current);
+      }
+
+      // Play tick sound repeatedly
+      tickingIntervalRef.current = setInterval(playTick, tickInterval);
+    };
+
+    const stopTickingSound = () => {
+      if (tickingIntervalRef.current) {
+        clearInterval(tickingIntervalRef.current);
+        tickingIntervalRef.current = null;
+      }
+    };
+
+    const playStopSound = () => {
+      // Initialize audio context if not already created
+      if (!audioContextRef.current) {
+        audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+      }
+
+      const audioContext = audioContextRef.current;
+
+      // Create a punchy "thud" sound using multiple frequencies
+      const playPunchySound = () => {
+        // Low frequency for the "thud"
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+
+        // Start with a low frequency for punch
+        oscillator.frequency.setValueAtTime(150, audioContext.currentTime);
+        // Drop to even lower for impact
+        oscillator.frequency.exponentialRampToValueAtTime(50, audioContext.currentTime + 0.1);
+        oscillator.type = 'sine';
+
+        // Punchy envelope - quick attack and decay
+        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.15);
+
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 0.15);
+
+        // Add a higher frequency click for the "snap"
+        const clickOsc = audioContext.createOscillator();
+        const clickGain = audioContext.createGain();
+
+        clickOsc.connect(clickGain);
+        clickGain.connect(audioContext.destination);
+
+        clickOsc.frequency.value = 1200;
+        clickOsc.type = 'square';
+
+        clickGain.gain.setValueAtTime(0.15, audioContext.currentTime);
+        clickGain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.03);
+
+        clickOsc.start(audioContext.currentTime);
+        clickOsc.stop(audioContext.currentTime + 0.03);
+      };
+
+      playPunchySound();
+    };
 
     const getRarityColor = (rarity: string): number => {
       switch (rarity) {
@@ -271,6 +370,9 @@ const PixiSlotMachine = forwardRef<PixiSlotMachineRef, PixiSlotMachineProps>(
       runningRef.current = true;
 
       if (onSpinStart) onSpinStart();
+
+      // Play ticking sound
+      playTickingSound();
 
       const reels = reelsRef.current;
       const selectedPrizes: Prize[] = [];
@@ -332,6 +434,8 @@ const PixiSlotMachine = forwardRef<PixiSlotMachineRef, PixiSlotMachineProps>(
           null,
           i === reels.length - 1
             ? () => {
+                stopTickingSound();
+                playStopSound(); // Single stop sound at the end
                 runningRef.current = false;
                 highlightWinners(selectedPrizes);
                 if (onSpinComplete) onSpinComplete(selectedPrizes);
