@@ -32,10 +32,23 @@ export default function PrizeColumnsView({
   onClose
 }: PrizeColumnsViewProps) {
   const [isVisible, setIsVisible] = useState(false);
+  const [expandedPrizes, setExpandedPrizes] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     setTimeout(() => setIsVisible(true), 100);
   }, []);
+
+  const togglePrizeExpansion = (prizeName: string) => {
+    setExpandedPrizes(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(prizeName)) {
+        newSet.delete(prizeName);
+      } else {
+        newSet.add(prizeName);
+      }
+      return newSet;
+    });
+  };
 
   // Group prizes by name
   const groupedPrizes = prizes.reduce((acc, prize) => {
@@ -99,59 +112,83 @@ export default function PrizeColumnsView({
       <div className="relative z-10 h-[calc(100vh-180px)] overflow-auto">
         <div className="max-w-7xl mx-auto px-3 sm:px-6 py-4 sm:py-8">
           <div className="flex flex-wrap justify-center gap-3 sm:gap-6">
-            {prizeGroups.map(({ prize, count }, groupIndex) => (
-              <div
-                key={prize.name}
-                className={`transition-all duration-500 ${
-                  isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
-                }`}
-                style={{
-                  transitionDelay: `${groupIndex * 100}ms`
-                }}
-              >
-                {/* Column */}
-                <div className="flex flex-col items-center gap-2 sm:gap-3">
-                  {/* Prize Type Header */}
-                  <div className={`bg-gradient-to-br ${rarityColors[prize.rarity]} rounded-lg sm:rounded-xl p-3 sm:p-4 shadow-2xl ${rarityGlow[prize.rarity]} min-w-[120px] sm:min-w-[160px] text-center`}>
-                    {prize.image && (
-                      <div className="w-14 h-14 sm:w-20 sm:h-20 mx-auto mb-2 sm:mb-3 relative">
-                        <img
-                          src={prize.image}
-                          alt={prize.name}
-                          className="w-full h-full object-contain drop-shadow-lg"
-                        />
+            {prizeGroups.map(({ prize, count }, groupIndex) => {
+              const isExpanded = expandedPrizes.has(prize.name);
+
+              return (
+                <div
+                  key={prize.name}
+                  className={`transition-all duration-500 ${
+                    isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
+                  }`}
+                  style={{
+                    transitionDelay: `${groupIndex * 100}ms`
+                  }}
+                >
+                  {/* Column */}
+                  <div className="flex flex-col items-center gap-2 sm:gap-3">
+                    {/* Prize Type Header - Clickable */}
+                    <button
+                      onClick={() => togglePrizeExpansion(prize.name)}
+                      className={`bg-gradient-to-br ${rarityColors[prize.rarity]} rounded-lg sm:rounded-xl p-3 sm:p-4 shadow-2xl ${rarityGlow[prize.rarity]} min-w-[140px] sm:min-w-[180px] text-center transition-all duration-300 hover:scale-105 relative cursor-pointer`}
+                    >
+                      {prize.image && (
+                        <div className="w-14 h-14 sm:w-20 sm:h-20 mx-auto mb-2 sm:mb-3 relative">
+                          <img
+                            src={prize.image}
+                            alt={prize.name}
+                            className="w-full h-full object-contain drop-shadow-lg"
+                          />
+                        </div>
+                      )}
+                      <p className="text-white font-bold text-sm sm:text-lg mb-1">{prize.name}</p>
+                      <span className="text-xs sm:text-sm text-white/80 capitalize block mb-2">
+                        {prize.rarity}
+                      </span>
+
+                      {/* Ticket Count Badge */}
+                      <div className="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 inline-flex items-center gap-1.5">
+                        <span className="text-white font-bold text-xs sm:text-sm">
+                          ×{count} ticket{count !== 1 ? 's' : ''}
+                        </span>
+                      </div>
+
+                      {/* Expand/Collapse Indicator */}
+                      <div className="mt-2 text-white/60 text-xs flex items-center justify-center gap-1">
+                        <span>{isExpanded ? 'Click to collapse' : 'Click to expand'}</span>
+                        <svg
+                          className={`w-3 h-3 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`}
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </div>
+                    </button>
+
+                    {/* Expanded Tickets */}
+                    {isExpanded && (
+                      <div className="relative flex flex-col items-center gap-1.5 sm:gap-2 animate-in fade-in slide-in-from-top-4 duration-300">
+                        {Array.from({ length: count }).map((_, ticketIndex) => (
+                          <div
+                            key={ticketIndex}
+                            className={`bg-gradient-to-br ${rarityColors[prize.rarity]} rounded-md sm:rounded-lg p-2 sm:p-3 shadow-lg ${rarityGlow[prize.rarity]} w-28 sm:w-36 text-center transition-all duration-300 hover:scale-105 hover:z-10`}
+                            style={{
+                              animationDelay: `${ticketIndex * 50}ms`
+                            }}
+                          >
+                            <div className="text-white font-bold text-xs sm:text-sm">
+                              Ticket #{ticketIndex + 1}
+                            </div>
+                          </div>
+                        ))}
                       </div>
                     )}
-                    <p className="text-white font-bold text-sm sm:text-lg mb-1">{prize.name}</p>
-                    <span className="text-xs sm:text-sm text-white/80 capitalize block">
-                      {prize.rarity}
-                    </span>
-                  </div>
-
-                  {/* Stacked Tickets */}
-                  <div className="relative flex flex-col items-center gap-1.5 sm:gap-2">
-                    {Array.from({ length: count }).map((_, ticketIndex) => (
-                      <div
-                        key={ticketIndex}
-                        className={`bg-gradient-to-br ${rarityColors[prize.rarity]} rounded-md sm:rounded-lg p-2 sm:p-3 shadow-lg ${rarityGlow[prize.rarity]} w-24 sm:w-32 text-center transition-all duration-300 hover:scale-105 hover:z-10`}
-                        style={{
-                          animationDelay: `${groupIndex * 100 + ticketIndex * 50}ms`
-                        }}
-                      >
-                        <div className="text-white font-bold text-xs sm:text-sm">
-                          Ticket #{ticketIndex + 1}
-                        </div>
-                      </div>
-                    ))}
-
-                    {/* Count Badge */}
-                    <div className="absolute -top-2 sm:-top-3 -right-2 sm:-right-3 bg-white text-gray-900 rounded-full w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center font-bold text-sm sm:text-lg shadow-xl border-2 sm:border-4 border-emerald-500">
-                      {count}
-                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>
