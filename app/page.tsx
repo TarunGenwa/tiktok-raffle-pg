@@ -106,7 +106,7 @@ export default function Home() {
 
           {/* Competition Cards */}
           {competitions.map((competition) => (
-            <div key={competition.id} className="w-full h-[70vh] px-2">
+            <div key={competition.id} className="w-full h-[40vh] px-2">
               <Competition
                 id={competition.id}
                 title={competition.title}

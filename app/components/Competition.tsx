@@ -177,8 +177,8 @@ export default function Competition({
         </div>
       </div>
 
-      {/* Top Section - Video/Avatar (60%) */}
-      <div className="relative h-[60%] w-full z-10">
+      {/* Top Section - Video/Avatar (75%) */}
+      <div className="relative h-[75%] w-full z-10">
         {videoUrl ? (
           <>
             {/* Video Player */}
@@ -194,6 +194,35 @@ export default function Competition({
             </video>
             {/* Video Overlay */}
             <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/60"></div>
+
+            {/* Countdown Timer - Top Right */}
+            <div className="absolute top-3 right-12 sm:right-16 z-30">
+              <div className="flex items-center justify-center gap-1 bg-emerald-500/80 backdrop-blur-sm rounded-full px-3 py-1.5">
+                {/* Days */}
+                <div className="flex items-center">
+                  <span className="text-[14px] font-bold text-white tabular-nums">{countdown.days.toString().padStart(2, '0')}</span>
+                  <span className="text-[12px] text-white/90 ml-0.5">d</span>
+                </div>
+                <span className="text-white text-[14px] mx-0.5">:</span>
+                {/* Hours */}
+                <div className="flex items-center">
+                  <span className="text-[14px] font-bold text-white tabular-nums">{countdown.hours.toString().padStart(2, '0')}</span>
+                  <span className="text-[12px] text-white/90 ml-0.5">h</span>
+                </div>
+                <span className="text-white text-[14px] mx-0.5">:</span>
+                {/* Minutes */}
+                <div className="flex items-center">
+                  <span className="text-[14px] font-bold text-white tabular-nums">{countdown.minutes.toString().padStart(2, '0')}</span>
+                  <span className="text-[12px] text-white/90 ml-0.5">m</span>
+                </div>
+                <span className="text-white text-[14px] mx-0.5">:</span>
+                {/* Seconds */}
+                <div className="flex items-center">
+                  <span className="text-[14px] font-bold text-white tabular-nums">{countdown.seconds.toString().padStart(2, '0')}</span>
+                  <span className="text-[12px] text-white/90 ml-0.5">s</span>
+                </div>
+              </div>
+            </div>
 
             {/* Mute/Unmute Button */}
             <button
@@ -230,35 +259,47 @@ export default function Competition({
             <div className="absolute inset-0 opacity-10">
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,_rgba(255,255,255,0.1),transparent_50%)]"></div>
             </div>
+
+            {/* Countdown Timer - Top Right (for non-video) */}
+            <div className="absolute top-3 right-3 sm:right-4 z-30">
+              <div className="flex items-center justify-center gap-1 bg-emerald-500/80 backdrop-blur-sm rounded-full px-3 py-1.5">
+                {/* Days */}
+                <div className="flex items-center">
+                  <span className="text-[14px] font-bold text-white tabular-nums">{countdown.days.toString().padStart(2, '0')}</span>
+                  <span className="text-[12px] text-white/90 ml-0.5">d</span>
+                </div>
+                <span className="text-white text-[14px] mx-0.5">:</span>
+                {/* Hours */}
+                <div className="flex items-center">
+                  <span className="text-[14px] font-bold text-white tabular-nums">{countdown.hours.toString().padStart(2, '0')}</span>
+                  <span className="text-[12px] text-white/90 ml-0.5">h</span>
+                </div>
+                <span className="text-white text-[14px] mx-0.5">:</span>
+                {/* Minutes */}
+                <div className="flex items-center">
+                  <span className="text-[14px] font-bold text-white tabular-nums">{countdown.minutes.toString().padStart(2, '0')}</span>
+                  <span className="text-[12px] text-white/90 ml-0.5">m</span>
+                </div>
+                <span className="text-white text-[14px] mx-0.5">:</span>
+                {/* Seconds */}
+                <div className="flex items-center">
+                  <span className="text-[14px] font-bold text-white tabular-nums">{countdown.seconds.toString().padStart(2, '0')}</span>
+                  <span className="text-[12px] text-white/90 ml-0.5">s</span>
+                </div>
+              </div>
+            </div>
           </>
         )}
 
-        {/* Tiny Countdown Timer - Bottom Center */}
-        <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 z-30">
-          <div className="flex items-center justify-center gap-1 bg-emerald-500/80 backdrop-blur-sm rounded-full px-3 py-1.5">
-            {/* Days */}
-            <div className="flex items-center">
-              <span className="text-[14px] font-bold text-white tabular-nums">{countdown.days.toString().padStart(2, '0')}</span>
-              <span className="text-[12px] text-white/90 ml-0.5">d</span>
-            </div>
-            <span className="text-white text-[14px] mx-0.5">:</span>
-            {/* Hours */}
-            <div className="flex items-center">
-              <span className="text-[14px] font-bold text-white tabular-nums">{countdown.hours.toString().padStart(2, '0')}</span>
-              <span className="text-[12px] text-white/90 ml-0.5">h</span>
-            </div>
-            <span className="text-white text-[14px] mx-0.5">:</span>
-            {/* Minutes */}
-            <div className="flex items-center">
-              <span className="text-[14px] font-bold text-white tabular-nums">{countdown.minutes.toString().padStart(2, '0')}</span>
-              <span className="text-[12px] text-white/90 ml-0.5">m</span>
-            </div>
-            <span className="text-white text-[14px] mx-0.5">:</span>
-            {/* Seconds */}
-            <div className="flex items-center">
-              <span className="text-[14px] font-bold text-white tabular-nums">{countdown.seconds.toString().padStart(2, '0')}</span>
-              <span className="text-[12px] text-white/90 ml-0.5">s</span>
-            </div>
+        {/* Competition Title - Bottom Center */}
+        <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 z-30 max-w-[90%]">
+          <div className="relative">
+            {/* Glow effect */}
+            <div className="absolute inset-0 bg-gradient-to-r from-emerald-500 via-green-400 to-teal-500 blur-xl opacity-60"></div>
+            {/* Title */}
+            <h2 className="relative text-2xl sm:text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 via-green-200 to-teal-300 drop-shadow-2xl text-center px-4 py-2">
+              {title}
+            </h2>
           </div>
         </div>
       </div>
@@ -271,13 +312,8 @@ export default function Competition({
         ></div>
       </div>
 
-      {/* Bottom Section - Content (40%) */}
-      <div className="relative h-[40%] w-full flex flex-col items-center justify-center p-4 sm:p-6 space-y-3 sm:space-y-4 bg-gradient-to-b from-transparent to-black/40 z-10">
-        {/* Competition Info */}
-        <div className="text-center space-y-1 sm:space-y-2 max-w-md">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white tracking-tight">{title}</h2>
-        </div>
-
+      {/* Bottom Section - Content (25%) */}
+      <div className="relative h-[25%] w-full flex flex-col items-center justify-center p-3 sm:p-4 bg-gradient-to-b from-transparent to-black/40 z-10">
         {/* Enter Button */}
         <Button
           onClick={() => router.push(`/competition/${id}`)}
