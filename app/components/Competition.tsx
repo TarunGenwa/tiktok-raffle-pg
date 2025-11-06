@@ -142,18 +142,17 @@ export default function Competition({
           </>
         ) : (
           <>
-            {/* Category Icon */}
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="relative">
-                <div className="w-24 h-24 sm:w-32 sm:h-32 relative">
-                  <div className={`absolute inset-0 bg-gradient-to-br ${categoryColors[category]} rounded-full opacity-70 blur-2xl`}></div>
-                  <div className={`relative w-full h-full bg-gradient-to-br ${categoryColors[category]} rounded-full flex items-center justify-center shadow-2xl border-4 border-white/20`}>
-                    <div className="text-white">
-                      {categoryIcons[category]}
-                    </div>
-                  </div>
+            {/* Single Enlarged Prize Image */}
+            <div className="absolute inset-0 flex items-center justify-center p-6 sm:p-8">
+              {prizes[0]?.imageUrl && (
+                <div className="relative w-full h-full max-w-md flex items-center justify-center">
+                  <img
+                    src={prizes[0].imageUrl}
+                    alt={prizes[0].name}
+                    className="w-full h-full object-contain drop-shadow-2xl"
+                  />
                 </div>
-              </div>
+              )}
             </div>
             {/* Background Pattern */}
             <div className="absolute inset-0 opacity-10">
