@@ -4,32 +4,32 @@ import { useRouter } from 'next/navigation';
 
 const categories = [
   {
-    name: 'Crypto',
-    icon: '₿',
-    description: 'Bitcoin, Ethereum & more',
-    gradient: 'from-orange-500 to-yellow-500',
-    route: '/explore?category=crypto'
-  },
-  {
-    name: 'Gaming',
-    icon: '🎮',
-    description: 'Consoles, skins & gear',
+    name: 'Mystery Boxes',
+    icon: '🎁',
+    description: 'Surprise prizes await',
     gradient: 'from-purple-500 to-pink-500',
-    route: '/explore?category=gaming'
+    route: '/explore?category=mysteryboxes'
   },
   {
-    name: 'Luxury',
-    icon: '💎',
-    description: 'Watches, jewelry & more',
+    name: 'Prize Spins',
+    icon: '🎡',
+    description: 'Spin to win big',
+    gradient: 'from-orange-500 to-yellow-500',
+    route: '/explore?category=prizespins'
+  },
+  {
+    name: 'Instant Wins',
+    icon: '💥',
+    description: 'Win instantly',
     gradient: 'from-blue-500 to-cyan-500',
-    route: '/explore?category=luxury'
+    route: '/explore?category=instantwins'
   },
   {
-    name: 'Electronics',
-    icon: '📱',
-    description: 'Latest gadgets & tech',
+    name: 'Daily Prizes',
+    icon: '🏆',
+    description: 'New chances daily',
     gradient: 'from-green-500 to-emerald-500',
-    route: '/explore?category=electronics'
+    route: '/explore?category=dailyprizes'
   }
 ];
 
