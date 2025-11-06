@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect, useRef } from 'react';
 import Competition from './components/Competition';
 import PromoSlide from './components/PromoSlide';
 
@@ -25,6 +26,23 @@ interface CompetitionType {
 }
 
 export default function Home() {
+  const [showHeader, setShowHeader] = useState(false);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (scrollContainerRef.current) {
+        const scrollPosition = scrollContainerRef.current.scrollTop;
+        setShowHeader(scrollPosition > 150);
+      }
+    };
+
+    const scrollContainer = scrollContainerRef.current;
+    if (scrollContainer) {
+      scrollContainer.addEventListener('scroll', handleScroll);
+      return () => scrollContainer.removeEventListener('scroll', handleScroll);
+    }
+  }, []);
   const competitions: CompetitionType[] = [
     {
       id: '1',
@@ -95,7 +113,22 @@ export default function Home() {
   ];
 
   return (
-    <div className="flex h-screen bg-black overflow-y-auto">
+    <div ref={scrollContainerRef} className="flex h-screen bg-black overflow-y-auto">
+      {/* Sticky Header - Shows on Scroll */}
+      <header
+        className={`fixed top-0 left-0 right-0 z-50 bg-black/95 backdrop-blur-sm border-b border-gray-800 transition-transform duration-300 ${
+          showHeader ? 'translate-y-0' : '-translate-y-full'
+        }`}
+      >
+        <div className="flex justify-center items-center py-2 px-4">
+          <img
+            src="/logo.png"
+            alt="Competition Town Logo"
+            className="h-12 w-auto object-contain"
+          />
+        </div>
+      </header>
+
       {/* Main Content Area - Scrollable */}
       <main className="flex-1 flex justify-center">
         <div className="w-full max-w-md mx-auto px-1 md:px-0 py-4 space-y-4">
