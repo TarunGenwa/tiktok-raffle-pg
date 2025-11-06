@@ -43,6 +43,7 @@ export default function Competition({
   const router = useRouter();
   const [isMuted, setIsMuted] = useState(true);
   const videoRef = useRef<HTMLVideoElement | null>(null);
+  const [countdown, setCountdown] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
 
   const toggleMute = () => {
     if (videoRef.current) {
@@ -50,6 +51,63 @@ export default function Competition({
       setIsMuted(!isMuted);
     }
   };
+
+  // Parse initial time and setup countdown
+  useEffect(() => {
+    // Parse timeRemaining (e.g., "4h 10m" or "2h 15m")
+    const parseTime = (timeStr: string) => {
+      const hoursMatch = timeStr.match(/(\d+)h/);
+      const minutesMatch = timeStr.match(/(\d+)m/);
+
+      const hours = hoursMatch ? parseInt(hoursMatch[1]) : 0;
+      const minutes = minutesMatch ? parseInt(minutesMatch[1]) : 0;
+
+      return {
+        days: 0,
+        hours,
+        minutes,
+        seconds: 0
+      };
+    };
+
+    const initialTime = parseTime(timeRemaining);
+    setCountdown(initialTime);
+
+    // Setup interval to decrement countdown every second
+    const interval = setInterval(() => {
+      setCountdown(prev => {
+        let { days, hours, minutes, seconds } = prev;
+
+        // Decrement seconds
+        seconds--;
+
+        if (seconds < 0) {
+          seconds = 59;
+          minutes--;
+        }
+
+        if (minutes < 0) {
+          minutes = 59;
+          hours--;
+        }
+
+        if (hours < 0) {
+          hours = 23;
+          days--;
+        }
+
+        // Stop at zero
+        if (days < 0) {
+          clearInterval(interval);
+          return { days: 0, hours: 0, minutes: 0, seconds: 0 };
+        }
+
+        return { days, hours, minutes, seconds };
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [timeRemaining]);
 
   // Control video playback based on active state
   useEffect(() => {
@@ -190,7 +248,9 @@ export default function Competition({
           {/* Days */}
           <div className="flex flex-col items-center">
             <div className="bg-gray-800/80 backdrop-blur-sm rounded-lg px-2.5 sm:px-3 py-1.5 sm:py-2 border border-gray-700 min-w-[40px] sm:min-w-[50px]">
-              <div className="text-lg sm:text-xl md:text-2xl font-bold text-white text-center">0</div>
+              <div className="text-lg sm:text-xl md:text-2xl font-bold text-white text-center tabular-nums">
+                {countdown.days.toString().padStart(2, '0')}
+              </div>
             </div>
             <div className="text-[10px] sm:text-xs text-gray-400 mt-1 uppercase tracking-wide">Days</div>
           </div>
@@ -198,8 +258,8 @@ export default function Competition({
           {/* Hours */}
           <div className="flex flex-col items-center">
             <div className="bg-gray-800/80 backdrop-blur-sm rounded-lg px-2.5 sm:px-3 py-1.5 sm:py-2 border border-gray-700 min-w-[40px] sm:min-w-[50px]">
-              <div className="text-lg sm:text-xl md:text-2xl font-bold text-white text-center">
-                {timeRemaining.includes('h') ? timeRemaining.split('h')[0].trim() : '0'}
+              <div className="text-lg sm:text-xl md:text-2xl font-bold text-white text-center tabular-nums">
+                {countdown.hours.toString().padStart(2, '0')}
               </div>
             </div>
             <div className="text-[10px] sm:text-xs text-gray-400 mt-1 uppercase tracking-wide">Hours</div>
@@ -208,8 +268,8 @@ export default function Competition({
           {/* Minutes */}
           <div className="flex flex-col items-center">
             <div className="bg-gray-800/80 backdrop-blur-sm rounded-lg px-2.5 sm:px-3 py-1.5 sm:py-2 border border-gray-700 min-w-[40px] sm:min-w-[50px]">
-              <div className="text-lg sm:text-xl md:text-2xl font-bold text-white text-center">
-                {timeRemaining.includes('m') ? timeRemaining.split('h')[1]?.split('m')[0]?.trim() || timeRemaining.split('m')[0].trim() : '0'}
+              <div className="text-lg sm:text-xl md:text-2xl font-bold text-white text-center tabular-nums">
+                {countdown.minutes.toString().padStart(2, '0')}
               </div>
             </div>
             <div className="text-[10px] sm:text-xs text-gray-400 mt-1 uppercase tracking-wide">Minutes</div>
@@ -218,7 +278,9 @@ export default function Competition({
           {/* Seconds */}
           <div className="flex flex-col items-center">
             <div className="bg-gray-800/80 backdrop-blur-sm rounded-lg px-2.5 sm:px-3 py-1.5 sm:py-2 border border-gray-700 min-w-[40px] sm:min-w-[50px]">
-              <div className="text-lg sm:text-xl md:text-2xl font-bold text-white text-center">0</div>
+              <div className="text-lg sm:text-xl md:text-2xl font-bold text-white text-center tabular-nums">
+                {countdown.seconds.toString().padStart(2, '0')}
+              </div>
             </div>
             <div className="text-[10px] sm:text-xs text-gray-400 mt-1 uppercase tracking-wide">Seconds</div>
           </div>
