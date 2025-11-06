@@ -127,7 +127,6 @@ export default function CompetitionPage() {
   const params = useParams();
   const competitionId = params.id as string;
   const [ticketCount, setTicketCount] = useState(1);
-  const [showBulkPlayModal, setShowBulkPlayModal] = useState(false);
   const [showPrizeColumns, setShowPrizeColumns] = useState(false);
   const [columnPrizes, setColumnPrizes] = useState<BulkPrize[]>([]);
   const triggerSpinRef = useRef<(() => void) | null>(null);
@@ -148,13 +147,8 @@ export default function CompetitionPage() {
     setTicketCount(prev => prev > 1 ? prev - 1 : prev);
   }, []);
 
-  const handleStartBulkPlay = () => {
-    setShowBulkPlayModal(true);
-  };
-
   const handleBulkPrizesWon = (prizes: BulkPrize[]) => {
     setColumnPrizes(prizes);
-    setShowBulkPlayModal(false);
     setShowPrizeColumns(true);
   };
 
@@ -162,10 +156,6 @@ export default function CompetitionPage() {
     setColumnPrizes([]);
     setShowPrizeColumns(false);
     setTicketCount(1);
-  };
-
-  const handleCloseBulkModal = () => {
-    setShowBulkPlayModal(false);
   };
 
   if (!competition) {
@@ -216,37 +206,21 @@ export default function CompetitionPage() {
 
         {/* Game Container */}
         <div className="w-full relative px-1 md:px-0 flex flex-col items-center gap-4 z-10">
-          {ticketCount <= 5 ? (
-            // Show slot machine for 1-5 tickets
-            <PrizeWheel
-              prizes={competition.prizes}
-              onClose={() => router.back()}
-              competitionTitle={competition.title}
-              isInline={true}
-              hideCloseButton={true}
-              numberOfTickets={ticketCount}
-              hideSpinButton={true}
-              onSpinTrigger={(spinFn) => {
-                triggerSpinRef.current = spinFn;
-              }}
-            />
-          ) : (
-            // Show message for bulk play mode
-            <div className="w-full flex flex-col items-center gap-6 p-8 min-h-[400px] justify-center">
-              <div className="text-center">
-                <div className="text-6xl mb-4">🎰</div>
-                <h2 className="text-2xl font-bold text-white mb-2">
-                  Bulk Play Mode
-                </h2>
-                <p className="text-gray-400 mb-1">
-                  Ready to play {ticketCount} tickets
-                </p>
-                <p className="text-sm text-gray-500">
-                  Click the button below to reveal all prizes
-                </p>
-              </div>
-            </div>
-          )}
+          {/* Always show slot machine inline, even for bulk play */}
+          <PrizeWheel
+            prizes={competition.prizes}
+            onClose={() => router.back()}
+            competitionTitle={competition.title}
+            isInline={true}
+            hideCloseButton={true}
+            numberOfTickets={ticketCount <= 5 ? ticketCount : 1}
+            totalTickets={ticketCount > 5 ? ticketCount : undefined}
+            hideSpinButton={true}
+            onSpinTrigger={(spinFn) => {
+              triggerSpinRef.current = spinFn;
+            }}
+            onBulkPrizesGenerated={ticketCount > 5 ? handleBulkPrizesWon : undefined}
+          />
         </div>
       </main>
 
@@ -256,10 +230,8 @@ export default function CompetitionPage() {
           <button
             type="button"
             onClick={() => {
-              if (ticketCount <= 5 && triggerSpinRef.current) {
+              if (triggerSpinRef.current) {
                 triggerSpinRef.current();
-              } else if (ticketCount > 5) {
-                handleStartBulkPlay();
               }
             }}
             className="w-full relative overflow-hidden bg-gradient-to-r from-emerald-500 via-green-500 to-lime-500 hover:from-emerald-400 hover:via-green-400 hover:to-lime-400 text-white font-bold text-base sm:text-lg px-8 py-4 sm:py-5 rounded-full shadow-[0_0_30px_rgba(16,185,129,0.5)] transform transition-all hover:scale-105 hover:shadow-[0_0_50px_rgba(16,185,129,0.7)] border-2 border-white/20"
@@ -386,23 +358,6 @@ export default function CompetitionPage() {
         </div>
       </div>
 
-      {/* Bulk Play Modal */}
-      {showBulkPlayModal && (
-        <div className="fixed inset-0 z-50 bg-black/95 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="w-full max-w-2xl">
-            <PrizeWheel
-              prizes={competition.prizes}
-              onClose={handleCloseBulkModal}
-              competitionTitle={competition.title}
-              isInline={true}
-              hideCloseButton={false}
-              numberOfTickets={1}
-              totalTickets={ticketCount}
-              onBulkPrizesGenerated={handleBulkPrizesWon}
-            />
-          </div>
-        </div>
-      )}
     </div>
   );
 }
