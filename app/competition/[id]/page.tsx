@@ -339,17 +339,19 @@ export default function CompetitionPage() {
 
       {/* Bulk Play Modal */}
       {showBulkPlayModal && (
-        <div className="fixed inset-0 z-50 bg-black/95 backdrop-blur-md flex items-center justify-center">
-          <PrizeWheel
-            prizes={competition.prizes}
-            onClose={handleCloseBulkModal}
-            competitionTitle={competition.title}
-            isInline={false}
-            hideCloseButton={false}
-            numberOfTickets={1}
-            totalTickets={ticketCount}
-            onBulkPrizesGenerated={handleBulkPrizesWon}
-          />
+        <div className="fixed inset-0 z-50 bg-black/95 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="w-full max-w-2xl">
+            <PrizeWheel
+              prizes={competition.prizes}
+              onClose={handleCloseBulkModal}
+              competitionTitle={competition.title}
+              isInline={true}
+              hideCloseButton={false}
+              numberOfTickets={1}
+              totalTickets={ticketCount}
+              onBulkPrizesGenerated={handleBulkPrizesWon}
+            />
+          </div>
         </div>
       )}
     </div>

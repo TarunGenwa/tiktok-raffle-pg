@@ -73,12 +73,12 @@ export default function PrizeColumnsView({
       </div>
 
       {/* Header */}
-      <div className="relative z-10 flex items-center justify-between p-6">
+      <div className="relative z-10 flex items-center justify-between p-3 sm:p-6">
         <div>
-          <h2 className="text-3xl font-bold text-white mb-1">
+          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-1">
             Your Prizes
           </h2>
-          <p className="text-gray-300">
+          <p className="text-sm sm:text-base text-gray-300">
             {prizes.length} ticket{prizes.length !== 1 ? 's' : ''} played
           </p>
         </div>
@@ -86,9 +86,9 @@ export default function PrizeColumnsView({
         {onClose && (
           <button
             onClick={onClose}
-            className="p-2 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-colors"
+            className="p-1.5 sm:p-2 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-colors"
           >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
@@ -97,8 +97,8 @@ export default function PrizeColumnsView({
 
       {/* Prize Columns Container */}
       <div className="relative z-10 h-[calc(100vh-180px)] overflow-auto">
-        <div className="max-w-7xl mx-auto px-6 py-8">
-          <div className="flex flex-wrap justify-center gap-6">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 py-4 sm:py-8">
+          <div className="flex flex-wrap justify-center gap-3 sm:gap-6">
             {prizeGroups.map(({ prize, count }, groupIndex) => (
               <div
                 key={prize.name}
@@ -110,11 +110,11 @@ export default function PrizeColumnsView({
                 }}
               >
                 {/* Column */}
-                <div className="flex flex-col items-center gap-3">
+                <div className="flex flex-col items-center gap-2 sm:gap-3">
                   {/* Prize Type Header */}
-                  <div className={`bg-gradient-to-br ${rarityColors[prize.rarity]} rounded-xl p-4 shadow-2xl ${rarityGlow[prize.rarity]} min-w-[160px] text-center`}>
+                  <div className={`bg-gradient-to-br ${rarityColors[prize.rarity]} rounded-lg sm:rounded-xl p-3 sm:p-4 shadow-2xl ${rarityGlow[prize.rarity]} min-w-[120px] sm:min-w-[160px] text-center`}>
                     {prize.image && (
-                      <div className="w-20 h-20 mx-auto mb-3 relative">
+                      <div className="w-14 h-14 sm:w-20 sm:h-20 mx-auto mb-2 sm:mb-3 relative">
                         <img
                           src={prize.image}
                           alt={prize.name}
@@ -122,30 +122,30 @@ export default function PrizeColumnsView({
                         />
                       </div>
                     )}
-                    <p className="text-white font-bold text-lg mb-1">{prize.name}</p>
-                    <span className="text-sm text-white/80 capitalize block">
+                    <p className="text-white font-bold text-sm sm:text-lg mb-1">{prize.name}</p>
+                    <span className="text-xs sm:text-sm text-white/80 capitalize block">
                       {prize.rarity}
                     </span>
                   </div>
 
                   {/* Stacked Tickets */}
-                  <div className="relative flex flex-col items-center gap-2">
+                  <div className="relative flex flex-col items-center gap-1.5 sm:gap-2">
                     {Array.from({ length: count }).map((_, ticketIndex) => (
                       <div
                         key={ticketIndex}
-                        className={`bg-gradient-to-br ${rarityColors[prize.rarity]} rounded-lg p-3 shadow-lg ${rarityGlow[prize.rarity]} w-32 text-center transition-all duration-300 hover:scale-105 hover:z-10`}
+                        className={`bg-gradient-to-br ${rarityColors[prize.rarity]} rounded-md sm:rounded-lg p-2 sm:p-3 shadow-lg ${rarityGlow[prize.rarity]} w-24 sm:w-32 text-center transition-all duration-300 hover:scale-105 hover:z-10`}
                         style={{
                           animationDelay: `${groupIndex * 100 + ticketIndex * 50}ms`
                         }}
                       >
-                        <div className="text-white font-bold text-sm">
+                        <div className="text-white font-bold text-xs sm:text-sm">
                           Ticket #{ticketIndex + 1}
                         </div>
                       </div>
                     ))}
 
                     {/* Count Badge */}
-                    <div className="absolute -top-3 -right-3 bg-white text-gray-900 rounded-full w-10 h-10 flex items-center justify-center font-bold text-lg shadow-xl border-4 border-emerald-500">
+                    <div className="absolute -top-2 sm:-top-3 -right-2 sm:-right-3 bg-white text-gray-900 rounded-full w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center font-bold text-sm sm:text-lg shadow-xl border-2 sm:border-4 border-emerald-500">
                       {count}
                     </div>
                   </div>
@@ -157,12 +157,12 @@ export default function PrizeColumnsView({
       </div>
 
       {/* Footer */}
-      <div className="relative z-10 p-6 border-t border-white/10">
+      <div className="relative z-10 p-3 sm:p-6 border-t border-white/10">
         <div className="max-w-4xl mx-auto text-center">
-          <p className="text-xl font-bold text-white mb-2">
+          <p className="text-base sm:text-lg md:text-xl font-bold text-white mb-1 sm:mb-2">
             🎉 All prizes revealed!
           </p>
-          <p className="text-gray-300">
+          <p className="text-sm sm:text-base text-gray-300">
             Check your inventory for your new prizes
           </p>
         </div>

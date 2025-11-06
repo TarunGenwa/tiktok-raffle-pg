@@ -115,8 +115,9 @@ export default function PrizeWheel({
     const selectedPrizes = totalTickets && totalTickets > 5 ? [allSelectedPrizes[0]] : allSelectedPrizes;
 
     // Calculate positions for each row to land on its specific winning prize
-    const prizeWidth = isInline ? 110 : 130; // Width of each prize item (matching the actual rendered width)
-    const containerWidth = isInline ? 360 : 480; // Container width (matching the actual rendered width)
+    // Use average width for calculation to work across breakpoints
+    const prizeWidth = isInline ? 100 : 120; // Width of each prize item (average of responsive widths)
+    const containerWidth = isInline ? 320 : 440; // Container width (average of responsive widths)
     const repetitions = 50; // Increased repetitions for proper circular loop
 
     // Create different spin amounts for each row (they'll stop at different times)
@@ -258,8 +259,8 @@ export default function PrizeWheel({
               isVisible && !isExiting ? 'translate-y-0 opacity-100' : '-translate-y-4 opacity-0'
             }`}
           >
-            <h2 className={`${isInline ? 'text-lg sm:text-xl' : 'text-xl sm:text-2xl md:text-3xl'} font-bold text-white px-4`}>{competitionTitle}</h2>
-            <p className={`${isInline ? 'text-xs sm:text-sm' : 'text-sm sm:text-base'} text-gray-400 px-4`}>Spin the slots to win your prize!</p>
+            <h2 className={`${isInline ? 'text-base xs:text-lg sm:text-xl' : 'text-lg sm:text-xl md:text-2xl lg:text-3xl'} font-bold text-white px-4`}>{competitionTitle}</h2>
+            <p className={`${isInline ? 'text-[11px] xs:text-xs sm:text-sm' : 'text-xs sm:text-sm md:text-base'} text-gray-400 px-4`}>Spin the slots to win your prize!</p>
           </div>
 
           {/* Slot Machine Container */}
@@ -274,13 +275,13 @@ export default function PrizeWheel({
             {/* Slot Machine Frame */}
             <div className={`relative bg-gradient-to-b from-gray-800 to-gray-900 ${isInline ? 'p-2 sm:p-4' : 'p-4 sm:p-8'} rounded-2xl sm:rounded-3xl shadow-2xl ${isInline ? 'border-2 sm:border-4' : 'border-4 sm:border-8'} border-yellow-500/50`}>
               {/* Top Decoration */}
-              <div className={`absolute ${isInline ? '-top-3 sm:-top-4' : '-top-4 sm:-top-6'} left-1/2 -translate-x-1/2 bg-gradient-to-r from-yellow-500 to-orange-500 ${isInline ? 'px-3 sm:px-6 py-0.5 sm:py-1' : 'px-4 sm:px-8 py-1 sm:py-2'} rounded-full text-white font-bold ${isInline ? 'text-xs sm:text-base' : 'text-sm sm:text-xl'} shadow-lg`}>
+              <div className={`absolute ${isInline ? '-top-2 xs:-top-3 sm:-top-4' : '-top-3 sm:-top-4 md:-top-6'} left-1/2 -translate-x-1/2 bg-gradient-to-r from-yellow-500 to-orange-500 ${isInline ? 'px-2 xs:px-3 sm:px-6 py-0.5 sm:py-1' : 'px-3 sm:px-4 md:px-8 py-0.5 sm:py-1 md:py-2'} rounded-full text-white font-bold ${isInline ? 'text-[10px] xs:text-xs sm:text-base' : 'text-xs sm:text-sm md:text-xl'} shadow-lg`}>
                 JACKPOT
               </div>
 
               {/* Selection Indicator */}
-              <div className="absolute top-0 bottom-0 left-1/2 -translate-x-1/2 z-10 pointer-events-none">
-                <div className={`${isInline ? 'my-2 sm:my-4' : 'my-4 sm:my-8'} ${isInline ? 'border-2' : 'border-2 sm:border-4'} border-red-500 rounded-lg ${isInline ? 'w-[110px] sm:w-[130px]' : 'w-[130px] sm:w-[150px]'} h-full bg-red-500/10 shadow-[0_0_30px_rgba(239,68,68,0.5)]`}></div>
+              <div className="absolute top-0 bottom-0 left-1/2 -translate-x-1/2 z-10 pointer-events-none flex items-center">
+                <div className={`${isInline ? 'my-2 sm:my-4' : 'my-4 sm:my-8'} ${isInline ? 'border-2' : 'border-2 sm:border-4'} border-red-500 rounded-lg ${isInline ? 'w-[90px] xs:w-[110px] sm:w-[130px]' : 'w-[110px] sm:w-[130px] md:w-[150px]'} h-full bg-red-500/10 shadow-[0_0_30px_rgba(239,68,68,0.5)]`}></div>
               </div>
 
               {/* Slot Rows */}
@@ -288,7 +289,7 @@ export default function PrizeWheel({
                 {rowRefs.slice(0, totalTickets && totalTickets > 5 ? 1 : numberOfTickets).map((ref, rowIndex) => (
                   <div key={rowIndex} className="flex-1">
                     {/* Row Container */}
-                    <div className={`bg-gray-950 rounded-xl p-1 sm:p-2 ${isInline ? 'w-[360px] sm:w-[420px]' : 'w-[480px] sm:w-[600px]'} overflow-hidden relative shadow-inner border-2 sm:border-4 border-gray-700`}>
+                    <div className={`bg-gray-950 rounded-xl p-1 sm:p-2 ${isInline ? 'w-full max-w-[360px] sm:max-w-[420px]' : 'w-full max-w-[480px] sm:max-w-[600px]'} overflow-hidden relative shadow-inner border-2 sm:border-4 border-gray-700`}>
                       {/* Scrolling Row */}
                       <div
                         ref={ref}
@@ -304,10 +305,10 @@ export default function PrizeWheel({
                         {(Array(50).fill(prizes).flat() as Prize[]).map((prize, idx) => (
                           <div
                             key={idx}
-                            className={`${isInline ? 'w-[110px] sm:w-[130px]' : 'w-[130px] sm:w-[150px]'} flex-shrink-0 flex items-center justify-center border-r-2 border-gray-800 bg-gradient-to-br ${rarityGradients[prize.rarity]} p-2`}
+                            className={`${isInline ? 'w-[90px] xs:w-[110px] sm:w-[130px]' : 'w-[110px] sm:w-[130px] md:w-[150px]'} flex-shrink-0 flex items-center justify-center border-r-2 border-gray-800 bg-gradient-to-br ${rarityGradients[prize.rarity]} p-2`}
                           >
                             {prize.imageUrl ? (
-                              <div className={`relative ${isInline ? 'w-16 h-16' : 'w-20 h-20'} flex items-center justify-center`}>
+                              <div className={`relative ${isInline ? 'w-12 xs:w-14 sm:w-16' : 'w-16 sm:w-20'} ${isInline ? 'h-12 xs:h-14 sm:h-16' : 'h-16 sm:h-20'} flex items-center justify-center`}>
                                 <img
                                   src={prize.imageUrl}
                                   alt={prize.name}
@@ -315,9 +316,9 @@ export default function PrizeWheel({
                                 />
                               </div>
                             ) : (
-                              <div className="text-center px-1 sm:px-2 py-2">
-                                <div className={`text-white font-bold ${isInline ? 'text-[10px] sm:text-xs' : 'text-xs sm:text-sm'} mb-1 leading-tight`}>{prize.name}</div>
-                                <div className={`${isInline ? 'text-[8px] sm:text-[10px]' : 'text-[10px] sm:text-xs'} text-white/80 capitalize`}>{prize.rarity}</div>
+                              <div className="text-center px-1 sm:px-2 py-1 sm:py-2">
+                                <div className={`text-white font-bold ${isInline ? 'text-[9px] xs:text-[10px] sm:text-xs' : 'text-xs sm:text-sm'} mb-1 leading-tight`}>{prize.name}</div>
+                                <div className={`${isInline ? 'text-[7px] xs:text-[8px] sm:text-[10px]' : 'text-[10px] sm:text-xs'} text-white/80 capitalize`}>{prize.rarity}</div>
                               </div>
                             )}
                           </div>
@@ -335,7 +336,7 @@ export default function PrizeWheel({
             onClick={handleSpin}
             disabled={isSpinning}
             size="lg"
-            className={`bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold ${isInline ? 'text-sm sm:text-base px-6 sm:px-10 py-3 sm:py-4' : 'text-base sm:text-lg md:text-xl px-8 sm:px-12 md:px-16 py-4 sm:py-5 md:py-6'} rounded-full shadow-2xl transform transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed duration-500 delay-300 ${
+            className={`bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold ${isInline ? 'text-xs xs:text-sm sm:text-base px-4 xs:px-6 sm:px-10 py-2 xs:py-3 sm:py-4' : 'text-sm sm:text-base md:text-lg lg:text-xl px-6 sm:px-8 md:px-12 lg:px-16 py-3 sm:py-4 md:py-5 lg:py-6'} rounded-full shadow-2xl transform transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed duration-500 delay-300 ${
               isVisible && !isExiting ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
             }`}
           >
