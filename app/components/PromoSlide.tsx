@@ -2,10 +2,6 @@
 
 import { useRouter } from 'next/navigation';
 
-interface PromoSlideProps {
-  isActive: boolean;
-}
-
 const categories = [
   {
     name: 'Crypto',
@@ -37,7 +33,7 @@ const categories = [
   }
 ];
 
-export default function PromoSlide({ isActive }: PromoSlideProps) {
+export default function PromoSlide() {
   const router = useRouter();
 
   return (
@@ -51,37 +47,44 @@ export default function PromoSlide({ isActive }: PromoSlideProps) {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 flex flex-col h-full justify-between p-6 sm:p-8">
+      <div className="relative z-10 flex flex-col h-full justify-between p-4 sm:p-6">
         {/* Header/Banner Section */}
-        <div className="text-center mb-6 sm:mb-8">
-          <div className="inline-block mb-4 sm:mb-6">
-            <div className="text-5xl sm:text-7xl mb-4 animate-bounce">🎰</div>
+        <div className="text-center mb-3 sm:mb-4">
+          <div className="inline-block mb-2 sm:mb-3">
+            <div className="w-48 h-20 sm:w-64 sm:h-24 mx-auto mb-2">
+              <img
+                src="/logo.png"
+                alt="Competition Town Logo"
+                className="w-full h-full object-contain drop-shadow-2xl"
+              />
+            </div>
           </div>
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-3 sm:mb-4 leading-tight">
-            Welcome to
-            <br />
-            <span className="bg-gradient-to-r from-emerald-400 via-green-400 to-lime-400 bg-clip-text text-transparent">
-              Raffle Paradise
-            </span>
-          </h1>
-          <p className="text-base sm:text-lg md:text-xl text-gray-300 max-w-md mx-auto">
-            Win amazing prizes from crypto to luxury items!
-          </p>
 
           {/* Promo Banner */}
-          <div className="mt-6 sm:mt-8 bg-gradient-to-r from-orange-500 to-pink-500 rounded-2xl p-4 sm:p-6 shadow-2xl transform hover:scale-105 transition-transform">
-            <div className="flex items-center justify-center gap-2 sm:gap-3 mb-2">
-              <span className="text-2xl sm:text-3xl">🎉</span>
-              <h2 className="text-xl sm:text-2xl font-bold text-white">Special Offer</h2>
-              <span className="text-2xl sm:text-3xl">🎉</span>
+          <div className="mt-2 relative rounded-xl sm:rounded-2xl p-6 sm:p-8 shadow-2xl transform hover:scale-105 transition-transform overflow-hidden min-h-[200px] sm:min-h-[240px] flex flex-col justify-center border-[6px] border-lime-400 shadow-[0_0_30px_rgba(163,230,53,0.8),0_0_60px_rgba(163,230,53,0.4)]">
+            {/* Background Image with Overlay */}
+            <div className="absolute inset-0 z-0">
+              <img
+                src="/CTSP credit 1000gbp.png"
+                alt="Prize"
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-r from-orange-600/95 via-pink-600/90 to-purple-600/95"></div>
             </div>
-            <p className="text-sm sm:text-base text-white/90 font-medium">
-              Get 50% more tickets on your first purchase!
-            </p>
-            <div className="mt-3 sm:mt-4">
+
+            {/* Content */}
+            <div className="relative z-10 text-center">
+              <div className="flex items-center justify-center gap-2 sm:gap-3 mb-2 sm:mb-3">
+                <span className="text-2xl sm:text-3xl">🎉</span>
+                <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-white drop-shadow-lg">Special Offer</h2>
+                <span className="text-2xl sm:text-3xl">🎉</span>
+              </div>
+              <p className="text-sm sm:text-base md:text-lg text-white font-semibold mb-4 sm:mb-5 drop-shadow-md">
+                Get 50% more tickets on your first purchase!
+              </p>
               <button
                 onClick={() => router.push('/explore')}
-                className="bg-white text-orange-600 font-bold px-6 sm:px-8 py-2 sm:py-3 rounded-full text-sm sm:text-base hover:bg-gray-100 transition-colors shadow-lg"
+                className="bg-white text-orange-600 font-bold px-6 sm:px-8 py-2.5 sm:py-3 rounded-full text-sm sm:text-base hover:bg-gray-100 transition-colors shadow-lg hover:shadow-xl"
               >
                 Claim Now
               </button>
@@ -90,24 +93,24 @@ export default function PromoSlide({ isActive }: PromoSlideProps) {
         </div>
 
         {/* Categories Section */}
-        <div className="flex-1 flex flex-col justify-center">
-          <h3 className="text-lg sm:text-xl font-bold text-white text-center mb-4 sm:mb-6">
+        <div className="flex-1 flex flex-col justify-center min-h-0">
+          <h3 className="text-base sm:text-lg font-bold text-white text-center mb-3 sm:mb-4">
             Explore Categories
           </h3>
-          <div className="grid grid-cols-2 gap-3 sm:gap-4 max-w-lg mx-auto w-full">
+          <div className="grid grid-cols-2 gap-2.5 sm:gap-3 max-w-lg mx-auto w-full">
             {categories.map((category) => (
               <button
                 key={category.name}
                 onClick={() => router.push(category.route)}
-                className="group relative overflow-hidden bg-gray-800/50 backdrop-blur-sm hover:bg-gray-800/80 rounded-2xl p-4 sm:p-6 border-2 border-gray-700 hover:border-gray-600 transition-all transform hover:scale-105 hover:-translate-y-1"
+                className="group relative overflow-hidden bg-gray-800/50 backdrop-blur-sm hover:bg-gray-800/80 rounded-xl sm:rounded-2xl p-3 sm:p-4 border-2 border-gray-700 hover:border-gray-600 transition-all transform hover:scale-105 hover:-translate-y-1"
               >
                 {/* Gradient Overlay */}
                 <div className={`absolute inset-0 bg-gradient-to-br ${category.gradient} opacity-0 group-hover:opacity-20 transition-opacity`}></div>
 
                 <div className="relative z-10">
-                  <div className="text-3xl sm:text-4xl mb-2 sm:mb-3">{category.icon}</div>
-                  <h4 className="text-sm sm:text-base font-bold text-white mb-1">{category.name}</h4>
-                  <p className="text-xs sm:text-sm text-gray-400">{category.description}</p>
+                  <div className="text-2xl sm:text-3xl mb-1.5 sm:mb-2">{category.icon}</div>
+                  <h4 className="text-xs sm:text-sm font-bold text-white mb-0.5 sm:mb-1">{category.name}</h4>
+                  <p className="text-[10px] sm:text-xs text-gray-400">{category.description}</p>
                 </div>
               </button>
             ))}
@@ -115,12 +118,12 @@ export default function PromoSlide({ isActive }: PromoSlideProps) {
         </div>
 
         {/* Scroll Indicator */}
-        <div className="text-center pt-6 sm:pt-8 animate-pulse">
-          <p className="text-sm sm:text-base text-gray-400 mb-2 sm:mb-3">
+        <div className="text-center pt-3 sm:pt-4 animate-pulse">
+          <p className="text-xs sm:text-sm text-gray-400 mb-1.5 sm:mb-2">
             Scroll up to see individual competitions
           </p>
           <svg
-            className="w-6 h-6 sm:w-8 sm:h-8 text-white mx-auto animate-bounce"
+            className="w-5 h-5 sm:w-6 sm:h-6 text-white mx-auto animate-bounce"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"

@@ -316,7 +316,7 @@ export default function Home() {
                     zIndex: isActive ? 10 : isPrev ? 9 : isNext ? 8 : 0,
                   }}
                 >
-                  <PromoSlide isActive={isActive} />
+                  <PromoSlide />
                 </div>
               );
             })()}
