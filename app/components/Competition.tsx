@@ -106,6 +106,19 @@ export default function Competition({
   return (
     <div className="relative w-full h-full p-[3px] rounded-lg bg-gradient-to-br from-emerald-500 via-green-500 to-teal-500 shadow-xl shadow-emerald-500/20">
       <div className="relative w-full h-full bg-gradient-to-br from-gray-900 via-black to-gray-900 rounded-lg overflow-hidden flex flex-col">
+
+      {/* Entry Price Badge - Top Left */}
+      <div className="absolute top-3 left-3 sm:top-4 sm:left-4 z-30">
+        <div className="bg-gradient-to-r from-green-600 to-emerald-600 rounded-full px-3 py-1.5 sm:px-4 sm:py-2 shadow-xl border-2 border-white/20">
+          <div className="flex items-center gap-1.5">
+            <svg className="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.41 16.09V20h-2.67v-1.93c-1.71-.36-3.16-1.46-3.27-3.4h1.96c.1 1.05.82 1.87 2.65 1.87 1.96 0 2.4-.98 2.4-1.59 0-.83-.44-1.61-2.67-2.14-2.48-.6-4.18-1.62-4.18-3.67 0-1.72 1.39-2.84 3.11-3.21V4h2.67v1.95c1.86.45 2.79 1.86 2.85 3.39H14.3c-.05-1.11-.64-1.87-2.22-1.87-1.5 0-2.4.68-2.4 1.64 0 .84.65 1.39 2.67 1.91s4.18 1.39 4.18 3.91c-.01 1.83-1.38 2.83-3.12 3.16z"/>
+            </svg>
+            <span className="text-white font-bold text-sm sm:text-base">${entryPrice}</span>
+          </div>
+        </div>
+      </div>
+
       {/* Top Section - Video/Avatar (50%) */}
       <div className="relative h-1/2 w-full z-10">
         {videoUrl ? (
@@ -172,22 +185,18 @@ export default function Competition({
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-2 gap-2 sm:gap-3 w-full max-w-md">
+        <div className="grid grid-cols-3 gap-2 sm:gap-3 w-full max-w-md">
           <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg sm:rounded-xl p-2 sm:p-3 border border-gray-700">
             <div className="text-gray-400 text-xs sm:text-sm font-medium">Prize Pool</div>
-            <div className="text-lg sm:text-xl md:text-2xl font-bold text-green-400">${prizePool.toLocaleString()}</div>
-          </div>
-          <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg sm:rounded-xl p-2 sm:p-3 border border-gray-700">
-            <div className="text-gray-400 text-xs sm:text-sm font-medium">Entry Price</div>
-            <div className="text-lg sm:text-xl md:text-2xl font-bold text-white">${entryPrice}</div>
+            <div className="text-base sm:text-lg md:text-xl font-bold text-green-400">${prizePool.toLocaleString()}</div>
           </div>
           <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg sm:rounded-xl p-2 sm:p-3 border border-gray-700">
             <div className="text-gray-400 text-xs sm:text-sm font-medium">Participants</div>
-            <div className="text-lg sm:text-xl md:text-2xl font-bold text-blue-400">{participants.toLocaleString()}</div>
+            <div className="text-base sm:text-lg md:text-xl font-bold text-blue-400">{participants.toLocaleString()}</div>
           </div>
           <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg sm:rounded-xl p-2 sm:p-3 border border-gray-700">
             <div className="text-gray-400 text-xs sm:text-sm font-medium">Time Left</div>
-            <div className="text-lg sm:text-xl md:text-2xl font-bold text-orange-400">{timeRemaining}</div>
+            <div className="text-base sm:text-lg md:text-xl font-bold text-orange-400">{timeRemaining}</div>
           </div>
         </div>
 
