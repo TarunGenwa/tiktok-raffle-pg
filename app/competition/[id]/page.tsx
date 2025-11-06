@@ -206,7 +206,7 @@ export default function CompetitionPage() {
       {/* Main Content Area - Scrollable */}
       <main className="flex-1 flex flex-col items-center overflow-y-auto pb-[240px] md:pb-32">
         {/* Interaction Buttons - Prizes Tickets Tab */}
-        <div className="w-full flex justify-center mb-4 px-4">
+        <div className="w-full flex justify-center mb-4 px-4 relative z-40">
           <InteractionSidebar
             prizes={competition.prizes}
             competitionTitle={competition.title}
@@ -214,7 +214,7 @@ export default function CompetitionPage() {
         </div>
 
         {/* Game Container */}
-        <div className="w-full max-w-md mx-auto relative px-1 md:px-0 flex flex-col items-center gap-4">
+        <div className="w-full max-w-md mx-auto relative px-1 md:px-0 flex flex-col items-center gap-4 z-10">
           {ticketCount <= 5 ? (
             // Show slot machine for 1-5 tickets
             <PrizeWheel
