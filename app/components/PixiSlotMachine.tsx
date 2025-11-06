@@ -15,18 +15,20 @@ interface PixiSlotMachineProps {
   numberOfReels: number;
   onSpinComplete?: (wonPrizes: Prize[]) => void;
   onSpinStart?: () => void;
+  onResetComplete?: () => void;
 }
 
 export interface PixiSlotMachineRef {
   spin: () => void;
   reset: () => void;
+  isSpinning: () => boolean;
 }
 
 const SYMBOL_SIZE = 100;
 const SYMBOL_GAP = 10;
 
 const PixiSlotMachine = forwardRef<PixiSlotMachineRef, PixiSlotMachineProps>(
-  ({ prizes, numberOfReels, onSpinComplete, onSpinStart }, ref) => {
+  ({ prizes, numberOfReels, onSpinComplete, onSpinStart, onResetComplete }, ref) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const appRef = useRef<PIXI.Application | null>(null);
     const reelsRef = useRef<any[]>([]);
@@ -37,11 +39,13 @@ const PixiSlotMachine = forwardRef<PixiSlotMachineRef, PixiSlotMachineProps>(
     const winSoundRef = useRef<HTMLAudioElement | null>(null);
     const audioContextRef = useRef<AudioContext | null>(null);
     const tickIntervalRef = useRef<NodeJS.Timeout | null>(null);
+    const resetTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     // Expose spin and reset methods
     useImperativeHandle(ref, () => ({
       spin: handleSpin,
       reset: handleReset,
+      isSpinning: () => runningRef.current,
     }));
 
     useEffect(() => {
@@ -246,6 +250,10 @@ const PixiSlotMachine = forwardRef<PixiSlotMachineRef, PixiSlotMachineProps>(
       return () => {
         isMounted = false;
         stopTickingSound();
+        if (resetTimeoutRef.current) {
+          clearTimeout(resetTimeoutRef.current);
+          resetTimeoutRef.current = null;
+        }
         if (appRef.current) {
           appRef.current.destroy(true);
           appRef.current = null;
@@ -316,6 +324,12 @@ const PixiSlotMachine = forwardRef<PixiSlotMachineRef, PixiSlotMachineProps>(
       if (runningRef.current || !isReady) return;
       runningRef.current = true;
 
+      // Clear any pending reset timeout
+      if (resetTimeoutRef.current) {
+        clearTimeout(resetTimeoutRef.current);
+        resetTimeoutRef.current = null;
+      }
+
       if (onSpinStart) onSpinStart();
 
       // Play ticking sound
@@ -383,9 +397,16 @@ const PixiSlotMachine = forwardRef<PixiSlotMachineRef, PixiSlotMachineProps>(
             ? () => {
                 stopTickingSound();
                 playStopSound(); // Single stop sound at the end
-                runningRef.current = false;
                 highlightWinners(selectedPrizes);
                 if (onSpinComplete) onSpinComplete(selectedPrizes);
+
+                // Auto-reset after a delay to show results
+                resetTimeoutRef.current = setTimeout(() => {
+                  handleReset();
+                  runningRef.current = false; // Allow next spin after reset
+                  resetTimeoutRef.current = null;
+                  if (onResetComplete) onResetComplete();
+                }, 2000); // Reset after 2 seconds
               }
             : null
         );

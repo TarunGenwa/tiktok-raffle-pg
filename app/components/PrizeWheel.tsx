@@ -197,9 +197,10 @@ export default function PrizeWheel({
                 numberOfReels={numberOfTickets}
                 onSpinStart={() => setIsSpinning(true)}
                 onSpinComplete={(selectedPrizes) => {
-                  setIsSpinning(false);
+                  // Don't set isSpinning to false here - wait for reset to complete
                   // Don't set wonPrizes - let the slot machine show the winners with highlights
                 }}
+                onResetComplete={() => setIsSpinning(false)}
               />
             </div>
           )}
