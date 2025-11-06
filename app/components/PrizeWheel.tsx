@@ -113,9 +113,9 @@ export default function PrizeWheel({
     const selectedPrizes = totalTickets && totalTickets > 5 ? [allSelectedPrizes[0]] : allSelectedPrizes;
 
     // Calculate positions for each row to land on its specific winning prize
-    // Updated widths for new horizontal design (card width + gap)
+    // Updated widths for full-width horizontal design (card width + gap)
     const prizeWidth = isInline ? 85 + 8 : 100 + 8; // Width of each prize card + 8px gap (average of responsive widths)
-    const containerWidth = isInline ? 320 : 480; // Container width (average of responsive widths)
+    const containerWidth = typeof window !== 'undefined' ? window.innerWidth - 16 : 400; // Full viewport width minus 8px padding on each side
     const repetitions = 50; // Repetitions for smooth circular loop
 
     // Create different spin amounts for each row (staggered stopping)
@@ -246,7 +246,7 @@ export default function PrizeWheel({
       {!wonPrizes ? (
         // Slot machine
         <div
-          className={`flex flex-col items-center ${isInline ? 'space-y-2 sm:space-y-3 md:space-y-4' : 'space-y-4 sm:space-y-6 md:space-y-8'} ${isInline ? 'max-w-md' : 'max-w-5xl'} w-full px-2 sm:px-4 transition-all duration-500 ${
+          className={`flex flex-col items-center ${isInline ? 'space-y-2 sm:space-y-3 md:space-y-4' : 'space-y-4 sm:space-y-6 md:space-y-8'} w-full px-2 transition-all duration-500 ${
             isVisible && !isExiting ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
           }`}
         >
@@ -260,8 +260,8 @@ export default function PrizeWheel({
             <div className={`flex flex-col ${isInline ? 'gap-3 sm:gap-4' : 'gap-4 sm:gap-5'} relative w-full`}>
                 {rowRefs.slice(0, totalTickets && totalTickets > 5 ? 1 : numberOfTickets).map((ref, rowIndex) => (
                   <div key={rowIndex} className="flex-1 flex justify-center">
-                    {/* Horizontal Strip Container - Minimal */}
-                    <div className={`${isInline ? 'w-[280px] xs:w-[320px] sm:w-[360px]' : 'w-[320px] sm:w-[480px] md:w-[600px]'} overflow-hidden relative`}>
+                    {/* Horizontal Strip Container - Full Width */}
+                    <div className="w-full overflow-hidden relative">
                       {/* Edge fade effects */}
                       <div className="absolute left-0 top-0 bottom-0 w-12 bg-gradient-to-r from-gray-900 to-transparent z-10 pointer-events-none"></div>
                       <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-gray-900 to-transparent z-10 pointer-events-none"></div>
@@ -367,7 +367,7 @@ export default function PrizeWheel({
       ) : (
         // Prizes Display - In place of slot machine
         <div
-          className={`flex flex-col items-center ${isInline ? 'space-y-2 sm:space-y-3 md:space-y-4' : 'space-y-4 sm:space-y-6 md:space-y-8'} ${isInline ? 'max-w-md' : 'max-w-5xl'} w-full px-2 sm:px-4 transition-all duration-500`}
+          className={`flex flex-col items-center ${isInline ? 'space-y-2 sm:space-y-3 md:space-y-4' : 'space-y-4 sm:space-y-6 md:space-y-8'} w-full px-2 transition-all duration-500`}
         >
           {/* Celebration Background */}
           <div className="absolute inset-0 pointer-events-none">
