@@ -232,6 +232,35 @@ export default function Competition({
             </div>
           </>
         )}
+
+        {/* Tiny Countdown Timer - Bottom Center */}
+        <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 z-30">
+          <div className="flex items-center justify-center gap-1 bg-emerald-500/80 backdrop-blur-sm rounded-full px-3 py-1.5">
+            {/* Days */}
+            <div className="flex items-center">
+              <span className="text-[14px] font-bold text-white tabular-nums">{countdown.days.toString().padStart(2, '0')}</span>
+              <span className="text-[12px] text-white/90 ml-0.5">d</span>
+            </div>
+            <span className="text-white text-[14px] mx-0.5">:</span>
+            {/* Hours */}
+            <div className="flex items-center">
+              <span className="text-[14px] font-bold text-white tabular-nums">{countdown.hours.toString().padStart(2, '0')}</span>
+              <span className="text-[12px] text-white/90 ml-0.5">h</span>
+            </div>
+            <span className="text-white text-[14px] mx-0.5">:</span>
+            {/* Minutes */}
+            <div className="flex items-center">
+              <span className="text-[14px] font-bold text-white tabular-nums">{countdown.minutes.toString().padStart(2, '0')}</span>
+              <span className="text-[12px] text-white/90 ml-0.5">m</span>
+            </div>
+            <span className="text-white text-[14px] mx-0.5">:</span>
+            {/* Seconds */}
+            <div className="flex items-center">
+              <span className="text-[14px] font-bold text-white tabular-nums">{countdown.seconds.toString().padStart(2, '0')}</span>
+              <span className="text-[12px] text-white/90 ml-0.5">s</span>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Tickets Sold Progress Bar */}
@@ -240,51 +269,6 @@ export default function Competition({
           className="h-full bg-emerald-500 transition-all duration-500"
           style={{ width: `${(participants / 20000) * 100}%` }}
         ></div>
-      </div>
-
-      {/* Countdown Timer */}
-      <div className="relative w-full py-3 sm:py-4 px-4 bg-black/40 z-10">
-        <div className="flex items-center justify-center gap-2 sm:gap-3">
-          {/* Days */}
-          <div className="flex flex-col items-center">
-            <div className="bg-gray-800/80 backdrop-blur-sm rounded-lg px-2.5 sm:px-3 py-1.5 sm:py-2 border border-gray-700 min-w-[40px] sm:min-w-[50px]">
-              <div className="text-lg sm:text-xl md:text-2xl font-bold text-white text-center tabular-nums">
-                {countdown.days.toString().padStart(2, '0')}
-              </div>
-            </div>
-            <div className="text-[10px] sm:text-xs text-gray-400 mt-1 uppercase tracking-wide">Days</div>
-          </div>
-          <div className="text-white text-xl font-bold pb-4">:</div>
-          {/* Hours */}
-          <div className="flex flex-col items-center">
-            <div className="bg-gray-800/80 backdrop-blur-sm rounded-lg px-2.5 sm:px-3 py-1.5 sm:py-2 border border-gray-700 min-w-[40px] sm:min-w-[50px]">
-              <div className="text-lg sm:text-xl md:text-2xl font-bold text-white text-center tabular-nums">
-                {countdown.hours.toString().padStart(2, '0')}
-              </div>
-            </div>
-            <div className="text-[10px] sm:text-xs text-gray-400 mt-1 uppercase tracking-wide">Hours</div>
-          </div>
-          <div className="text-white text-xl font-bold pb-4">:</div>
-          {/* Minutes */}
-          <div className="flex flex-col items-center">
-            <div className="bg-gray-800/80 backdrop-blur-sm rounded-lg px-2.5 sm:px-3 py-1.5 sm:py-2 border border-gray-700 min-w-[40px] sm:min-w-[50px]">
-              <div className="text-lg sm:text-xl md:text-2xl font-bold text-white text-center tabular-nums">
-                {countdown.minutes.toString().padStart(2, '0')}
-              </div>
-            </div>
-            <div className="text-[10px] sm:text-xs text-gray-400 mt-1 uppercase tracking-wide">Minutes</div>
-          </div>
-          <div className="text-white text-xl font-bold pb-4">:</div>
-          {/* Seconds */}
-          <div className="flex flex-col items-center">
-            <div className="bg-gray-800/80 backdrop-blur-sm rounded-lg px-2.5 sm:px-3 py-1.5 sm:py-2 border border-gray-700 min-w-[40px] sm:min-w-[50px]">
-              <div className="text-lg sm:text-xl md:text-2xl font-bold text-white text-center tabular-nums">
-                {countdown.seconds.toString().padStart(2, '0')}
-              </div>
-            </div>
-            <div className="text-[10px] sm:text-xs text-gray-400 mt-1 uppercase tracking-wide">Seconds</div>
-          </div>
-        </div>
       </div>
 
       {/* Bottom Section - Content (40%) */}
