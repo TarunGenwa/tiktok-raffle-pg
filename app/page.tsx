@@ -131,7 +131,7 @@ export default function Home() {
 
       {/* Main Content Area - Scrollable */}
       <main className="flex-1 flex justify-center">
-        <div className="w-full max-w-md mx-auto px-1 md:px-0 py-4 space-y-4">
+        <div className="w-full max-w-md mx-auto px-1 md:px-0 pt-4 pb-32 mb-8 space-y-4">
           {/* Promo Slide */}
           <div className="w-full">
             <PromoSlide />
@@ -139,7 +139,7 @@ export default function Home() {
 
           {/* Competition Cards */}
           {competitions.map((competition) => (
-            <div key={competition.id} className="w-full h-[40vh] px-2">
+            <div key={competition.id} className="w-full h-[40vh] px-2" >
               <Competition
                 id={competition.id}
                 title={competition.title}
@@ -156,6 +156,8 @@ export default function Home() {
               />
             </div>
           ))}
+
+          <div className='h-4'></div>
         </div>
       </main>
     </div>
