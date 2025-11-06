@@ -41,13 +41,8 @@ export default function Competition({
   isActive = true
 }: CompetitionProps) {
   const router = useRouter();
-  const [videoEnded, setVideoEnded] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
   const videoRef = useRef<HTMLVideoElement | null>(null);
-
-  const handleVideoEnd = () => {
-    setVideoEnded(true);
-  };
 
   const toggleMute = () => {
     if (videoRef.current) {
@@ -56,14 +51,12 @@ export default function Competition({
     }
   };
 
-  // Reset video when competition is no longer active
+  // Control video playback based on active state
   useEffect(() => {
     if (videoRef.current && videoUrl) {
       if (!isActive) {
-        // Reset video to beginning and pause
+        // Pause video when not active
         videoRef.current.pause();
-        videoRef.current.currentTime = 0;
-        setVideoEnded(false);
       } else {
         // Play video when competition becomes active
         videoRef.current.play().catch(() => {
@@ -111,60 +104,48 @@ export default function Competition({
   };
 
   return (
-    <div className="relative w-full h-full bg-gradient-to-br from-gray-900 via-black to-gray-900 rounded-lg overflow-hidden">
-      <>
-          {/* Video Background */}
-          {videoUrl && (
-            <>
-              <video
-                ref={videoRef}
-                className="absolute inset-0 w-full h-full object-cover"
-                autoPlay
-                muted={isMuted}
-                playsInline
-                onEnded={handleVideoEnd}
-              >
-                <source src={videoUrl} type="video/mp4" />
-              </video>
-              {/* Video Overlay */}
-              <div className="absolute inset-0 bg-black/20"></div>
+    <div className="relative w-full h-full bg-gradient-to-br from-gray-900 via-black to-gray-900 rounded-lg overflow-hidden flex flex-col">
+      {/* Top Section - Video/Avatar (50%) */}
+      <div className="relative h-1/2 w-full">
+        {videoUrl ? (
+          <>
+            {/* Video Player */}
+            <video
+              ref={videoRef}
+              className="absolute inset-0 w-full h-full object-cover"
+              autoPlay
+              muted={isMuted}
+              playsInline
+              loop
+            >
+              <source src={videoUrl} type="video/mp4" />
+            </video>
+            {/* Video Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/60"></div>
 
-              {/* Mute/Unmute Button */}
-              {!videoEnded && (
-                <button
-                  onClick={toggleMute}
-                  className="absolute top-4 right-4 z-20 w-10 h-10 flex items-center justify-center rounded-full bg-black/50 hover:bg-black/70 transition-colors backdrop-blur-sm"
-                >
-                  {isMuted ? (
-                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" />
-                    </svg>
-                  ) : (
-                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
-                    </svg>
-                  )}
-                </button>
+            {/* Mute/Unmute Button */}
+            <button
+              onClick={toggleMute}
+              className="absolute top-2 right-2 sm:top-4 sm:right-4 z-20 w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-full bg-black/50 hover:bg-black/70 transition-colors backdrop-blur-sm"
+            >
+              {isMuted ? (
+                <svg className="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" />
+                </svg>
+              ) : (
+                <svg className="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                </svg>
               )}
-            </>
-          )}
-
-          {/* Background Pattern (only if no video) */}
-          {!videoUrl && (
-            <div className="absolute inset-0 opacity-10">
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,_rgba(255,255,255,0.1),transparent_50%)]"></div>
-            </div>
-          )}
-
-          {/* Main Content */}
-          <div className="relative h-full flex flex-col items-center justify-center p-8 space-y-6">
-            {/* Hide content while video is playing */}
-            {videoUrl && !videoEnded ? null : (
-            <>
-              {/* Category Icon */}
-              <div className={`relative`}>
-                <div className="w-32 h-32 relative">
+            </button>
+          </>
+        ) : (
+          <>
+            {/* Category Icon */}
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="relative">
+                <div className="w-24 h-24 sm:w-32 sm:h-32 relative">
                   <div className={`absolute inset-0 bg-gradient-to-br ${categoryColors[category]} rounded-full opacity-70 blur-2xl`}></div>
                   <div className={`relative w-full h-full bg-gradient-to-br ${categoryColors[category]} rounded-full flex items-center justify-center shadow-2xl border-4 border-white/20`}>
                     <div className="text-white">
@@ -173,77 +154,68 @@ export default function Competition({
                   </div>
                 </div>
               </div>
+            </div>
+            {/* Background Pattern */}
+            <div className="absolute inset-0 opacity-10">
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,_rgba(255,255,255,0.1),transparent_50%)]"></div>
+            </div>
+          </>
+        )}
+      </div>
 
-              {/* Competition Info */}
-              <div className="text-center space-y-3 max-w-md">
-                <h2 className="text-4xl font-bold text-white tracking-tight">{title}</h2>
-                <p className="text-lg text-gray-300">{description}</p>
-              </div>
+      {/* Bottom Section - Content (50%) */}
+      <div className="relative h-1/2 w-full flex flex-col items-center justify-center p-4 sm:p-6 space-y-3 sm:space-y-4 bg-gradient-to-b from-transparent to-black/40">
+        {/* Competition Info */}
+        <div className="text-center space-y-1 sm:space-y-2 max-w-md">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white tracking-tight">{title}</h2>
+          <p className="text-sm sm:text-base md:text-lg text-gray-300">{description}</p>
+        </div>
 
-              {/* Stats Grid */}
-              <div className="grid grid-cols-2 gap-4 w-full max-w-md">
-                <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-4 border border-gray-700">
-                  <div className="text-gray-400 text-sm font-medium">Prize Pool</div>
-                  <div className="text-2xl font-bold text-green-400">${prizePool.toLocaleString()}</div>
-                </div>
-                <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-4 border border-gray-700">
-                  <div className="text-gray-400 text-sm font-medium">Entry Price</div>
-                  <div className="text-2xl font-bold text-white">${entryPrice}</div>
-                </div>
-                <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-4 border border-gray-700">
-                  <div className="text-gray-400 text-sm font-medium">Participants</div>
-                  <div className="text-2xl font-bold text-blue-400">{participants.toLocaleString()}</div>
-                </div>
-                <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-4 border border-gray-700">
-                  <div className="text-gray-400 text-sm font-medium">Time Left</div>
-                  <div className="text-2xl font-bold text-orange-400">{timeRemaining}</div>
-                </div>
-              </div>
-
-              {/* Prize Preview */}
-              <div className="w-full max-w-md">
-                <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wide text-center mb-3">Top Prizes</h3>
-                <div className="flex gap-2 justify-center overflow-x-auto">
-                  {prizes.slice(0, 3).map((prize, idx) => (
-                    <div
-                      key={idx}
-                      className="bg-gray-800/50 backdrop-blur-sm rounded-lg p-3 border border-gray-700 flex-shrink-0"
-                    >
-                      <div className="text-sm font-medium text-white">{prize.name}</div>
-                      <div className="text-xs text-gray-400 capitalize">{prize.rarity}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Enter Button */}
-              <Button
-                onClick={() => router.push(`/competition/${id}`)}
-                size="lg"
-                className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold text-xl px-16 py-6 rounded-full shadow-2xl transform transition-all hover:scale-105"
-              >
-                Enter & Spin Now
-              </Button>
-
-              {/* Trust Indicators */}
-              <div className="flex items-center gap-4 text-sm text-gray-400">
-                <div className="flex items-center gap-1">
-                  <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z"/>
-                  </svg>
-                  <span>Verified</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <svg className="w-4 h-4 text-blue-500" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
-                  </svg>
-                  <span>Instant Win</span>
-                </div>
-              </div>
-            </>
-          )}
+        {/* Stats Grid */}
+        <div className="grid grid-cols-2 gap-2 sm:gap-3 w-full max-w-md">
+          <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg sm:rounded-xl p-2 sm:p-3 border border-gray-700">
+            <div className="text-gray-400 text-xs sm:text-sm font-medium">Prize Pool</div>
+            <div className="text-lg sm:text-xl md:text-2xl font-bold text-green-400">${prizePool.toLocaleString()}</div>
           </div>
-      </>
+          <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg sm:rounded-xl p-2 sm:p-3 border border-gray-700">
+            <div className="text-gray-400 text-xs sm:text-sm font-medium">Entry Price</div>
+            <div className="text-lg sm:text-xl md:text-2xl font-bold text-white">${entryPrice}</div>
+          </div>
+          <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg sm:rounded-xl p-2 sm:p-3 border border-gray-700">
+            <div className="text-gray-400 text-xs sm:text-sm font-medium">Participants</div>
+            <div className="text-lg sm:text-xl md:text-2xl font-bold text-blue-400">{participants.toLocaleString()}</div>
+          </div>
+          <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg sm:rounded-xl p-2 sm:p-3 border border-gray-700">
+            <div className="text-gray-400 text-xs sm:text-sm font-medium">Time Left</div>
+            <div className="text-lg sm:text-xl md:text-2xl font-bold text-orange-400">{timeRemaining}</div>
+          </div>
+        </div>
+
+        {/* Enter Button */}
+        <Button
+          onClick={() => router.push(`/competition/${id}`)}
+          size="lg"
+          className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold text-base sm:text-lg md:text-xl px-8 sm:px-12 md:px-16 py-3 sm:py-4 md:py-6 rounded-full shadow-2xl transform transition-all hover:scale-105"
+        >
+          Enter & Spin Now
+        </Button>
+
+        {/* Trust Indicators */}
+        <div className="flex items-center gap-3 sm:gap-4 text-xs sm:text-sm text-gray-400">
+          <div className="flex items-center gap-1">
+            <svg className="w-3 h-3 sm:w-4 sm:h-4 text-green-500" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z"/>
+            </svg>
+            <span>Verified</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <svg className="w-3 h-3 sm:w-4 sm:h-4 text-blue-500" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+            </svg>
+            <span>Instant Win</span>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
