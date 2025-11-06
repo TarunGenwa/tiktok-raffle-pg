@@ -35,6 +35,8 @@ const PixiSlotMachine = forwardRef<PixiSlotMachineRef, PixiSlotMachineProps>(
     const runningRef = useRef(false);
     const tickSoundRef = useRef<HTMLAudioElement | null>(null);
     const winSoundRef = useRef<HTMLAudioElement | null>(null);
+    const audioContextRef = useRef<AudioContext | null>(null);
+    const tickIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
     // Expose spin and reset methods
     useImperativeHandle(ref, () => ({
@@ -236,10 +238,6 @@ const PixiSlotMachine = forwardRef<PixiSlotMachineRef, PixiSlotMachineProps>(
 
       // Load audio files
       if (typeof window !== 'undefined') {
-        tickSoundRef.current = new Audio('/sounds/tick.mp3');
-        tickSoundRef.current.loop = true;
-        tickSoundRef.current.volume = 0.3;
-
         winSoundRef.current = new Audio('/sounds/basic_win.mp3');
         winSoundRef.current.volume = 0.5;
       }
@@ -255,17 +253,45 @@ const PixiSlotMachine = forwardRef<PixiSlotMachineRef, PixiSlotMachineProps>(
       };
     }, [numberOfReels, prizes]);
 
-    const playTickingSound = () => {
-      if (tickSoundRef.current) {
-        tickSoundRef.current.currentTime = 0;
-        tickSoundRef.current.play().catch(err => console.log('Audio play failed:', err));
+    const generateTickSound = () => {
+      if (typeof window === 'undefined') return;
+
+      if (!audioContextRef.current) {
+        audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
       }
+
+      const audioContext = audioContextRef.current;
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+
+      // Short, sharp tick sound
+      oscillator.frequency.value = 800;
+      oscillator.type = 'sine';
+
+      gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.03);
+
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + 0.03);
+    };
+
+    const playTickingSound = () => {
+      // Play tick sound repeatedly
+      if (tickIntervalRef.current) return; // Already playing
+
+      generateTickSound(); // Play immediately
+      tickIntervalRef.current = setInterval(() => {
+        generateTickSound();
+      }, 50); // Tick every 50ms
     };
 
     const stopTickingSound = () => {
-      if (tickSoundRef.current) {
-        tickSoundRef.current.pause();
-        tickSoundRef.current.currentTime = 0;
+      if (tickIntervalRef.current) {
+        clearInterval(tickIntervalRef.current);
+        tickIntervalRef.current = null;
       }
     };
 
