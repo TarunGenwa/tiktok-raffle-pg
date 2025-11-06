@@ -168,14 +168,6 @@ export default function CompetitionPage() {
 
       {/* Main Content Area - Scrollable */}
       <main className="flex-1 flex flex-col items-center overflow-y-auto pb-20">
-        {/* Interaction Buttons - Prizes Tickets Tab */}
-        <div className="w-full flex justify-center mb-4 px-4 relative z-40">
-          <InteractionSidebar
-            prizes={competition.prizes}
-            competitionTitle={competition.title}
-          />
-        </div>
-
         {/* Game Container */}
         <div className="w-full relative px-1 md:px-0 flex flex-col items-center gap-4 z-10 max-w-md mx-auto">
           {/* Always show slot machine inline, even for bulk play */}
@@ -346,6 +338,14 @@ export default function CompetitionPage() {
                 )}
               </span>
             </button>
+          </div>
+
+          {/* Interaction Buttons - Prizes Tickets Tab - Below Spin Button */}
+          <div className="w-full flex justify-center px-4 mt-2">
+            <InteractionSidebar
+              prizes={competition.prizes}
+              competitionTitle={competition.title}
+            />
           </div>
         </div>
       </main>

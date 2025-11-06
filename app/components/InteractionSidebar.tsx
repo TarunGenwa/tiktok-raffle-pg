@@ -23,7 +23,7 @@ interface InteractionSidebarProps {
 }
 
 export default function InteractionSidebar({ prizes, competitionTitle }: InteractionSidebarProps) {
-  const [activeTab, setActiveTab] = useState<'prizes' | 'tickets' | null>(null);
+  const [activeTab, setActiveTab] = useState<'prizes' | 'tickets' | null>('prizes');
 
   const rarityColors = {
     common: 'from-gray-500 to-gray-600',
@@ -109,11 +109,11 @@ export default function InteractionSidebar({ prizes, competitionTitle }: Interac
 
       {/* Drawer Content */}
       <div
-        className={`absolute top-full left-0 right-0 mt-2 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-2xl shadow-2xl border-2 border-gray-700 overflow-hidden transition-all duration-300 z-50 ${
-          activeTab ? 'max-h-[60vh] opacity-100' : 'max-h-0 opacity-0 pointer-events-none'
+        className={`absolute top-full left-0 right-0 mt-2 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-2xl shadow-2xl border-2 border-gray-700 transition-all duration-300 z-50 ${
+          activeTab ? 'opacity-100' : 'max-h-0 opacity-0 pointer-events-none overflow-hidden'
         }`}
       >
-        <div className="overflow-y-auto max-h-[60vh] p-4">
+        <div className="p-4">
           {/* Prizes Content */}
           {activeTab === 'prizes' && (
             <div className="space-y-3">
