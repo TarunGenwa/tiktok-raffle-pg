@@ -27,6 +27,8 @@ interface PrizeWheelProps {
   onBulkPrizesGenerated?: (prizes: BulkPrize[]) => void;
   hideSpinButton?: boolean;
   onSpinTrigger?: (spinFn: () => void) => void;
+  onResetTrigger?: (resetFn: () => void) => void;
+  onPrizesStateChange?: (hasWonPrizes: boolean) => void;
 }
 
 export default function PrizeWheel({
@@ -39,7 +41,9 @@ export default function PrizeWheel({
   totalTickets,
   onBulkPrizesGenerated,
   hideSpinButton = false,
-  onSpinTrigger
+  onSpinTrigger,
+  onResetTrigger,
+  onPrizesStateChange
 }: PrizeWheelProps) {
   const [isSpinning, setIsSpinning] = useState(false);
   const [wonPrizes, setWonPrizes] = useState<Prize[] | null>(null);
@@ -81,6 +85,21 @@ export default function PrizeWheel({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [numberOfTickets, onSpinTrigger]);
+
+  // Expose reset trigger to parent
+  useEffect(() => {
+    if (onResetTrigger) {
+      onResetTrigger(handlePlayAgain);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [onResetTrigger]);
+
+  // Notify parent when prizes state changes
+  useEffect(() => {
+    if (onPrizesStateChange) {
+      onPrizesStateChange(wonPrizes !== null);
+    }
+  }, [wonPrizes, onPrizesStateChange]);
 
   // Reset when numberOfTickets changes
   useEffect(() => {
@@ -427,17 +446,6 @@ export default function PrizeWheel({
                   </div>
                 </div>
               ))}
-            </div>
-
-            {/* Action Button */}
-            <div className="flex justify-center w-full sm:w-auto mt-6">
-              <Button
-                onClick={handlePlayAgain}
-                size={isInline ? "default" : "lg"}
-                className={`bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold ${isInline ? 'px-6 sm:px-8 py-3 sm:py-4 text-base' : 'px-6 sm:px-8 py-3 sm:py-4'} rounded-full transform hover:scale-105 transition-transform`}
-              >
-                Spin Again
-              </Button>
             </div>
           </div>
         </div>

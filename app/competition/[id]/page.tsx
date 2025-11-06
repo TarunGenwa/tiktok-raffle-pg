@@ -129,7 +129,9 @@ export default function CompetitionPage() {
   const [ticketCount, setTicketCount] = useState(1);
   const [showPrizeColumns, setShowPrizeColumns] = useState(false);
   const [columnPrizes, setColumnPrizes] = useState<BulkPrize[]>([]);
+  const [hasPrizesShown, setHasPrizesShown] = useState(false);
   const triggerSpinRef = useRef<(() => void) | null>(null);
+  const triggerResetRef = useRef<(() => void) | null>(null);
   const MAX_TICKETS = 100;
 
   // Find the competition by ID
@@ -219,6 +221,12 @@ export default function CompetitionPage() {
             onSpinTrigger={(spinFn) => {
               triggerSpinRef.current = spinFn;
             }}
+            onResetTrigger={(resetFn) => {
+              triggerResetRef.current = resetFn;
+            }}
+            onPrizesStateChange={(hasWonPrizes) => {
+              setHasPrizesShown(hasWonPrizes);
+            }}
             onBulkPrizesGenerated={ticketCount > 5 ? handleBulkPrizesWon : undefined}
           />
         </div>
@@ -230,20 +238,39 @@ export default function CompetitionPage() {
           <button
             type="button"
             onClick={() => {
-              if (triggerSpinRef.current) {
+              if (hasPrizesShown && triggerResetRef.current) {
+                // Reset mode - clear prizes and reset
+                triggerResetRef.current();
+              } else if (triggerSpinRef.current) {
+                // Spin mode - trigger spin
                 triggerSpinRef.current();
               }
             }}
-            className="w-full relative overflow-hidden bg-gradient-to-r from-emerald-500 via-green-500 to-lime-500 hover:from-emerald-400 hover:via-green-400 hover:to-lime-400 text-white font-bold text-base sm:text-lg px-8 py-4 sm:py-5 rounded-full shadow-[0_0_30px_rgba(16,185,129,0.5)] transform transition-all hover:scale-105 hover:shadow-[0_0_50px_rgba(16,185,129,0.7)] border-2 border-white/20"
+            className={`w-full relative overflow-hidden ${
+              hasPrizesShown
+                ? 'bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 hover:from-blue-400 hover:via-indigo-400 hover:to-purple-400 shadow-[0_0_30px_rgba(99,102,241,0.5)] hover:shadow-[0_0_50px_rgba(99,102,241,0.7)]'
+                : 'bg-gradient-to-r from-emerald-500 via-green-500 to-lime-500 hover:from-emerald-400 hover:via-green-400 hover:to-lime-400 shadow-[0_0_30px_rgba(16,185,129,0.5)] hover:shadow-[0_0_50px_rgba(16,185,129,0.7)]'
+            } text-white font-bold text-base sm:text-lg px-8 py-4 sm:py-5 rounded-full transform transition-all hover:scale-105 border-2 border-white/20`}
           >
             {/* Shine effect */}
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent group-hover:animate-shine"></div>
 
             <span className="relative flex items-center justify-center gap-2">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-              </svg>
-              SPIN FOR {ticketCount} {ticketCount === 1 ? 'TICKET' : 'TICKETS'}
+              {hasPrizesShown ? (
+                <>
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                  </svg>
+                  RESET
+                </>
+              ) : (
+                <>
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                  SPIN FOR {ticketCount} {ticketCount === 1 ? 'TICKET' : 'TICKETS'}
+                </>
+              )}
             </span>
           </button>
         </div>
