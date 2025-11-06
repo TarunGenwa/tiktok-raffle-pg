@@ -177,8 +177,8 @@ export default function Competition({
         </div>
       </div>
 
-      {/* Top Section - Video/Avatar (50%) */}
-      <div className="relative h-1/2 w-full z-10">
+      {/* Top Section - Video/Avatar (60%) */}
+      <div className="relative h-[60%] w-full z-10">
         {videoUrl ? (
           <>
             {/* Video Player */}
@@ -287,8 +287,8 @@ export default function Competition({
         </div>
       </div>
 
-      {/* Bottom Section - Content (50%) */}
-      <div className="relative h-1/2 w-full flex flex-col items-center justify-center p-4 sm:p-6 space-y-3 sm:space-y-4 bg-gradient-to-b from-transparent to-black/40 z-10">
+      {/* Bottom Section - Content (40%) */}
+      <div className="relative h-[40%] w-full flex flex-col items-center justify-center p-4 sm:p-6 space-y-3 sm:space-y-4 bg-gradient-to-b from-transparent to-black/40 z-10">
         {/* Competition Info */}
         <div className="text-center space-y-1 sm:space-y-2 max-w-md">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white tracking-tight">{title}</h2>
