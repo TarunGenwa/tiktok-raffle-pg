@@ -277,12 +277,12 @@ const PixiSlotMachine = forwardRef<PixiSlotMachineRef, PixiSlotMachineProps>(
 
       // Reset indicators to normal state
       const indicators = (reels[0]?.container.parent as any)?.selectionIndicators;
-      if (indicators) {
-        indicators.forEach((indicator: PIXI.Graphics) => {
+      if (indicators && appRef.current) {
+        const centerX = appRef.current.screen.width / 2;
+        const rowHeight = SYMBOL_SIZE + SYMBOL_GAP;
+        indicators.forEach((indicator: PIXI.Graphics, index: number) => {
           indicator.clear();
-          const rowIndex = indicators.indexOf(indicator);
-          const y = rowIndex * (SYMBOL_SIZE + SYMBOL_GAP) + 20;
-          const centerX = appRef.current?.screen.width ? appRef.current.screen.width / 2 : 300;
+          const y = index * rowHeight + 20;
 
           indicator.rect(
             centerX - SYMBOL_SIZE / 2 - 5,
@@ -348,32 +348,18 @@ const PixiSlotMachine = forwardRef<PixiSlotMachineRef, PixiSlotMachineProps>(
       if (!indicators || !appRef.current) return;
 
       const centerX = appRef.current.screen.width / 2;
+      const rowHeight = SYMBOL_SIZE + SYMBOL_GAP;
 
       selectedPrizes.forEach((prize, index) => {
         const indicator = indicators[index];
         if (indicator) {
           indicator.clear();
-          const y = index * (SYMBOL_SIZE + SYMBOL_GAP) + 20;
+          const y = index * rowHeight + 20;
 
-          // Get rarity color
-          let glowColor = 0xFFD700; // Default gold
-          switch (prize.rarity) {
-            case 'common': glowColor = 0x9CA3AF; break;
-            case 'rare': glowColor = 0x3B82F6; break;
-            case 'epic': glowColor = 0xA855F7; break;
-            case 'legendary': glowColor = 0xFBBF24; break;
-          }
+          // Irish green for all highlights
+          const glowColor = 0x009A49; // Irish green
 
-          // Draw glowing selection box
-          indicator.rect(
-            centerX - SYMBOL_SIZE / 2 - 5,
-            y - 5,
-            SYMBOL_SIZE + 10,
-            SYMBOL_SIZE + 10
-          );
-          indicator.stroke({ width: 4, color: glowColor, alpha: 1 });
-
-          // Add inner glow
+          // Draw outer glow
           indicator.rect(
             centerX - SYMBOL_SIZE / 2 - 8,
             y - 8,
@@ -381,6 +367,15 @@ const PixiSlotMachine = forwardRef<PixiSlotMachineRef, PixiSlotMachineProps>(
             SYMBOL_SIZE + 16
           );
           indicator.stroke({ width: 2, color: glowColor, alpha: 0.5 });
+
+          // Draw main selection box on top
+          indicator.rect(
+            centerX - SYMBOL_SIZE / 2 - 5,
+            y - 5,
+            SYMBOL_SIZE + 10,
+            SYMBOL_SIZE + 10
+          );
+          indicator.stroke({ width: 4, color: glowColor, alpha: 1 });
         }
       });
     };
@@ -397,9 +392,10 @@ const PixiSlotMachine = forwardRef<PixiSlotMachineRef, PixiSlotMachineProps>(
       const indicators = (reels[0]?.container.parent as any)?.selectionIndicators;
       if (indicators && appRef.current) {
         const centerX = appRef.current.screen.width / 2;
+        const rowHeight = SYMBOL_SIZE + SYMBOL_GAP;
         indicators.forEach((indicator: PIXI.Graphics, index: number) => {
           indicator.clear();
-          const y = index * (SYMBOL_SIZE + SYMBOL_GAP) + 20;
+          const y = index * rowHeight + 20;
 
           indicator.rect(
             centerX - SYMBOL_SIZE / 2 - 5,
