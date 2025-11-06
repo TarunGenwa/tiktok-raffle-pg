@@ -1,9 +1,7 @@
 'use client';
 
-import { useState } from 'react';
 import Competition from './components/Competition';
 import PromoSlide from './components/PromoSlide';
-import { Button } from '@/components/ui/button';
 
 interface Prize {
   name: string;
@@ -114,338 +112,36 @@ export default function Home() {
     }
   ];
 
-  // Total slides = 1 promo slide + competitions
-  const totalSlides = 1 + competitions.length;
-  const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
-  const [touchStart, setTouchStart] = useState<number | null>(null);
-  const [touchEnd, setTouchEnd] = useState<number | null>(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragOffset, setDragOffset] = useState(0);
-  const [isTransitioning, setIsTransitioning] = useState(false);
-  const [lastScrollTime, setLastScrollTime] = useState(0);
-
-  // Minimum swipe distance (in px) to trigger navigation
-  const minSwipeDistance = 50;
-  // Minimum time between scroll events (in ms) to prevent too rapid scrolling
-  const scrollDebounceTime = 800;
-
-  const goToNextSlide = () => {
-    if (currentSlideIndex < totalSlides - 1 && !isTransitioning) {
-      setIsTransitioning(true);
-      setCurrentSlideIndex((prev) => prev + 1);
-      setTimeout(() => {
-        setIsTransitioning(false);
-      }, 400);
-    }
-  };
-
-  const goToPreviousSlide = () => {
-    if (currentSlideIndex > 0 && !isTransitioning) {
-      setIsTransitioning(true);
-      setCurrentSlideIndex((prev) => prev - 1);
-      setTimeout(() => {
-        setIsTransitioning(false);
-      }, 400);
-    }
-  };
-
-  // Touch event handlers
-  const onTouchStart = (e: React.TouchEvent) => {
-    setTouchEnd(null);
-    setTouchStart(e.targetTouches[0].clientY);
-    setIsDragging(true);
-  };
-
-  const onTouchMove = (e: React.TouchEvent) => {
-    if (touchStart === null) return;
-
-    const currentTouch = e.targetTouches[0].clientY;
-    const diff = touchStart - currentTouch;
-    setDragOffset(diff);
-    setTouchEnd(currentTouch);
-
-    // Allow pull-to-refresh when on first slide and swiping down
-    if (currentSlideIndex === 0 && diff < 0) {
-      return; // Don't prevent default, allow pull-to-refresh
-    }
-
-    // Prevent pull-to-refresh when swiping up or not on first slide
-    if (diff > 0) {
-      e.preventDefault();
-    }
-  };
-
-  const onTouchEnd = () => {
-    if (!touchStart || !touchEnd) {
-      setIsDragging(false);
-      setDragOffset(0);
-      return;
-    }
-
-    const distance = touchStart - touchEnd;
-    const isSwipeUp = distance > minSwipeDistance;
-    const isSwipeDown = distance < -minSwipeDistance;
-
-    if (isSwipeUp) {
-      goToNextSlide();
-    } else if (isSwipeDown) {
-      goToPreviousSlide();
-    }
-
-    setIsDragging(false);
-    setDragOffset(0);
-    setTouchStart(null);
-    setTouchEnd(null);
-  };
-
-  // Wheel event handler for desktop scroll
-  const onWheel = (e: React.WheelEvent) => {
-    // Prevent if already transitioning
-    if (isTransitioning) {
-      e.preventDefault();
-      return;
-    }
-
-    const now = Date.now();
-    if (now - lastScrollTime < scrollDebounceTime) {
-      e.preventDefault();
-      return;
-    }
-
-    // Prevent default scroll behavior
-    e.preventDefault();
-
-    // Check scroll direction (using a threshold to avoid tiny movements)
-    if (Math.abs(e.deltaY) < 10) return;
-
-    if (e.deltaY > 0) {
-      // Scrolling down - go to next
-      if (currentSlideIndex < totalSlides - 1) {
-        setLastScrollTime(now);
-        goToNextSlide();
-      }
-    } else if (e.deltaY < 0) {
-      // Scrolling up - go to previous
-      if (currentSlideIndex > 0) {
-        setLastScrollTime(now);
-        goToPreviousSlide();
-      }
-    }
-  };
-
-  // Calculate opacity and transform based on drag
-  const getOpacity = () => {
-    if (!isDragging) return 1;
-    const progress = Math.abs(dragOffset) / 200;
-    return Math.max(1 - progress, 0.3);
-  };
-
-  const getScale = () => {
-    if (!isDragging) return 1;
-    const progress = Math.abs(dragOffset) / 200;
-    return Math.max(1 - progress * 0.1, 0.9);
-  };
-
   return (
-    <div className="flex h-screen bg-black overflow-hidden overscroll-none">
-      {/* Main Content Area - Media Player */}
-      <main
-        className="flex-1 flex items-start md:items-center justify-center relative overflow-hidden select-none touch-pan-y"
-        onTouchStart={onTouchStart}
-        onTouchMove={onTouchMove}
-        onTouchEnd={onTouchEnd}
-        onWheel={onWheel}
-        style={{
-          touchAction: 'pan-y',
-          overscrollBehavior: currentSlideIndex === 0 ? 'auto' : 'none'
-        }}
-      >
-        <div className="w-full max-w-md h-[calc(100vh-5rem)] md:h-[calc(100vh-4rem)] mx-auto relative px-1 md:px-0">
-          {/* Slides Stack with Smooth Transitions */}
-          <div className="relative w-full h-full">
-            {/* Promo Slide - Always at index 0 */}
-            {(() => {
-              const slideIndex = 0;
-              const offset = slideIndex - currentSlideIndex;
-              const isActive = slideIndex === currentSlideIndex;
-              const isPrev = offset === -1;
-              const isNext = offset === 1;
-              const isVisible = Math.abs(offset) <= 1;
-
-              if (!isVisible) return null;
-
-              // Calculate transform based on position and drag
-              let translateY = offset * 100; // Base offset in vh
-              if (isDragging) {
-                translateY -= (dragOffset / window.innerHeight) * 100;
-              }
-
-              // Calculate opacity
-              let opacity = 1;
-              if (!isActive) {
-                opacity = 0.3;
-              }
-              if (isDragging && isActive) {
-                const progress = Math.abs(dragOffset) / 300;
-                opacity = Math.max(1 - progress, 0.3);
-              }
-
-              // Calculate scale
-              let scale = 1;
-              if (!isActive) {
-                scale = 0.85;
-              }
-              if (isDragging && isActive) {
-                const progress = Math.abs(dragOffset) / 300;
-                scale = Math.max(1 - progress * 0.15, 0.85);
-              }
-
-              // Calculate blur
-              const blur = isActive ? 0 : 8;
-
-              return (
-                <div
-                  key="promo-slide"
-                  className="absolute inset-0 w-full h-full"
-                  style={{
-                    transform: `translateY(${translateY}%) scale(${scale})`,
-                    opacity: opacity,
-                    filter: `blur(${blur}px)`,
-                    transition: isDragging ? 'none' : 'all 0.5s cubic-bezier(0.4, 0.0, 0.2, 1)',
-                    pointerEvents: isActive ? 'auto' : 'none',
-                    zIndex: isActive ? 10 : isPrev ? 9 : isNext ? 8 : 0,
-                  }}
-                >
-                  <PromoSlide />
-                </div>
-              );
-            })()}
-
-            {/* Competition Slides - Starting from index 1 */}
-            {competitions.map((competition, competitionIndex) => {
-              const slideIndex = competitionIndex + 1; // +1 because promo is at 0
-              const offset = slideIndex - currentSlideIndex;
-              const isActive = slideIndex === currentSlideIndex;
-              const isPrev = offset === -1;
-              const isNext = offset === 1;
-              const isVisible = Math.abs(offset) <= 1;
-
-              if (!isVisible) return null;
-
-              // Calculate transform based on position and drag
-              let translateY = offset * 100; // Base offset in vh
-              if (isDragging) {
-                translateY -= (dragOffset / window.innerHeight) * 100;
-              }
-
-              // Calculate opacity
-              let opacity = 1;
-              if (!isActive) {
-                opacity = 0.3;
-              }
-              if (isDragging && isActive) {
-                const progress = Math.abs(dragOffset) / 300;
-                opacity = Math.max(1 - progress, 0.3);
-              }
-
-              // Calculate scale
-              let scale = 1;
-              if (!isActive) {
-                scale = 0.85;
-              }
-              if (isDragging && isActive) {
-                const progress = Math.abs(dragOffset) / 300;
-                scale = Math.max(1 - progress * 0.15, 0.85);
-              }
-
-              // Calculate blur
-              const blur = isActive ? 0 : 8;
-
-              return (
-                <div
-                  key={competition.id}
-                  className="absolute inset-0 w-full h-full"
-                  style={{
-                    transform: `translateY(${translateY}%) scale(${scale})`,
-                    opacity: opacity,
-                    filter: `blur(${blur}px)`,
-                    transition: isDragging ? 'none' : 'all 0.5s cubic-bezier(0.4, 0.0, 0.2, 1)',
-                    pointerEvents: isActive ? 'auto' : 'none',
-                    zIndex: isActive ? 10 : isPrev ? 9 : isNext ? 8 : 0,
-                  }}
-                >
-                  <Competition
-                    id={competition.id}
-                    title={competition.title}
-                    category={competition.category}
-                    description={competition.description}
-                    entryPrice={competition.entryPrice}
-                    prizePool={competition.prizePool}
-                    participants={competition.participants}
-                    timeRemaining={competition.timeRemaining}
-                    prizes={competition.prizes}
-                    sponsored={competition.sponsored}
-                    videoUrl={competition.videoUrl}
-                    isActive={isActive}
-                  />
-                </div>
-              );
-            })}
+    <div className="flex h-screen bg-black overflow-y-auto">
+      {/* Main Content Area - Scrollable */}
+      <main className="flex-1 flex justify-center">
+        <div className="w-full max-w-md mx-auto px-1 md:px-0 py-4 space-y-4">
+          {/* Promo Slide */}
+          <div className="w-full">
+            <PromoSlide />
           </div>
 
-          {/* Swipe Indicator - Mobile Only */}
-          {isDragging && (
-            <div className="md:hidden absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-30 pointer-events-none">
-              <div className="bg-black/70 rounded-full p-3 sm:p-4">
-                {dragOffset > minSwipeDistance && currentSlideIndex < totalSlides - 1 && (
-                  <svg className="w-6 h-6 sm:w-8 sm:h-8 text-white animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M19 9l-7 7-7-7" />
-                  </svg>
-                )}
-                {dragOffset < -minSwipeDistance && currentSlideIndex > 0 && (
-                  <svg className="w-6 h-6 sm:w-8 sm:h-8 text-white animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 15l7-7 7 7" />
-                  </svg>
-                )}
-              </div>
+          {/* Competition Cards */}
+          {competitions.map((competition) => (
+            <div key={competition.id} className="w-full h-[70vh]">
+              <Competition
+                id={competition.id}
+                title={competition.title}
+                category={competition.category}
+                description={competition.description}
+                entryPrice={competition.entryPrice}
+                prizePool={competition.prizePool}
+                participants={competition.participants}
+                timeRemaining={competition.timeRemaining}
+                prizes={competition.prizes}
+                sponsored={competition.sponsored}
+                videoUrl={competition.videoUrl}
+                isActive={true}
+              />
             </div>
-          )}
+          ))}
         </div>
-
-        {/* Navigation Buttons (Desktop) */}
-        <div className="hidden md:flex absolute left-24 top-1/2 -translate-y-1/2 flex-col gap-4 z-20">
-          {/* Up Button */}
-          <Button
-            onClick={goToPreviousSlide}
-            disabled={currentSlideIndex === 0}
-            size="icon"
-            className="w-14 h-14 rounded-full bg-gray-800/80 hover:bg-gray-700/80 border-2 border-white/20 disabled:opacity-30 disabled:cursor-not-allowed shadow-xl"
-          >
-            <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 15l7-7 7 7" />
-            </svg>
-          </Button>
-
-          {/* Slide Progress Indicator */}
-          <div className="bg-gray-800/80 rounded-full px-4 py-2 border-2 border-white/20 shadow-xl">
-            <div className="text-white text-sm font-bold text-center">
-              {currentSlideIndex + 1} / {totalSlides}
-            </div>
-          </div>
-
-          {/* Down Button */}
-          <Button
-            onClick={goToNextSlide}
-            disabled={currentSlideIndex === totalSlides - 1}
-            size="icon"
-            className="w-14 h-14 rounded-full bg-gray-800/80 hover:bg-gray-700/80 border-2 border-white/20 disabled:opacity-30 disabled:cursor-not-allowed shadow-xl"
-          >
-            <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M19 9l-7 7-7-7" />
-            </svg>
-          </Button>
-        </div>
-
       </main>
     </div>
   );
