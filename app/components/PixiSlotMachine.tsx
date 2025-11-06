@@ -125,8 +125,8 @@ const PixiSlotMachine = forwardRef<PixiSlotMachineRef, PixiSlotMachineProps>(
           const reel = {
             container: rc,
             symbols: [] as PIXI.Sprite[],
-            position: 0,
-            previousPosition: 0,
+            position: 2, // Start at 3rd symbol (0-indexed) for centered feel
+            previousPosition: 2,
             blur: new PIXI.BlurFilter(),
           };
 
@@ -319,7 +319,8 @@ const PixiSlotMachine = forwardRef<PixiSlotMachineRef, PixiSlotMachineProps>(
 
         // Target position should land on the winning prize
         // Add enough spins to make it dramatic + land on specific prize
-        const target = baseSpins * prizes.length + prizeIndex;
+        // Account for starting position of 2
+        const target = 2 + baseSpins * prizes.length + prizeIndex;
         const time = 2500 + i * 300 + extra * 300;
 
         tweenTo(
@@ -388,8 +389,8 @@ const PixiSlotMachine = forwardRef<PixiSlotMachineRef, PixiSlotMachineProps>(
       const reels = reelsRef.current;
       for (let i = 0; i < reels.length; i++) {
         const r = reels[i];
-        r.position = 0;
-        r.previousPosition = 0;
+        r.position = 2; // Reset to 3rd symbol
+        r.previousPosition = 2;
       }
 
       // Reset indicators to normal state
