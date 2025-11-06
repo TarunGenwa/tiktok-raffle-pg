@@ -298,7 +298,9 @@ export default function CompetitionPage() {
                   value={ticketCount}
                   onChange={(e) => {
                     const newCount = parseInt(e.target.value);
-                    setTicketCount(newCount);
+                    if (newCount >= 1 && newCount <= MAX_TICKETS) {
+                      setTicketCount(newCount);
+                    }
                   }}
                   className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider-thumb"
                   style={{
