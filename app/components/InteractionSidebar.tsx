@@ -73,6 +73,16 @@ export default function InteractionSidebar({ prizes, competitionTitle }: Interac
 
   const [tickets] = useState<RaffleTicket[]>(generateTickets());
 
+  // Generate prize availability once to avoid hydration mismatch
+  const [prizeAvailability] = useState(() => {
+    return prizes.map((prize) => {
+      const totalAvailable = Math.round((prize.probability / 100) * 100);
+      const claimed = Math.floor(Math.random() * totalAvailable * 0.6); // 0-60% claimed
+      const available = totalAvailable - claimed;
+      return { totalAvailable, available };
+    });
+  });
+
   const handleTabClick = (tab: 'prizes' | 'tickets' | 'drawinfo') => {
     setActiveTab(activeTab === tab ? null : tab);
   };
@@ -139,10 +149,7 @@ export default function InteractionSidebar({ prizes, competitionTitle }: Interac
               </div>
 
               {prizes.map((prize, index) => {
-                // Calculate availability based on probability (mock data)
-                const totalAvailable = Math.round((prize.probability / 100) * 100);
-                const claimed = Math.floor(Math.random() * totalAvailable * 0.6); // 0-60% claimed
-                const available = totalAvailable - claimed;
+                const { totalAvailable, available } = prizeAvailability[index];
 
                 return (
                   <div

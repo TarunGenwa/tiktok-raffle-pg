@@ -26,7 +26,7 @@ export interface PixiSlotMachineRef {
 
 const BASE_SYMBOL_SIZE = 100;
 const SYMBOL_GAP = 10;
-const MAX_HEIGHT_VH = 50; // Max height in viewport height percentage
+const MAX_HEIGHT_VH = 40; // Max height in viewport height percentage
 const PADDING = 40; // Additional padding
 
 const PixiSlotMachine = forwardRef<PixiSlotMachineRef, PixiSlotMachineProps>(
