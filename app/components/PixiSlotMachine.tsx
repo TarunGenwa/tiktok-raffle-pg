@@ -24,8 +24,10 @@ export interface PixiSlotMachineRef {
   isSpinning: () => boolean;
 }
 
-const SYMBOL_SIZE = 100;
+const BASE_SYMBOL_SIZE = 100;
 const SYMBOL_GAP = 10;
+const MAX_HEIGHT_VH = 50; // Max height in viewport height percentage
+const PADDING = 40; // Additional padding
 
 const PixiSlotMachine = forwardRef<PixiSlotMachineRef, PixiSlotMachineProps>(
   ({ prizes, numberOfReels, onSpinComplete, onSpinStart, onResetComplete }, ref) => {
@@ -40,6 +42,25 @@ const PixiSlotMachine = forwardRef<PixiSlotMachineRef, PixiSlotMachineProps>(
     const audioContextRef = useRef<AudioContext | null>(null);
     const tickIntervalRef = useRef<NodeJS.Timeout | null>(null);
     const resetTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+    // Calculate dynamic symbol size based on number of reels to fit within 70vh
+    const calculateSymbolSize = () => {
+      const maxHeightPx = (typeof window !== 'undefined' ? window.innerHeight : 800) * (MAX_HEIGHT_VH / 100);
+      const availableHeight = maxHeightPx - PADDING;
+      const maxRowHeight = availableHeight / numberOfReels;
+      const calculatedSymbolSize = Math.floor(maxRowHeight - SYMBOL_GAP);
+
+      // Use the smaller of BASE_SYMBOL_SIZE or calculated size
+      return Math.min(BASE_SYMBOL_SIZE, calculatedSymbolSize);
+    };
+
+    const [SYMBOL_SIZE, setSymbolSize] = useState(BASE_SYMBOL_SIZE);
+
+    // Calculate and set symbol size on mount and when numberOfReels changes
+    useEffect(() => {
+      const newSymbolSize = calculateSymbolSize();
+      setSymbolSize(newSymbolSize);
+    }, [numberOfReels]);
 
     // Expose spin and reset methods
     useImperativeHandle(ref, () => ({
@@ -59,7 +80,7 @@ const PixiSlotMachine = forwardRef<PixiSlotMachineRef, PixiSlotMachineProps>(
 
         const containerWidth = containerRef.current?.clientWidth || 600;
         const rowHeight = SYMBOL_SIZE + SYMBOL_GAP;
-        const totalHeight = numberOfReels * rowHeight + 40;
+        const totalHeight = numberOfReels * rowHeight + PADDING;
 
         await app.init({
           background: 'transparent',
@@ -259,7 +280,7 @@ const PixiSlotMachine = forwardRef<PixiSlotMachineRef, PixiSlotMachineProps>(
           appRef.current = null;
         }
       };
-    }, [numberOfReels, prizes]);
+    }, [numberOfReels, prizes, SYMBOL_SIZE]);
 
     const generateTickSound = () => {
       if (typeof window === 'undefined') return;
@@ -519,8 +540,11 @@ const PixiSlotMachine = forwardRef<PixiSlotMachineRef, PixiSlotMachineProps>(
     return (
       <div
         ref={containerRef}
-        className="w-full flex justify-center items-center"
-        style={{ minHeight: numberOfReels * (SYMBOL_SIZE + SYMBOL_GAP) + 40 }}
+        className="w-full flex justify-center items-center max-h-[50vh]"
+        style={{
+          minHeight: numberOfReels * (SYMBOL_SIZE + SYMBOL_GAP) + PADDING,
+          maxHeight: '50vh'
+        }}
       />
     );
   }
