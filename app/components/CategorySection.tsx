@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import Competition from './Competition';
 
 interface Prize {
@@ -33,29 +33,16 @@ interface CategorySectionProps {
 
 export default function CategorySection({ title, icon, gradient, competitions }: CategorySectionProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const handlePrevious = () => {
     if (currentIndex > 0) {
       setCurrentIndex(currentIndex - 1);
-      scrollToIndex(currentIndex - 1);
     }
   };
 
   const handleNext = () => {
     if (currentIndex < competitions.length - 1) {
       setCurrentIndex(currentIndex + 1);
-      scrollToIndex(currentIndex + 1);
-    }
-  };
-
-  const scrollToIndex = (index: number) => {
-    if (scrollContainerRef.current) {
-      const cardWidth = scrollContainerRef.current.scrollWidth / competitions.length;
-      scrollContainerRef.current.scrollTo({
-        left: cardWidth * index,
-        behavior: 'smooth'
-      });
     }
   };
 
@@ -101,7 +88,7 @@ export default function CategorySection({ title, icon, gradient, competitions }:
 
       {/* Carousel Container */}
       <div className="relative overflow-hidden px-2">
-        <div ref={scrollContainerRef} className="overflow-hidden">
+        <div className="overflow-hidden">
           <div className="flex transition-transform duration-300 ease-in-out" style={{ transform: `translateX(-${currentIndex * 100}%)` }}>
             {competitions.map((competition) => (
               <div key={competition.id} className="flex-shrink-0 w-full h-[40vh]">
@@ -129,10 +116,7 @@ export default function CategorySection({ title, icon, gradient, competitions }:
           {competitions.map((_, index) => (
             <button
               key={index}
-              onClick={() => {
-                setCurrentIndex(index);
-                scrollToIndex(index);
-              }}
+              onClick={() => setCurrentIndex(index)}
               className={`w-2 h-2 rounded-full transition-all ${
                 index === currentIndex
                   ? 'bg-white w-6'

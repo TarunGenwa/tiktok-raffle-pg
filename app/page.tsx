@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import PromoSlide from './components/PromoSlide';
+import WinnersSection from './components/WinnersSection';
 import CategorySection from './components/CategorySection';
 
 export default function Home() {
@@ -205,6 +206,11 @@ export default function Home() {
           {/* Promo Slide */}
           <div className="w-full overflow-hidden">
             <PromoSlide />
+          </div>
+
+          {/* Winners Section */}
+          <div className="w-full overflow-hidden">
+            <WinnersSection />
           </div>
 
           {/* Category Sections */}
