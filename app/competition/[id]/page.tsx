@@ -41,10 +41,10 @@ const competitions: CompetitionType[] = [
     sponsored: true,
     videoUrl: '/lennie.mp4',
     prizes: [
-      { name: 'Gaming Headset', rarity: 'common', probability: 35, imageUrl: '/CTSP credit 1gbp.png' },
-      { name: 'RGB Keyboard', rarity: 'rare', probability: 30, imageUrl: '/CTSP credit 5gbp.png' },
-      { name: 'Gaming Chair', rarity: 'epic', probability: 20, imageUrl: '/CTSP credit 20gbp.png' },
-      { name: 'RTX 4090', rarity: 'legendary', probability: 15, imageUrl: '/CTSP credit 1000gbp.png' }
+      { name: 'Gaming Headset', rarity: 'common', probability: 35, imageUrl: 'https://ik.imagekit.io/slamseven/tr:w-300,h-300/competition-town/Prizes/CTSP%20credit%201gbp_3WMPEr7hA.png?updatedAt=1762502837312' },
+      { name: 'RGB Keyboard', rarity: 'rare', probability: 30, imageUrl: 'https://ik.imagekit.io/slamseven/tr:w-300,h-300/competition-town/Prizes/CTSP%20credit%205gbp_lhYe46Ty6I.png?updatedAt=1762502837188' },
+      { name: 'Gaming Chair', rarity: 'epic', probability: 20, imageUrl: 'https://ik.imagekit.io/slamseven/tr:w-300,h-300/competition-town/Prizes/CTSP%20credit%2020gbp_Mx0lH6PXI.png?updatedAt=1762502837310' },
+      { name: 'RTX 4090', rarity: 'legendary', probability: 15, imageUrl: 'https://ik.imagekit.io/slamseven/tr:w-300,h-300/competition-town/Prizes/CTSP%20credit%201000gbp_jSoTSkL0PW.png?updatedAt=1762502837311' }
     ]
   },
   {
@@ -58,11 +58,11 @@ const competitions: CompetitionType[] = [
     timeRemaining: '2h 15m',
     sponsored: true,
     prizes: [
-      { name: '$10 BTC', rarity: 'common', probability: 40, imageUrl: '/CTSP cash 1.png' },
-      { name: '$50 ETH', rarity: 'common', probability: 25, imageUrl: '/CTSP cash 1.png' },
-      { name: '$100 BTC', rarity: 'rare', probability: 20, imageUrl: '/CTSP cash 2.png' },
-      { name: '$500 ETH', rarity: 'epic', probability: 10, imageUrl: '/CTSP cash 3.png' },
-      { name: '1 BTC', rarity: 'legendary', probability: 5, imageUrl: '/CTSP credit 1000gbp.png' }
+      { name: '$10 BTC', rarity: 'common', probability: 40, imageUrl: 'https://ik.imagekit.io/slamseven/tr:w-300,h-300/competition-town/Prizes/CTSP%20cash%201_cqq0nBDZaN.png?updatedAt=1762502837441' },
+      { name: '$50 ETH', rarity: 'common', probability: 25, imageUrl: 'https://ik.imagekit.io/slamseven/tr:w-300,h-300/competition-town/Prizes/CTSP%20cash%201_cqq0nBDZaN.png?updatedAt=1762502837441' },
+      { name: '$100 BTC', rarity: 'rare', probability: 20, imageUrl: 'https://ik.imagekit.io/slamseven/tr:w-300,h-300/competition-town/Prizes/CTSP%20cash%202_7pNvz-mAQ.png?updatedAt=1762502837508' },
+      { name: '$500 ETH', rarity: 'epic', probability: 10, imageUrl: 'https://ik.imagekit.io/slamseven/tr:w-300,h-300/competition-town/Prizes/CTSP%20cash%203_MwUvn7y34.png?updatedAt=1762502836841' },
+      { name: '1 BTC', rarity: 'legendary', probability: 5, imageUrl: 'https://ik.imagekit.io/slamseven/tr:w-300,h-300/competition-town/Prizes/CTSP%20credit%201000gbp_jSoTSkL0PW.png?updatedAt=1762502837311' }
     ]
   },
   {
@@ -75,10 +75,10 @@ const competitions: CompetitionType[] = [
     participants: 8921,
     timeRemaining: '5h 30m',
     prizes: [
-      { name: 'Common Skin', rarity: 'common', probability: 45, imageUrl: '/CTSP credit 1gbp.png' },
-      { name: 'Rare Emote', rarity: 'rare', probability: 30, imageUrl: '/CTSP credit 5gbp.png' },
-      { name: 'Epic Bundle', rarity: 'epic', probability: 15, imageUrl: '/CTSP credit 20gbp.png' },
-      { name: 'PS5 Console', rarity: 'legendary', probability: 10, imageUrl: '/CTSP fiat 500.png' }
+      { name: 'Common Skin', rarity: 'common', probability: 45, imageUrl: 'https://ik.imagekit.io/slamseven/tr:w-300,h-300/competition-town/Prizes/CTSP%20credit%201gbp_3WMPEr7hA.png?updatedAt=1762502837312' },
+      { name: 'Rare Emote', rarity: 'rare', probability: 30, imageUrl: 'https://ik.imagekit.io/slamseven/tr:w-300,h-300/competition-town/Prizes/CTSP%20credit%205gbp_lhYe46Ty6I.png?updatedAt=1762502837188' },
+      { name: 'Epic Bundle', rarity: 'epic', probability: 15, imageUrl: 'https://ik.imagekit.io/slamseven/tr:w-300,h-300/competition-town/Prizes/CTSP%20credit%2020gbp_Mx0lH6PXI.png?updatedAt=1762502837310' },
+      { name: 'PS5 Console', rarity: 'legendary', probability: 10, imageUrl: 'https://ik.imagekit.io/slamseven/tr:w-300,h-300/competition-town/Prizes/CTSP%20fiat%20500_JTVt-vBTr.png?updatedAt=1762502836555' }
     ]
   },
   {
@@ -91,10 +91,10 @@ const competitions: CompetitionType[] = [
     participants: 5432,
     timeRemaining: '1h 45m',
     prizes: [
-      { name: 'Designer Watch', rarity: 'rare', probability: 35, imageUrl: '/CTSP credit 5gbp.png' },
-      { name: 'Gold Chain', rarity: 'rare', probability: 30, imageUrl: '/CTSP credit 20gbp.png' },
-      { name: 'Diamond Ring', rarity: 'epic', probability: 20, imageUrl: '/CTSP credit 20gbp.png' },
-      { name: 'Rolex Watch', rarity: 'legendary', probability: 15, imageUrl: '/CTSP credit 1000gbp.png' }
+      { name: 'Designer Watch', rarity: 'rare', probability: 35, imageUrl: 'https://ik.imagekit.io/slamseven/tr:w-300,h-300/competition-town/Prizes/CTSP%20credit%205gbp_lhYe46Ty6I.png?updatedAt=1762502837188' },
+      { name: 'Gold Chain', rarity: 'rare', probability: 30, imageUrl: 'https://ik.imagekit.io/slamseven/tr:w-300,h-300/competition-town/Prizes/CTSP%20credit%2020gbp_Mx0lH6PXI.png?updatedAt=1762502837310' },
+      { name: 'Diamond Ring', rarity: 'epic', probability: 20, imageUrl: 'https://ik.imagekit.io/slamseven/tr:w-300,h-300/competition-town/Prizes/CTSP%20credit%2020gbp_Mx0lH6PXI.png?updatedAt=1762502837310' },
+      { name: 'Rolex Watch', rarity: 'legendary', probability: 15, imageUrl: 'https://ik.imagekit.io/slamseven/tr:w-300,h-300/competition-town/Prizes/CTSP%20credit%201000gbp_jSoTSkL0PW.png?updatedAt=1762502837311' }
     ]
   },
   {
@@ -107,10 +107,10 @@ const competitions: CompetitionType[] = [
     participants: 15678,
     timeRemaining: '3h 20m',
     prizes: [
-      { name: 'AirPods', rarity: 'common', probability: 40, imageUrl: '/CTSP apple voucher 1.png' },
-      { name: 'iPad', rarity: 'rare', probability: 30, imageUrl: '/CTSP apple voucher 1.png' },
-      { name: 'MacBook', rarity: 'epic', probability: 20, imageUrl: '/CTSP apple voucher 1.png' },
-      { name: 'iPhone 15 Pro', rarity: 'legendary', probability: 10, imageUrl: '/CTSP apple voucher 1.png' }
+      { name: 'AirPods', rarity: 'common', probability: 40, imageUrl: 'https://ik.imagekit.io/slamseven/tr:w-300,h-300/competition-town/Prizes/CTSP%20apple%20voucher%201_VLIk15GsSs.png?updatedAt=1762502837149' },
+      { name: 'iPad', rarity: 'rare', probability: 30, imageUrl: 'https://ik.imagekit.io/slamseven/tr:w-300,h-300/competition-town/Prizes/CTSP%20apple%20voucher%201_VLIk15GsSs.png?updatedAt=1762502837149' },
+      { name: 'MacBook', rarity: 'epic', probability: 20, imageUrl: 'https://ik.imagekit.io/slamseven/tr:w-300,h-300/competition-town/Prizes/CTSP%20apple%20voucher%201_VLIk15GsSs.png?updatedAt=1762502837149' },
+      { name: 'iPhone 15 Pro', rarity: 'legendary', probability: 10, imageUrl: 'https://ik.imagekit.io/slamseven/tr:w-300,h-300/competition-town/Prizes/CTSP%20apple%20voucher%201_VLIk15GsSs.png?updatedAt=1762502837149' }
     ]
   }
 ];

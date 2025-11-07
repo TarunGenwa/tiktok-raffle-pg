@@ -20,7 +20,7 @@ const recentWinners: Winner[] = [
     competition: 'Mega Cash Jackpot',
     prizeValue: '£500',
     timeAgo: '2m ago',
-    imageUrl: '/CTSP fiat 500.png'
+    imageUrl: 'https://ik.imagekit.io/slamseven/tr:w-300,h-300/competition-town/Prizes/CTSP%20fiat%20500_JTVt-vBTr.png?updatedAt=1762502836555'
   },
   {
     id: '2',
@@ -29,7 +29,7 @@ const recentWinners: Winner[] = [
     competition: 'Tech Spin',
     prizeValue: '£1,199',
     timeAgo: '15m ago',
-    imageUrl: '/CTSP apple voucher 1.png'
+    imageUrl: 'https://ik.imagekit.io/slamseven/tr:w-300,h-300/competition-town/Prizes/CTSP%20apple%20voucher%201_VLIk15GsSs.png?updatedAt=1762502837149'
   },
   {
     id: '3',
@@ -38,7 +38,7 @@ const recentWinners: Winner[] = [
     competition: 'Crypto Mystery Box',
     prizeValue: '£100',
     timeAgo: '23m ago',
-    imageUrl: '/CTSP cash 3.png'
+    imageUrl: 'https://ik.imagekit.io/slamseven/tr:w-300,h-300/competition-town/Prizes/CTSP%20cash%203_MwUvn7y34.png?updatedAt=1762502836841'
   },
   {
     id: '4',
@@ -47,7 +47,7 @@ const recentWinners: Winner[] = [
     competition: 'Gaming Spin',
     prizeValue: '£450',
     timeAgo: '1h ago',
-    imageUrl: '/CTSP credit 20gbp.png'
+    imageUrl: 'https://ik.imagekit.io/slamseven/tr:w-300,h-300/competition-town/Prizes/CTSP%20credit%2020gbp_Mx0lH6PXI.png?updatedAt=1762502837310'
   },
   {
     id: '5',
@@ -56,7 +56,7 @@ const recentWinners: Winner[] = [
     competition: 'Daily Jackpot',
     prizeValue: '£1,000',
     timeAgo: '2h ago',
-    imageUrl: '/CTSP credit 1000gbp.png'
+    imageUrl: 'https://ik.imagekit.io/slamseven/tr:w-300,h-300/competition-town/Prizes/CTSP%20credit%201000gbp_jSoTSkL0PW.png?updatedAt=1762502837311'
   },
   {
     id: '6',
@@ -65,7 +65,7 @@ const recentWinners: Winner[] = [
     competition: 'Crypto Mystery Box',
     prizeValue: '£25',
     timeAgo: '3h ago',
-    imageUrl: '/CTSP cash 2.png'
+    imageUrl: 'https://ik.imagekit.io/slamseven/tr:w-300,h-300/competition-town/Prizes/CTSP%20cash%202_7pNvz-mAQ.png?updatedAt=1762502837508'
   }
 ];
 
