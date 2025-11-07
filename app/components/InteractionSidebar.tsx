@@ -7,6 +7,7 @@ interface Prize {
   name: string;
   rarity: 'common' | 'rare' | 'epic' | 'legendary';
   probability: number;
+  imageUrl?: string;
 }
 
 interface RaffleTicket {
@@ -132,43 +133,56 @@ export default function InteractionSidebar({ prizes, competitionTitle }: Interac
         <div className="p-4">
           {/* Prizes Content */}
           {activeTab === 'prizes' && (
-            <div className="space-y-3">
-              <div className="mb-3">
+            <div className="space-y-2">
+              <div className="mb-2">
                 <h3 className="text-lg font-bold text-white">Prize Pool</h3>
               </div>
 
-              {prizes.map((prize, index) => (
-                <div
-                  key={index}
-                  className={`relative bg-gradient-to-br ${rarityColors[prize.rarity]} rounded-lg p-3 border-2 ${rarityBorders[prize.rarity]} shadow-lg`}
-                >
-                  <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
-                      <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                      </svg>
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <h3 className="text-sm font-bold text-white">{prize.name}</h3>
-                      <p className="text-xs text-white/80 capitalize mt-0.5">{prize.rarity}</p>
-                      <div className="mt-2 flex items-center justify-between">
-                        <div className="text-xs text-white/70">Win Rate</div>
-                        <div className="text-base font-bold text-white">{prize.probability}%</div>
+              {prizes.map((prize, index) => {
+                // Calculate availability based on probability (mock data)
+                const totalAvailable = Math.round((prize.probability / 100) * 100);
+                const claimed = Math.floor(Math.random() * totalAvailable * 0.6); // 0-60% claimed
+                const available = totalAvailable - claimed;
+
+                return (
+                  <div
+                    key={index}
+                    className={`relative bg-gradient-to-br ${rarityColors[prize.rarity]} rounded-lg p-2 border ${rarityBorders[prize.rarity]} shadow-lg`}
+                  >
+                    <div className="flex items-center gap-2">
+                      {/* Prize Image */}
+                      <div className="w-12 h-12 bg-white/10 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden">
+                        {prize.imageUrl ? (
+                          <img
+                            src={prize.imageUrl}
+                            alt={prize.name}
+                            className="w-full h-full object-contain"
+                          />
+                        ) : (
+                          <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                          </svg>
+                        )}
                       </div>
-                      <div className="mt-2 h-1.5 bg-black/30 rounded-full overflow-hidden">
-                        <div
-                          className="h-full bg-white/50 rounded-full"
-                          style={{ width: `${prize.probability}%` }}
-                        ></div>
+
+                      {/* Prize Info */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between gap-2">
+                          <h3 className="text-sm font-bold text-white truncate">Prize {index + 1}</h3>
+                          <span className="text-xs font-semibold text-white/90 whitespace-nowrap">
+                            Available: {available}/{totalAvailable}
+                          </span>
+                        </div>
+                        <p className="text-xs text-white/70 truncate mt-0.5">{prize.name}</p>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
 
-              <div className="mt-4 p-3 bg-gray-800/50 rounded-lg border border-gray-700">
+              <div className="mt-3 p-2 bg-gray-800/50 rounded-lg border border-gray-700">
                 <div className="flex items-center justify-between text-xs">
-                  <span className="text-gray-400">Total Prizes</span>
+                  <span className="text-gray-400">Total Prize Types</span>
                   <span className="text-white font-bold">{prizes.length}</span>
                 </div>
               </div>
