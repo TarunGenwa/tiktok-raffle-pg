@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 
 interface Prize {
@@ -71,17 +71,27 @@ export default function InteractionSidebar({ prizes, competitionTitle }: Interac
     return tickets;
   };
 
-  const [tickets] = useState<RaffleTicket[]>(generateTickets());
+  const [tickets, setTickets] = useState<RaffleTicket[]>([]);
 
-  // Generate prize availability once to avoid hydration mismatch
-  const [prizeAvailability] = useState(() => {
+  // Generate prize availability - initialize with total only, update with random on client
+  const [prizeAvailability, setPrizeAvailability] = useState(() => {
     return prizes.map((prize) => {
+      const totalAvailable = Math.round((prize.probability / 100) * 100);
+      return { totalAvailable, available: totalAvailable };
+    });
+  });
+
+  // Generate random values only on client side to avoid hydration mismatch
+  useEffect(() => {
+    setTickets(generateTickets());
+
+    setPrizeAvailability(prizes.map((prize) => {
       const totalAvailable = Math.round((prize.probability / 100) * 100);
       const claimed = Math.floor(Math.random() * totalAvailable * 0.6); // 0-60% claimed
       const available = totalAvailable - claimed;
       return { totalAvailable, available };
-    });
-  });
+    }));
+  }, [prizes]);
 
   const handleTabClick = (tab: 'prizes' | 'tickets' | 'drawinfo') => {
     setActiveTab(activeTab === tab ? null : tab);
