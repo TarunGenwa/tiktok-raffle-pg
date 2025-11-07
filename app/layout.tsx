@@ -40,9 +40,9 @@ export default function RootLayout({
         {/* Global Header */}
         <Header />
 
-        <div className="flex h-screen bg-black overflow-hidden pt-16">
+        <div className="flex h-screen bg-black overflow-hidden">
           {/* Left Sidebar - Navigation (Desktop Only) */}
-          <aside className="hidden md:block w-20 bg-black border-r border-gray-800 flex-shrink-0">
+          <aside className="hidden md:block w-20 bg-black border-r border-gray-800 flex-shrink-0 pt-16">
             <NavSidebar />
           </aside>
 
@@ -52,7 +52,7 @@ export default function RootLayout({
           </div>
 
           {/* Main Content */}
-          <div className="flex-1 overflow-hidden">
+          <div className="flex-1 overflow-hidden ">
             {children}
           </div>
         </div>
