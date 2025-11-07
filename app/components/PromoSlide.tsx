@@ -1,40 +1,6 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
-
-const categories = [
-  {
-    name: 'Mystery Boxes',
-    icon: '🎁',
-    description: 'Surprise prizes await',
-    gradient: 'from-purple-500 to-pink-500',
-    route: '/explore?category=mysteryboxes'
-  },
-  {
-    name: 'Prize Spins',
-    icon: '🎡',
-    description: 'Spin to win big',
-    gradient: 'from-orange-500 to-yellow-500',
-    route: '/explore?category=prizespins'
-  },
-  {
-    name: 'Instant Wins',
-    icon: '💥',
-    description: 'Win instantly',
-    gradient: 'from-blue-500 to-cyan-500',
-    route: '/explore?category=instantwins'
-  },
-  {
-    name: 'Daily Prizes',
-    icon: '🏆',
-    description: 'New chances daily',
-    gradient: 'from-green-500 to-emerald-500',
-    route: '/explore?category=dailyprizes'
-  }
-];
-
 export default function PromoSlide() {
-  const router = useRouter();
 
   return (
     <div className="w-full flex flex-col bg-gradient-to-br from-gray-900 via-black to-gray-900 rounded-lg overflow-hidden relative max-w-full">
@@ -73,24 +39,6 @@ export default function PromoSlide() {
               </div>
             </div>
           </div>
-        </div>
-
-        {/* Categories Section */}
-        <div className="flex flex-wrap gap-3 sm:gap-4 justify-center items-center max-w-full">
-          {categories.map((category) => (
-            <button
-              key={category.name}
-              onClick={() => router.push(category.route)}
-              className="group relative overflow-hidden bg-gray-800/50 backdrop-blur-sm hover:bg-gray-800/80 rounded-xl sm:rounded-2xl p-4 sm:p-5 border-2 border-gray-700 hover:border-gray-600 transition-all transform hover:scale-110 flex-shrink-0"
-            >
-              {/* Gradient Overlay */}
-              <div className={`absolute inset-0 bg-gradient-to-br ${category.gradient} opacity-0 group-hover:opacity-20 transition-opacity`}></div>
-
-              <div className="relative z-10">
-                <div className="text-3xl sm:text-4xl">{category.icon}</div>
-              </div>
-            </button>
-          ))}
         </div>
       </div>
     </div>
